@@ -1462,33 +1462,7 @@
     }
 
 
-    /* Firebase connection status */
-    .firebase-status{
-      position:fixed;
-      left:20px;
-      bottom:20px;
-      z-index:4900;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      border-radius:13px;
-      color:#1c2b45;
-      background:rgba(20,31,53,.9);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow:0 12px 35px rgba(20,31,53,.25);
-      backdrop-filter:blur(12px);
-      font-size:11px;
-      transition:.25s;
-    }
-    .firebase-status span{
-      width:8px;height:8px;border-radius:50%;
-      background:#d8c79e;
-      box-shadow:0 0 12px rgba(216,199,158,.6);
-    }
-    .firebase-status.online span{background:#40c98a;box-shadow:0 0 12px rgba(64,201,138,.7)}
-    .firebase-status.error span{background:#ef6f6f;box-shadow:0 0 12px rgba(239,111,111,.7)}
-    .firebase-status.online{opacity:.72}
+    
     @media(max-width:620px){
       .firebase-status{left:10px;bottom:10px}
     }
@@ -6095,6 +6069,18 @@ header{
   color:#9A7138 !important;
 }
 
+
+
+/* Hide Firebase development/status messages from visitors */
+.firebase-status,
+#firebaseStatus,
+[data-firebase-status]{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
 </style>
 
 </head>
@@ -6910,9 +6896,7 @@ header{
 </main>
 </div>
 </div>
-<div class="firebase-status" id="firebaseStatus">
-<span></span><b>جاري الاتصال بقاعدة البيانات...</b>
-</div>
+
 <div class="toast" id="toast"></div>
 <script>
     // Promo controls must be global because the HTML buttons call them directly.
@@ -8004,14 +7988,7 @@ header{
         activePerfumeAudio.play().catch(()=>showToast("تعذر تشغيل الصوت"));
       };
 
-      function setConnectionStatus(type, label) {
-        const el = document.getElementById("firebaseStatus");
-        if (!el) return;
-        el.classList.remove("online", "error");
-        if (type) el.classList.add(type);
-        const labelEl = el.querySelector("b");
-        if (labelEl) labelEl.textContent = label;
-      }
+      
 
       function firebaseMessage(error) {
         const code = error?.code || "";
@@ -8165,7 +8142,7 @@ header{
           },
           error => {
             console.error("Orders listener:", error);
-            setConnectionStatus("error", "تعذر قراءة الطلبات");
+            
             showToast(firebaseMessage(error));
           }
         );
@@ -8194,7 +8171,7 @@ header{
           setConnectionStatus("online", "متصل بقاعدة بيانات HUTOON");
         } catch (error) {
           console.error("Auth state:", error);
-          setConnectionStatus("error", "تعذر تحميل بيانات الحساب");
+          
           showToast(firebaseMessage(error));
         }
       });
@@ -8274,7 +8251,7 @@ header{
         } catch (error) {
           console.error("Login:", error);
           showAuthError(error);
-          setConnectionStatus("error", "تعذر تسجيل الدخول");
+          
           showToast(firebaseMessage(error));
           console.error("Firebase login details:", error.code, error.message);
         } finally {
@@ -8361,7 +8338,7 @@ header{
             showToast(firebaseMessage(error));
           }
 
-          setConnectionStatus("error", "تعذر إكمال إنشاء الحساب");
+          
         } finally {
           if (button) {
             button.disabled = false;
@@ -8728,7 +8705,7 @@ header{
 
       subscribePerfumes();
       subscribePerfumeAudio();
-      setConnectionStatus("online", `Firebase متصل — ${window.location.hostname || "local"}`);
+      
     })();
   </script>
 <script id="hutoon-requested-layout">

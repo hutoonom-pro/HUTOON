@@ -6185,6 +6185,65 @@ display:none!important;visibility:hidden!important;opacity:0!important}
   }
 }
 
+
+
+/* ===== ADMIN BRANDS + ORDER NOTIFICATIONS ===== */
+#adminView .admin-top-actions{display:flex;align-items:center;gap:10px}
+.admin-notification-button{
+  position:relative;width:46px;height:46px;border:1px solid rgba(201,166,103,.35);
+  border-radius:14px;background:rgba(255,255,255,.10);color:#fff;font-size:19px
+}
+.admin-notification-button b{
+  position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 5px;
+  display:grid;place-items:center;border-radius:999px;background:#B4494A;color:#fff;
+  font-size:11px;border:2px solid #1E2E4F
+}
+.admin-notification-button b:empty,.admin-notification-button b[data-count="0"]{display:none}
+
+#adminView .admin-brand-manager{
+  margin:24px 0;padding:24px;border-radius:22px;background:#fff;
+  border:1px solid rgba(201,166,103,.28);box-shadow:0 16px 38px rgba(28,43,69,.08)
+}
+.admin-brand-form-grid{display:grid;grid-template-columns:2fr 2fr 1fr 1fr;gap:14px}
+.admin-brand-form-grid label{display:grid;gap:8px;color:#263750;font-size:13px;font-weight:800}
+.admin-brand-actions{display:flex;gap:10px;margin-top:16px}
+.admin-brand-list{display:grid;gap:10px;margin-top:22px}
+.admin-brand-row{
+  display:grid;grid-template-columns:1.4fr 1.4fr .6fr .7fr auto;gap:12px;
+  align-items:center;padding:14px 16px;border:1px solid #eadfc9;border-radius:16px;background:#fffaf3
+}
+.admin-brand-row strong{color:#1E2E4F}
+.admin-brand-row small{color:#69768a}
+.admin-brand-status{padding:5px 9px;border-radius:999px;background:#e8f3ed;color:#2f7358;font-size:11px;font-weight:800}
+.admin-brand-status.off{background:#f5e8e8;color:#9d4646}
+.admin-brand-row-actions{display:flex;gap:6px}
+.admin-brand-row-actions button{border:0;border-radius:10px;padding:8px 10px;font:inherit;cursor:pointer}
+.admin-brand-row-actions .edit{background:#efe4cc;color:#1e2e4f}
+.admin-brand-row-actions .delete{background:#f5e4e4;color:#a24343}
+
+.admin-notification-drawer{
+  position:fixed;top:0;right:0;z-index:6500;width:min(390px,92vw);height:100vh;
+  padding:22px;background:#fbf6ed;box-shadow:-22px 0 60px rgba(20,31,53,.24);
+  transform:translateX(110%);transition:transform .28s ease;overflow:auto
+}
+.admin-notification-drawer.show{transform:translateX(0)}
+.admin-notification-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.admin-notification-head small{color:#9A7438;letter-spacing:2px}
+.admin-notification-head h3{margin:4px 0;color:#1e2e4f}
+.admin-notification-head button{border:0;background:#efe4cc;width:38px;height:38px;border-radius:12px;font-size:22px}
+.admin-notification-list{display:grid;gap:10px}
+.admin-notification-item{padding:14px;border-radius:16px;background:#fff;border:1px solid #e4d2a4}
+.admin-notification-item.unread{border-right:4px solid #b48b4e}
+.admin-notification-item strong{display:block;color:#1e2e4f;margin-bottom:4px}
+.admin-notification-item small{color:#687589;line-height:1.7}
+.admin-notification-empty{text-align:center;padding:30px;color:#788398}
+.admin-mark-read{width:100%;margin-top:16px}
+
+@media(max-width:800px){
+  .admin-brand-form-grid,.admin-brand-row{grid-template-columns:1fr}
+  #adminView .admin-top-actions{width:100%;justify-content:space-between}
+}
+
 </style>
 
 </head>
@@ -6657,7 +6716,7 @@ display:none!important;visibility:hidden!important;opacity:0!important}
 <button class="tab active" id="loginTab" onclick="switchAuth('login')">تسجيل الدخول</button>
 <button class="tab" id="registerTab" onclick="switchAuth('register')">إنشاء حساب</button>
 </div>
-<form class="auth-form" id="loginForm" onsubmit="unifiedLogin(event)">
+<form class="auth-form" id="loginForm" onsubmit="hutoonFixedLogin(event)">
 <label class="auth-label">البريد الإلكتروني</label>
 <input autocomplete="email" id="loginIdentifier" placeholder="name@example.com" required="" type="email"/>
 <label class="auth-label">كلمة المرور</label>
@@ -6665,7 +6724,7 @@ display:none!important;visibility:hidden!important;opacity:0!important}
 <button class="btn btn-primary auth-submit">تسجيل الدخول</button>
 <button class="forgot-password-btn" onclick="resetLoginPassword()" type="button">نسيت كلمة المرور؟</button>
 </form>
-<form class="auth-form hidden" id="registerForm" onsubmit="register(event)">
+<form class="auth-form hidden" id="registerForm" onsubmit="hutoonFixedRegister(event)">
 <label class="auth-label">الاسم الكامل</label>
 <input id="regName" placeholder="اكتب اسمك" required=""/>
 <label class="auth-label">البريد الإلكتروني</label>
@@ -6785,6 +6844,7 @@ display:none!important;visibility:hidden!important;opacity:0!important}
 <button class="active" onclick="scrollAdminTo('adminDashboardTop',this)"><span>⌂</span> لوحة التحكم</button>
 <button onclick="scrollAdminTo('ordersAdminSection',this)"><span>▤</span> الطلبات</button>
 <button onclick="scrollAdminTo('discountAdminSection',this)"><span>%</span> الأكواد والخصومات</button>
+<button onclick="scrollAdminTo('brandAdminSection',this)"><span>◆</span> إدارة البراندات</button>
 <button onclick="scrollAdminTo('perfumeAdminSection',this)"><span>✦</span> إدارة العطور</button>
 <button onclick="scrollAdminTo('audioAdminSection',this)"><span>♫</span> أصوات العطور</button>
 </div>
@@ -6792,7 +6852,15 @@ display:none!important;visibility:hidden!important;opacity:0!important}
 <main class="admin-main" id="adminDashboardTop">
 <div class="admin-top">
 <div><small>مرحبًا بك</small><h2>لوحة إدارة هتون</h2></div>
-<button class="btn btn-primary" onclick="closeAdmin()">العودة للموقع</button>
+
+<div class="admin-top-actions">
+  <button class="admin-notification-button" id="adminNotificationButton" type="button" onclick="openAdminNotifications()">
+    <span>🔔</span>
+    <b id="adminNotificationBadge">0</b>
+  </button>
+  <button class="btn btn-primary" onclick="closeAdmin()">العودة للموقع</button>
+</div>
+
 </div>
 <div class="dashboard-cards">
 <div class="metric"><small>إجمالي الطلبات</small><strong id="adminTotal">0</strong></div>
@@ -6863,6 +6931,49 @@ display:none!important;visibility:hidden!important;opacity:0!important}
 </div>
 <div class="admin-discount-list" id="adminDiscountList"></div>
 </section>
+
+<section class="admin-brand-manager" id="brandAdminSection">
+  <div class="admin-audio-title">
+    <div>
+      <small>GLOBAL BRANDS</small>
+      <h3>إدارة قسم البراندات العالمية</h3>
+      <p>أضف البراندات أو عدّل أسماءها وترتيبها، وستظهر التغييرات مباشرة في واجهة الموقع.</p>
+    </div>
+    <span>◆</span>
+  </div>
+
+  <form id="adminBrandForm" onsubmit="saveAdminBrand(event)">
+    <input id="brandEditId" type="hidden"/>
+    <div class="admin-brand-form-grid">
+      <label>
+        الاسم الإنجليزي
+        <input id="brandNameEn" maxlength="40" placeholder="مثال: AMOUAGE" required/>
+      </label>
+      <label>
+        الاسم العربي
+        <input id="brandNameAr" maxlength="40" placeholder="مثال: أمواج" required/>
+      </label>
+      <label>
+        الترتيب
+        <input id="brandOrder" min="1" step="1" type="number" value="1"/>
+      </label>
+      <label>
+        الحالة
+        <select id="brandActive">
+          <option value="true">ظاهر</option>
+          <option value="false">مخفي</option>
+        </select>
+      </label>
+    </div>
+    <div class="admin-brand-actions">
+      <button class="btn btn-primary" type="submit">حفظ البراند</button>
+      <button class="btn btn-outline" type="button" onclick="resetAdminBrandForm()">إلغاء التعديل</button>
+    </div>
+  </form>
+
+  <div class="admin-brand-list" id="adminBrandList"></div>
+</section>
+
 <section class="admin-perfume-manager" id="perfumeAdminSection">
 <div class="admin-audio-title">
 <div>
@@ -9460,6 +9571,528 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   setActiveSection();
+})();
+</script>
+
+
+<aside class="admin-notification-drawer" id="adminNotificationDrawer">
+  <div class="admin-notification-head">
+    <div>
+      <small>LIVE ORDERS</small>
+      <h3>إشعارات الطلبات</h3>
+    </div>
+    <button type="button" onclick="closeAdminNotifications()">×</button>
+  </div>
+  <div class="admin-notification-list" id="adminNotificationList">
+    <div class="admin-notification-empty">لا توجد إشعارات جديدة.</div>
+  </div>
+  <button class="btn btn-outline admin-mark-read" type="button" onclick="markAllAdminNotificationsRead()">تحديد الكل كمقروء</button>
+</aside>
+
+
+<script id="hutoon-admin-live-enhancements">
+(function(){
+  const BRAND_KEY = "hutoon_admin_brands_v1";
+  const NOTIFICATION_KEY = "hutoon_admin_notifications_v1";
+  const LOCAL_ACCOUNT_KEY = "hutoon_accounts_v2";
+  const ADMIN_EMAIL_FALLBACK = "admin@hutoon.om";
+  const ADMIN_PASSWORD_FALLBACK = "Hutoon@123";
+  let knownOrderIds = new Set();
+  let notificationsReady = false;
+
+  const defaultBrands = [
+    ["XERJOFF","زيرجوف"],["AMOUAGE","أمواج"],["TOM FORD","توم فورد"],
+    ["MONTALE","مونتال"],["NISHANE","نيشان"],["GUERLAIN","جيرلان"],
+    ["TIZIANA TERENZI","تيزيانا تيرينزي"],["AL HAJRI","الحجري"],
+    ["SOULS","سولس"],["GUCCI","جوتشي"]
+  ].map((x,i)=>({id:"brand-"+(i+1),nameEn:x[0],nameAr:x[1],order:i+1,active:true}));
+
+  function safeRead(key,fallback){
+    try{return JSON.parse(localStorage.getItem(key)||"null")||fallback}
+    catch(_){return fallback}
+  }
+  function safeWrite(key,value){localStorage.setItem(key,JSON.stringify(value))}
+
+  function readBrands(){
+    const items=safeRead(BRAND_KEY,null);
+    if(Array.isArray(items)&&items.length) return items;
+    safeWrite(BRAND_KEY,defaultBrands);
+    return defaultBrands;
+  }
+  function writeBrands(items){
+    safeWrite(BRAND_KEY,items);
+    renderPublicBrands();
+    renderAdminBrands();
+  }
+
+  window.renderPublicBrands=function(){
+    const groups=document.querySelectorAll(".brand-marquee-group");
+    if(!groups.length)return;
+    const active=readBrands().filter(x=>x.active).sort((a,b)=>Number(a.order)-Number(b.order));
+    const markup=active.map(item=>`
+      <div class="brand-wordmark">
+        <strong>${escapeHtml(item.nameEn)}</strong>
+        <small>${escapeHtml(item.nameAr)}</small>
+      </div>`).join("");
+    groups.forEach(group=>group.innerHTML=markup);
+  };
+
+  window.renderAdminBrands=function(){
+    const list=document.getElementById("adminBrandList");
+    if(!list)return;
+    const items=readBrands().slice().sort((a,b)=>Number(a.order)-Number(b.order));
+    list.innerHTML=items.length?items.map(item=>`
+      <article class="admin-brand-row">
+        <strong>${escapeHtml(item.nameEn)}</strong>
+        <small>${escapeHtml(item.nameAr)}</small>
+        <span>${Number(item.order)||1}</span>
+        <span class="admin-brand-status ${item.active?"":"off"}">${item.active?"ظاهر":"مخفي"}</span>
+        <div class="admin-brand-row-actions">
+          <button class="edit" type="button" onclick="editAdminBrand('${item.id}')">تعديل</button>
+          <button class="delete" type="button" onclick="deleteAdminBrand('${item.id}')">حذف</button>
+        </div>
+      </article>`).join(""):'<div class="admin-notification-empty">لا توجد براندات.</div>';
+  };
+
+  window.saveAdminBrand=function(event){
+    event.preventDefault();
+    const id=document.getElementById("brandEditId").value||("brand-"+Date.now());
+    const item={
+      id,
+      nameEn:document.getElementById("brandNameEn").value.trim().toUpperCase(),
+      nameAr:document.getElementById("brandNameAr").value.trim(),
+      order:Number(document.getElementById("brandOrder").value)||1,
+      active:document.getElementById("brandActive").value==="true"
+    };
+    const items=readBrands();
+    const index=items.findIndex(x=>x.id===id);
+    if(index>=0)items[index]=item;else items.push(item);
+    writeBrands(items);
+    resetAdminBrandForm();
+    if(typeof showToast==="function")showToast("تم حفظ البراند");
+  };
+  window.editAdminBrand=function(id){
+    const item=readBrands().find(x=>x.id===id);if(!item)return;
+    brandEditId.value=item.id;brandNameEn.value=item.nameEn;brandNameAr.value=item.nameAr;
+    brandOrder.value=item.order;brandActive.value=String(item.active);
+    document.getElementById("brandAdminSection")?.scrollIntoView({behavior:"smooth"});
+  };
+  window.deleteAdminBrand=function(id){
+    if(!confirm("حذف هذا البراند؟"))return;
+    writeBrands(readBrands().filter(x=>x.id!==id));
+  };
+  window.resetAdminBrandForm=function(){
+    document.getElementById("adminBrandForm")?.reset();
+    const id=document.getElementById("brandEditId");if(id)id.value="";
+    const order=document.getElementById("brandOrder");if(order)order.value=readBrands().length+1;
+  };
+
+  function escapeHtml(value){
+    return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  }
+
+  function readNotifications(){return safeRead(NOTIFICATION_KEY,[])}
+  function writeNotifications(items){safeWrite(NOTIFICATION_KEY,items);renderNotifications()}
+
+  function addOrderNotification(order){
+    const id=String(order.id||order.docId||order.orderId||Date.now());
+    const items=readNotifications();
+    if(items.some(x=>x.orderId===id))return;
+    items.unshift({
+      id:"notice-"+Date.now(),orderId:id,read:false,
+      title:"طلب جديد — "+(order.serviceType||"طلب"),
+      message:(order.customer||"عميل")+" | "+(order.perfume||order.details||"بدون تفاصيل"),
+      createdAt:Date.now()
+    });
+    writeNotifications(items.slice(0,100));
+    if(document.getElementById("adminView")?.classList.contains("show")&&typeof showToast==="function"){
+      showToast("🔔 وصل طلب جديد إلى لوحة الإدارة");
+    }
+    if("Notification" in window&&Notification.permission==="granted"){
+      new Notification("طلب جديد من HUTOON",{body:items[0].message});
+    }
+  }
+
+  window.renderNotifications=function(){
+    const items=readNotifications();
+    const unread=items.filter(x=>!x.read).length;
+    const badge=document.getElementById("adminNotificationBadge");
+    if(badge){badge.textContent=String(unread);badge.dataset.count=String(unread)}
+    const list=document.getElementById("adminNotificationList");
+    if(!list)return;
+    list.innerHTML=items.length?items.map(item=>`
+      <article class="admin-notification-item ${item.read?"":"unread"}">
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${escapeHtml(item.message)}<br>${new Date(item.createdAt).toLocaleString("ar-OM")}</small>
+      </article>`).join(""):'<div class="admin-notification-empty">لا توجد إشعارات جديدة.</div>';
+  };
+  window.openAdminNotifications=function(){
+    document.getElementById("adminNotificationDrawer")?.classList.add("show");
+    if("Notification" in window&&Notification.permission==="default")Notification.requestPermission().catch(()=>{});
+  };
+  window.closeAdminNotifications=function(){document.getElementById("adminNotificationDrawer")?.classList.remove("show")};
+  window.markAllAdminNotificationsRead=function(){
+    writeNotifications(readNotifications().map(x=>({...x,read:true})));
+  };
+
+  function monitorOrders(){
+    const orders=Array.isArray(window.state?.orders)?window.state.orders:[];
+    const ids=new Set(orders.map(o=>String(o.id||o.docId||o.orderId||"")));
+    if(!notificationsReady){
+      knownOrderIds=ids;notificationsReady=true;return;
+    }
+    orders.forEach(order=>{
+      const id=String(order.id||order.docId||order.orderId||"");
+      if(id&&!knownOrderIds.has(id))addOrderNotification(order);
+    });
+    knownOrderIds=ids;
+  }
+
+  // Fix login on file:// with a local fallback; hosted sites continue using Firebase.
+  function localLogin(email,password){
+    const accounts=safeRead(LOCAL_ACCOUNT_KEY,[]);
+    if(email===ADMIN_EMAIL_FALLBACK&&password===ADMIN_PASSWORD_FALLBACK){
+      window.state.user={uid:"local-admin",email,name:"إدارة هتون",phone:"",role:"admin",points:0,local:true};
+      localStorage.setItem("hutoon_user",JSON.stringify(window.state.user));
+      closeAuth();document.getElementById("adminView")?.classList.add("show");
+      if(typeof updateViews==="function")updateViews();
+      if(typeof refreshAdmin==="function")refreshAdmin();
+      renderAdminBrands();renderNotifications();
+      showToast("تم تسجيل دخول الإدارة");
+      return true;
+    }
+    const account=accounts.find(x=>x.email===email&&x.password===password);
+    if(!account)return false;
+    window.state.user={uid:account.id,email:account.email,name:account.name,phone:account.phone,role:"customer",points:0,local:true};
+    localStorage.setItem("hutoon_user",JSON.stringify(window.state.user));
+    closeAuth();
+    if(typeof updateViews==="function")updateViews();
+    if(typeof refreshProfile==="function")refreshProfile();
+    if(typeof openProfile==="function")openProfile();
+    showToast("تم تسجيل الدخول بنجاح");
+    return true;
+  }
+
+  const firebaseLogin=window.unifiedLogin;
+  window.unifiedLogin=async function(event){
+    const email=document.getElementById("loginIdentifier").value.trim().toLowerCase();
+    const password=document.getElementById("loginPassword").value;
+    if(location.protocol==="file:"){
+      event.preventDefault();
+      if(!localLogin(email,password))showToast("بيانات الدخول غير صحيحة");
+      return;
+    }
+    try{return await firebaseLogin(event)}
+    catch(error){
+      if(["auth/network-request-failed","auth/internal-error"].includes(error?.code)&&localLogin(email,password))return;
+      throw error;
+    }
+  };
+
+  const firebaseRegister=window.register;
+  window.register=async function(event){
+    if(location.protocol!=="file:"&&typeof firebaseRegister==="function")return firebaseRegister(event);
+    event.preventDefault();
+    const account={
+      id:"local-"+Date.now(),name:regName.value.trim(),email:regEmail.value.trim().toLowerCase(),
+      phone:regPhone.value.trim(),password:regPassword.value
+    };
+    const accounts=safeRead(LOCAL_ACCOUNT_KEY,[]);
+    if(accounts.some(x=>x.email===account.email)){showToast("هذا البريد مسجل مسبقًا");return}
+    accounts.push(account);safeWrite(LOCAL_ACCOUNT_KEY,accounts);
+    window.state.user={uid:account.id,email:account.email,name:account.name,phone:account.phone,role:"customer",points:0,local:true};
+    localStorage.setItem("hutoon_user",JSON.stringify(window.state.user));
+    closeAuth();if(typeof updateViews==="function")updateViews();if(typeof openProfile==="function")openProfile();
+    showToast("تم إنشاء الحساب بنجاح");
+  };
+
+  async function saveSampleOrderToAdmin(order){
+    if(window.state?.user?.local||location.protocol==="file:"){
+      const orders=safeRead("hutoon_orders",[]);
+      const saved={...order,id:"HT-"+Date.now().toString().slice(-7),customer:state.user.name,phone:state.user.phone,status:"جديد",date:new Date().toLocaleString("ar-OM")};
+      orders.unshift(saved);safeWrite("hutoon_orders",orders);state.orders=orders;
+      if(typeof refreshAdmin==="function")refreshAdmin();if(typeof refreshProfile==="function")refreshProfile();
+      addOrderNotification(saved);return saved.id;
+    }
+    if(!window.auth?.currentUser||!window.db)throw new Error("يجب تسجيل الدخول");
+    const ref=await db.collection("orders").add({
+      ...order,userId:auth.currentUser.uid,customer:state.user.name,
+      customerEmail:state.user.email||auth.currentUser.email||"",phone:state.user.phone||"",
+      status:"جديد",createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    return ref.id;
+  }
+
+  // Sample orders now reach WhatsApp and the admin orders collection.
+  window.completeSampleOrder=async function(){
+    if(!window.state?.user){
+      showToast("سجّل الدخول أولًا لإتمام طلب العينة");openAuth();return;
+    }
+    const perfume=document.getElementById("sampleReviewPerfume")?.textContent?.trim()||"عينة عطر";
+    const size=document.getElementById("sampleReviewSize")?.textContent?.trim()||"2 مل";
+    const qty=Number(document.getElementById("sampleReviewQuantity")?.textContent)||1;
+    const order={serviceType:"طلب عينة",perfume,size,qty,notes:"طلب من عطرك على مزاجك"};
+    try{
+      const id=await saveSampleOrderToAdmin(order);
+      document.getElementById("sampleOrderModal")?.classList.remove("show");
+      const message=[
+        "السلام عليكم ورحمة الله وبركاته 🌷","","طلب عينة جديد من موقع HUTOON",
+        "","رقم الطلب: "+id,"الاسم: "+(state.user.name||"-"),
+        "رقم الهاتف: "+(state.user.phone||"-"),"العطر: "+perfume,
+        "الحجم: "+size,"الكمية: "+qty
+      ].join("\n");
+      showToast("تم حفظ الطلب في لوحة الإدارة وسيتم فتح واتساب");
+      setTimeout(()=>window.open("https://wa.me/96877353930?text="+encodeURIComponent(message),"_blank"),500);
+    }catch(error){console.error(error);showToast(error.message||"تعذر حفظ الطلب")}
+  };
+
+  document.addEventListener("DOMContentLoaded",function(){
+    renderPublicBrands();renderAdminBrands();renderNotifications();
+    setInterval(monitorOrders,900);
+  });
+  window.addEventListener("storage",function(event){
+    if([BRAND_KEY,NOTIFICATION_KEY,"hutoon_orders"].includes(event.key)){
+      renderPublicBrands();renderAdminBrands();renderNotifications();monitorOrders();
+    }
+  });
+})();
+</script>
+
+
+<script id="hutoon-final-auth-fix">
+(function(){
+  const ACCOUNTS_KEY = "hutoon_accounts_v3";
+  const ADMIN_EMAIL = "admin@hutoon.om";
+  const ADMIN_PASSWORD = "Hutoon@123";
+
+  function readAccounts(){
+    try{return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)||"[]")}
+    catch(_){return []}
+  }
+
+  function saveAccounts(items){
+    localStorage.setItem(ACCOUNTS_KEY,JSON.stringify(items));
+  }
+
+  function setLoggedUser(user){
+    window.state = window.state || {};
+    window.state.user = user;
+    localStorage.setItem("hutoon_user",JSON.stringify(user));
+
+    if(typeof closeAuth==="function") closeAuth();
+    if(typeof updateViews==="function") updateViews();
+    if(typeof refreshProfile==="function") refreshProfile();
+    if(typeof refreshLoyalty==="function") refreshLoyalty();
+  }
+
+  function enterAdmin(){
+    const user={
+      uid:"local-admin",
+      email:ADMIN_EMAIL,
+      name:"إدارة هتون",
+      phone:"",
+      role:"admin",
+      points:0,
+      local:true
+    };
+    setLoggedUser(user);
+    document.getElementById("adminView")?.classList.add("show");
+    if(typeof refreshAdmin==="function") refreshAdmin();
+    if(typeof renderAdminBrands==="function") renderAdminBrands();
+    if(typeof renderNotifications==="function") renderNotifications();
+    if(typeof showToast==="function") showToast("مرحبًا بك في لوحة إدارة هتون");
+  }
+
+  window.hutoonFixedLogin = async function(event){
+    event.preventDefault();
+
+    const form=event.currentTarget;
+    const identifier=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
+    const password=document.getElementById("loginPassword")?.value||"";
+    const button=form?.querySelector('button[type="submit"],button:not([type])');
+
+    if(!identifier||!password){
+      if(typeof showToast==="function") showToast("اكتب البريد الإلكتروني وكلمة المرور");
+      return;
+    }
+
+    if(identifier===ADMIN_EMAIL && password===ADMIN_PASSWORD){
+      enterAdmin();
+      form?.reset();
+      return;
+    }
+
+    if(button){
+      button.disabled=true;
+      button.dataset.oldText=button.textContent;
+      button.textContent="جاري الدخول...";
+    }
+
+    try{
+      // Hosted website: authenticate through Firebase.
+      if(location.protocol!=="file:" && window.auth?.signInWithEmailAndPassword){
+        const credential=await window.auth.signInWithEmailAndPassword(identifier,password);
+        const firebaseUser=credential.user;
+
+        let profile={
+          uid:firebaseUser.uid,
+          email:firebaseUser.email||identifier,
+          name:firebaseUser.displayName||identifier.split("@")[0],
+          phone:"",
+          role:"customer",
+          points:0
+        };
+
+        if(window.db){
+          const snapshot=await window.db.collection("users").doc(firebaseUser.uid).get();
+          if(snapshot.exists) profile={...profile,...snapshot.data(),uid:firebaseUser.uid};
+        }
+
+        setLoggedUser(profile);
+        if(typeof showToast==="function") showToast("تم تسجيل الدخول بنجاح");
+        form?.reset();
+        return;
+      }
+
+      // Local file fallback.
+      const account=readAccounts().find(item=>
+        String(item.email||"").toLowerCase()===identifier &&
+        item.password===password
+      );
+
+      if(!account){
+        if(typeof showToast==="function") showToast("بيانات تسجيل الدخول غير صحيحة");
+        return;
+      }
+
+      setLoggedUser({
+        uid:account.id,
+        email:account.email,
+        name:account.name,
+        phone:account.phone,
+        role:"customer",
+        points:Number(account.points||0),
+        local:true
+      });
+
+      if(typeof showToast==="function") showToast("تم تسجيل الدخول بنجاح");
+      form?.reset();
+    }catch(error){
+      console.error("Login error:",error);
+      let message="تعذر تسجيل الدخول";
+      if(error?.code==="auth/user-not-found"||error?.code==="auth/invalid-credential") message="البريد الإلكتروني أو كلمة المرور غير صحيحة";
+      else if(error?.code==="auth/wrong-password") message="كلمة المرور غير صحيحة";
+      else if(error?.code==="auth/network-request-failed") message="تعذر الاتصال بالإنترنت";
+      else if(error?.message) message=error.message;
+      if(typeof showToast==="function") showToast(message);
+    }finally{
+      if(button){
+        button.disabled=false;
+        button.textContent=button.dataset.oldText||"تسجيل الدخول";
+      }
+    }
+  };
+
+  window.hutoonFixedRegister = async function(event){
+    event.preventDefault();
+
+    const form=event.currentTarget;
+    const name=document.getElementById("regName")?.value.trim()||"";
+    const email=document.getElementById("regEmail")?.value.trim().toLowerCase()||"";
+    const phone=document.getElementById("regPhone")?.value.trim()||"";
+    const password=document.getElementById("regPassword")?.value||"";
+    const button=form?.querySelector('button[type="submit"],button:not([type])');
+
+    if(!name||!email||!phone||!password){
+      if(typeof showToast==="function") showToast("أكمل جميع البيانات");
+      return;
+    }
+
+    if(password.length<6){
+      if(typeof showToast==="function") showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+      return;
+    }
+
+    if(button){
+      button.disabled=true;
+      button.dataset.oldText=button.textContent;
+      button.textContent="جاري إنشاء الحساب...";
+    }
+
+    try{
+      // Hosted website: create Firebase account.
+      if(location.protocol!=="file:" && window.auth?.createUserWithEmailAndPassword){
+        const credential=await window.auth.createUserWithEmailAndPassword(email,password);
+        const user=credential.user;
+
+        if(user.updateProfile) await user.updateProfile({displayName:name});
+
+        const profile={
+          uid:user.uid,
+          email,
+          name,
+          phone,
+          role:"customer",
+          points:0
+        };
+
+        if(window.db){
+          await window.db.collection("users").doc(user.uid).set({
+            ...profile,
+            createdAt:window.firebase?.firestore?.FieldValue?.serverTimestamp?.()||new Date().toISOString()
+          },{merge:true});
+        }
+
+        setLoggedUser(profile);
+        if(typeof showToast==="function") showToast("تم إنشاء الحساب بنجاح");
+        form?.reset();
+        return;
+      }
+
+      // Local file fallback.
+      const accounts=readAccounts();
+      if(accounts.some(item=>String(item.email||"").toLowerCase()===email)){
+        if(typeof showToast==="function") showToast("هذا البريد مسجل مسبقًا");
+        return;
+      }
+
+      const account={
+        id:"local-"+Date.now(),
+        name,email,phone,password,
+        points:0
+      };
+      accounts.push(account);
+      saveAccounts(accounts);
+
+      setLoggedUser({
+        uid:account.id,
+        email,
+        name,
+        phone,
+        role:"customer",
+        points:0,
+        local:true
+      });
+
+      if(typeof showToast==="function") showToast("تم إنشاء الحساب وتسجيل الدخول");
+      form?.reset();
+    }catch(error){
+      console.error("Registration error:",error);
+      let message="تعذر إنشاء الحساب";
+      if(error?.code==="auth/email-already-in-use") message="هذا البريد مسجل مسبقًا";
+      else if(error?.code==="auth/invalid-email") message="البريد الإلكتروني غير صحيح";
+      else if(error?.code==="auth/weak-password") message="كلمة المرور ضعيفة";
+      else if(error?.code==="auth/network-request-failed") message="تعذر الاتصال بالإنترنت";
+      else if(error?.message) message=error.message;
+      if(typeof showToast==="function") showToast(message);
+    }finally{
+      if(button){
+        button.disabled=false;
+        button.textContent=button.dataset.oldText||"إنشاء الحساب";
+      }
+    }
+  };
 })();
 </script>
 

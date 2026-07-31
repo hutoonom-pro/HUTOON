@@ -2297,6 +2297,201 @@ flex:0 0 340px!important;
 max-width:340px!important;
 }
 
+
+/* ===== SAMPLE ORDER FLOW ===== */
+.sample-order-card{width:min(520px,calc(100vw - 28px));padding:28px;border:1px solid rgba(180,139,78,.34);background:linear-gradient(180deg,#fbf5ea 0%,#efe0c9 100%);box-shadow:0 30px 80px rgba(20,31,53,.22)}
+.sample-order-card .modal-head{align-items:flex-start;margin-bottom:20px}
+.sample-order-card .modal-head p{margin:7px 0 0;color:#5d6879;line-height:1.7}
+.sample-order-kicker{color:#a47839;letter-spacing:.14em;font-weight:800}
+.sample-perfume-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;margin-bottom:20px;border-radius:17px;background:#fffaf2;border:1px solid rgba(180,139,78,.28)}
+.sample-perfume-summary span,.sample-order-review span{color:#657084;font-size:.9rem}
+.sample-perfume-summary strong{color:#172741;text-align:left}
+.sample-order-field{margin:18px 0}
+.sample-order-field>label{display:block;margin-bottom:10px;color:#172741;font-weight:800}
+.sample-size-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sample-size-btn{min-height:48px;border-radius:14px;border:1px solid #cfb27b;background:#fffaf2;color:#172741;font:inherit;font-weight:800;cursor:pointer;transition:.2s ease}
+.sample-size-btn:hover{transform:translateY(-2px);border-color:#a77c3e}
+.sample-size-btn.selected{background:#c7aa72;border-color:#9c7135;color:#14213a;box-shadow:0 8px 18px rgba(28,43,69,.11)}
+.sample-quantity-control{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;max-width:220px;overflow:hidden;border:1px solid #cfb27b;border-radius:15px;background:#fffaf2}
+.sample-quantity-control button{height:48px;border:0;background:#e2cfad;color:#172741;font-size:1.4rem;cursor:pointer}
+.sample-quantity-control strong{text-align:center;color:#172741;font-size:1.1rem}
+.sample-order-review{display:grid;gap:1px;margin:22px 0 18px;overflow:hidden;border:1px solid rgba(180,139,78,.25);border-radius:17px;background:rgba(180,139,78,.18)}
+.sample-order-review>div{display:flex;justify-content:space-between;gap:14px;padding:13px 16px;background:#f9f0e2}
+.sample-order-review strong{color:#172741}
+.sample-order-submit{width:100%;min-height:52px;font-weight:900}
+.sample-login-note{margin:12px 0 0;text-align:center;color:#6c7380;font-size:.84rem}
+@media(max-width:520px){.sample-order-card{padding:22px 17px}.sample-size-options{grid-template-columns:1fr}}
+
+
+/* ===== MOBILE FLOATING INSTAGRAM NAV ===== */
+.mobile-floating-nav{
+  display:none;
+}
+
+@media (max-width: 768px){
+  /* Mobile uses the floating control bar. Desktop remains untouched. */
+  header{
+    display:none !important;
+  }
+
+  body{
+    padding-bottom:calc(104px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-floating-nav{
+    position:fixed;
+    right:14px;
+    bottom:calc(14px + env(safe-area-inset-bottom));
+    left:14px;
+    z-index:4200;
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    align-items:end;
+    min-height:72px;
+    padding:8px 7px 7px;
+    border:1px solid rgba(255,255,255,.72);
+    border-radius:25px;
+    background:rgba(252,248,241,.86);
+    -webkit-backdrop-filter:blur(22px) saturate(145%);
+    backdrop-filter:blur(22px) saturate(145%);
+    box-shadow:
+      0 18px 45px rgba(20,31,53,.20),
+      inset 0 1px 0 rgba(255,255,255,.75);
+    transition:
+      transform .32s cubic-bezier(.2,.8,.2,1),
+      opacity .25s ease;
+    direction:rtl;
+  }
+
+  .mobile-floating-nav.mobile-nav-hidden{
+    transform:translateY(calc(125% + env(safe-area-inset-bottom)));
+    opacity:.15;
+    pointer-events:none;
+  }
+
+  .mobile-nav-item{
+    position:relative;
+    min-width:0;
+    min-height:54px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    gap:4px;
+    padding:5px 2px 3px;
+    border:0;
+    border-radius:17px;
+    background:transparent;
+    color:#263750;
+    font-family:inherit;
+    text-decoration:none;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:color .22s ease,background .22s ease,transform .22s ease;
+  }
+
+  .mobile-nav-item svg{
+    width:22px;
+    height:22px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  .mobile-nav-item span:last-child{
+    max-width:100%;
+    overflow:hidden;
+    font-size:10.5px;
+    font-weight:800;
+    line-height:1.15;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+  }
+
+  .mobile-nav-item.active{
+    color:#a77b3d;
+    background:rgba(197,163,103,.13);
+  }
+
+  .mobile-nav-item:active{
+    transform:scale(.94);
+  }
+
+  .mobile-nav-featured{
+    justify-content:flex-end;
+    padding-top:0;
+  }
+
+  .mobile-featured-icon{
+    width:48px;
+    height:48px;
+    margin-top:-24px;
+    display:grid;
+    place-items:center;
+    border:4px solid rgba(252,248,241,.98);
+    border-radius:50%;
+    background:linear-gradient(145deg,#d7bd89,#aa7c3d);
+    color:#172741;
+    box-shadow:
+      0 10px 22px rgba(24,37,61,.25),
+      inset 0 1px 0 rgba(255,255,255,.55);
+  }
+
+  .mobile-featured-icon svg{
+    width:25px;
+    height:25px;
+    stroke-width:1.9;
+  }
+
+  .mobile-nav-featured.active{
+    color:#9c6e30;
+    background:transparent;
+  }
+
+  .mobile-nav-featured.active .mobile-featured-icon{
+    transform:translateY(-2px);
+    box-shadow:
+      0 13px 27px rgba(24,37,61,.30),
+      0 0 0 3px rgba(185,143,76,.15),
+      inset 0 1px 0 rgba(255,255,255,.55);
+  }
+
+  .hero{
+    padding-top:62px;
+  }
+
+  .modal,
+  .profile-panel{
+    z-index:5000;
+  }
+}
+
+@media (max-width: 380px){
+  .mobile-floating-nav{
+    right:8px;
+    left:8px;
+    border-radius:22px;
+  }
+
+  .mobile-nav-item span:last-child{
+    font-size:9.5px;
+  }
+
+  .mobile-featured-icon{
+    width:44px;
+    height:44px;
+    margin-top:-21px;
+  }
+}
+
+@media (min-width: 769px){
+  .mobile-floating-nav{
+    display:none !important;
+  }
+}
+
 </style>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
@@ -5933,7 +6128,7 @@ header{
 <a href="#about">عن هتون</a>
 <a href="#creator">خدمات هتون</a>
 <a href="#moodQuiz">عطرك على مزاجك</a>
-<a href="#drops">المنتجات</a>
+
 <a href="#loyalty">برنامج الولاء</a>
 <a href="#contact">تواصل معنا</a>
 </div>
@@ -6311,6 +6506,53 @@ header{
 <div>Instagram • TikTok • WhatsApp</div>
 </div>
 </footer>
+
+<!-- Sample order -->
+<div class="modal sample-order-modal" id="sampleOrderModal">
+  <div class="modal-card sample-order-card">
+    <div class="modal-head">
+      <div>
+        <small class="sample-order-kicker">HUTOON SAMPLE</small>
+        <h3>اطلب عيّنتك</h3>
+        <p>اختر الحجم والكمية، ثم أكمل الطلب عبر واتساب.</p>
+      </div>
+      <button class="close-btn" type="button" onclick="closeSampleOrder()">×</button>
+    </div>
+
+    <div class="sample-perfume-summary">
+      <span>العطر المختار</span>
+      <strong id="sampleOrderPerfume">—</strong>
+    </div>
+
+    <div class="sample-order-field">
+      <label>حجم العيّنة</label>
+      <div class="sample-size-options">
+        <button class="sample-size-btn selected" type="button" data-size="2 مل" onclick="selectSampleSize(this)">2 مل</button>
+        <button class="sample-size-btn" type="button" data-size="5 مل" onclick="selectSampleSize(this)">5 مل</button>
+        <button class="sample-size-btn" type="button" data-size="10 مل" onclick="selectSampleSize(this)">10 مل</button>
+      </div>
+    </div>
+
+    <div class="sample-order-field">
+      <label>الكمية</label>
+      <div class="sample-quantity-control">
+        <button type="button" onclick="changeSampleQuantity(-1)">−</button>
+        <strong id="sampleOrderQuantity">1</strong>
+        <button type="button" onclick="changeSampleQuantity(1)">+</button>
+      </div>
+    </div>
+
+    <div class="sample-order-review">
+      <div><span>العطر</span><strong id="sampleReviewPerfume">—</strong></div>
+      <div><span>الحجم</span><strong id="sampleReviewSize">2 مل</strong></div>
+      <div><span>الكمية</span><strong id="sampleReviewQuantity">1</strong></div>
+    </div>
+
+    <button class="btn btn-primary sample-order-submit" type="button" onclick="completeSampleOrder()">إتمام الطلب</button>
+    <p class="sample-login-note">يلزم تسجيل الدخول قبل إرسال الطلب عبر واتساب.</p>
+  </div>
+</div>
+
 <!-- Auth -->
 <div class="modal" id="authModal">
 <div class="modal-card auth-premium-card">
@@ -8893,5 +9135,252 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener("storage",renderAdminDiscounts);
 })();
 </script>
+
+<script>
+(function(){
+  let selectedSamplePerfume="";
+  let selectedSampleSize="2 مل";
+  let selectedSampleQuantity=1;
+  let continueSampleAfterLogin=false;
+  let loginWatcher=null;
+
+  function updateSampleOrderReview(){
+    const map={
+      sampleOrderPerfume:selectedSamplePerfume||"—",
+      sampleReviewPerfume:selectedSamplePerfume||"—",
+      sampleReviewSize:selectedSampleSize,
+      sampleOrderQuantity:String(selectedSampleQuantity),
+      sampleReviewQuantity:String(selectedSampleQuantity)
+    };
+    Object.entries(map).forEach(([id,value])=>{
+      const el=document.getElementById(id);
+      if(el) el.textContent=value;
+    });
+  }
+
+  window.requestPerfumeSample=function(name){
+    selectedSamplePerfume=String(name||"").trim();
+    selectedSampleSize="2 مل";
+    selectedSampleQuantity=1;
+    continueSampleAfterLogin=false;
+    document.querySelectorAll(".sample-size-btn").forEach(btn=>btn.classList.toggle("selected",btn.dataset.size===selectedSampleSize));
+    updateSampleOrderReview();
+    document.getElementById("sampleOrderModal")?.classList.add("show");
+  };
+
+  window.closeSampleOrder=function(){
+    document.getElementById("sampleOrderModal")?.classList.remove("show");
+    continueSampleAfterLogin=false;
+    if(loginWatcher){clearInterval(loginWatcher);loginWatcher=null}
+  };
+
+  window.selectSampleSize=function(button){
+    selectedSampleSize=button.dataset.size||button.textContent.trim();
+    document.querySelectorAll(".sample-size-btn").forEach(btn=>btn.classList.toggle("selected",btn===button));
+    updateSampleOrderReview();
+  };
+
+  window.changeSampleQuantity=function(change){
+    selectedSampleQuantity=Math.max(1,Math.min(20,selectedSampleQuantity+Number(change||0)));
+    updateSampleOrderReview();
+  };
+
+  function loggedInCustomer(){
+    try{return Boolean(state&&state.user)}catch(error){return false}
+  }
+
+  function sendSampleToWhatsApp(){
+    if(!selectedSamplePerfume)return;
+    let customerName="غير محدد",customerPhone="غير محدد";
+    try{
+      customerName=state.user?.name||state.user?.displayName||"غير محدد";
+      customerPhone=state.user?.phone||"غير محدد";
+    }catch(error){}
+
+    const message=[
+      "السلام عليكم ورحمة الله وبركاته 🌷",
+      "",
+      "أرغب بطلب عيّنة عطر من موقع HUTOON.",
+      "",
+      "اسم العطر: "+selectedSamplePerfume,
+      "حجم العيّنة: "+selectedSampleSize,
+      "الكمية: "+selectedSampleQuantity,
+      "",
+      "اسم العميل: "+customerName,
+      "رقم الهاتف: "+customerPhone,
+      "",
+      "شكرًا لكم 🤍"
+    ].join("\n");
+
+    document.getElementById("sampleOrderModal")?.classList.remove("show");
+    continueSampleAfterLogin=false;
+    if(typeof showToast==="function")showToast("سيتم الآن فتح واتساب لإكمال الطلب");
+    window.open("https://wa.me/96877353930?text="+encodeURIComponent(message),"_blank");
+  }
+
+  window.completeSampleOrder=function(){
+    if(!loggedInCustomer()){
+      continueSampleAfterLogin=true;
+      if(typeof showToast==="function")showToast("سجّل الدخول أولًا لإتمام طلب العيّنة");
+      if(typeof openAuth==="function")openAuth();
+
+      if(loginWatcher)clearInterval(loginWatcher);
+      loginWatcher=setInterval(function(){
+        if(continueSampleAfterLogin&&loggedInCustomer()){
+          clearInterval(loginWatcher);
+          loginWatcher=null;
+          if(typeof closeAuth==="function")closeAuth();
+          sendSampleToWhatsApp();
+        }
+      },450);
+      return;
+    }
+    sendSampleToWhatsApp();
+  };
+
+  document.addEventListener("click",function(event){
+    const modal=document.getElementById("sampleOrderModal");
+    if(event.target===modal)window.closeSampleOrder();
+  });
+})();
+</script>
+
+
+<!-- Mobile-only floating Instagram-style navigation -->
+<nav class="mobile-floating-nav" id="mobileFloatingNav" aria-label="التنقل السريع للجوال">
+  <a class="mobile-nav-item active" href="#home" data-section="home" aria-label="الرئيسية">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 10.8 12 3l9 7.8v9.1a1.1 1.1 0 0 1-1.1 1.1h-5.2v-6.4H9.3V21H4.1A1.1 1.1 0 0 1 3 19.9z"/>
+    </svg>
+    <span>الرئيسية</span>
+  </a>
+
+  <a class="mobile-nav-item" href="#creator" data-section="creator" aria-label="الخدمات">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8.5 3h7v3.2l1.8 2.2v10.8A1.8 1.8 0 0 1 15.5 21h-7a1.8 1.8 0 0 1-1.8-1.8V8.4l1.8-2.2z"/>
+      <path d="M8.5 10.2h7"/>
+    </svg>
+    <span>الخدمات</span>
+  </a>
+
+  <a class="mobile-nav-item mobile-nav-featured" href="#moodQuiz" data-section="moodQuiz" aria-label="عطرك">
+    <span class="mobile-featured-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m12 2 1.6 5.1L19 9l-5.4 1.9L12 16l-1.6-5.1L5 9l5.4-1.9z"/>
+        <path d="m18.5 14 .8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z"/>
+      </svg>
+    </span>
+    <span>عطرك</span>
+  </a>
+
+  <a class="mobile-nav-item" href="#loyalty" data-section="loyalty" aria-label="الولاء">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 20.5 4.7 13.8A4.8 4.8 0 0 1 11.5 7l.5.6.5-.6a4.8 4.8 0 0 1 6.8 6.8z"/>
+    </svg>
+    <span>الولاء</span>
+  </a>
+
+  <button class="mobile-nav-item" type="button" id="mobileAccountButton" aria-label="حسابي">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="8" r="3.5"/>
+      <path d="M5 21a7 7 0 0 1 14 0"/>
+    </svg>
+    <span>حسابي</span>
+  </button>
+</nav>
+
+
+<script>
+(function(){
+  const mobileNav = document.getElementById("mobileFloatingNav");
+  const accountButton = document.getElementById("mobileAccountButton");
+  const navItems = Array.from(document.querySelectorAll(".mobile-floating-nav [data-section]"));
+  const mobileMedia = window.matchMedia("(max-width: 768px)");
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+
+  function isMobile(){
+    return mobileMedia.matches;
+  }
+
+  function openMobileAccount(){
+    try{
+      if(typeof state !== "undefined" && state && state.user){
+        if(typeof openProfile === "function") openProfile();
+      }else if(typeof openAuth === "function"){
+        openAuth();
+      }
+    }catch(error){
+      if(typeof openAuth === "function") openAuth();
+    }
+  }
+
+  if(accountButton){
+    accountButton.addEventListener("click", openMobileAccount);
+  }
+
+  navItems.forEach(function(item){
+    item.addEventListener("click", function(){
+      navItems.forEach(function(link){ link.classList.remove("active"); });
+      item.classList.add("active");
+    });
+  });
+
+  function setActiveSection(){
+    if(!isMobile()) return;
+
+    const viewportPoint = window.scrollY + (window.innerHeight * .36);
+    let activeId = "home";
+
+    navItems.forEach(function(item){
+      const section = document.getElementById(item.dataset.section);
+      if(section && section.offsetTop <= viewportPoint){
+        activeId = item.dataset.section;
+      }
+    });
+
+    navItems.forEach(function(item){
+      item.classList.toggle("active", item.dataset.section === activeId);
+    });
+  }
+
+  function handleMobileScroll(){
+    if(!isMobile() || !mobileNav) return;
+
+    const currentY = Math.max(window.scrollY, 0);
+    const difference = currentY - lastScrollY;
+
+    if(currentY < 80){
+      mobileNav.classList.remove("mobile-nav-hidden");
+    }else if(difference > 8){
+      mobileNav.classList.add("mobile-nav-hidden");
+    }else if(difference < -6){
+      mobileNav.classList.remove("mobile-nav-hidden");
+    }
+
+    lastScrollY = currentY;
+    setActiveSection();
+  }
+
+  window.addEventListener("scroll", function(){
+    if(!ticking){
+      window.requestAnimationFrame(function(){
+        handleMobileScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, {passive:true});
+
+  mobileMedia.addEventListener?.("change", function(){
+    if(mobileNav) mobileNav.classList.remove("mobile-nav-hidden");
+    lastScrollY = window.scrollY;
+    setActiveSection();
+  });
+
+  setActiveSection();
+})();
+</script>
+
 </body>
 </html>

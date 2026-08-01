@@ -6946,6 +6946,346 @@ main > #home + #perfumesCatalog{
   color:#d6b36d;
 }
 
+
+
+/* ===== MOBILE EXPERIENCE UPGRADE ===== */
+.catalog-order-options{
+  display:grid;
+  grid-template-columns:1.3fr 1fr 1fr;
+  gap:12px;
+  margin-top:16px;
+}
+.catalog-option-block{
+  display:grid;
+  gap:8px;
+}
+.catalog-option-block>label{
+  color:#1E2E4F;
+  font-size:12px;
+  font-weight:800;
+}
+.catalog-mode-switch{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  padding:5px;
+  border:1px solid #E4D2A4;
+  border-radius:14px;
+  background:#FAF6EE;
+}
+.catalog-mode-switch button{
+  min-height:42px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#687589;
+  font-weight:800;
+}
+.catalog-mode-switch button.active{
+  background:#1E2E4F;
+  color:#fff;
+  box-shadow:0 8px 18px rgba(30,46,79,.18);
+}
+.catalog-option-block select{
+  width:100%;
+  min-height:52px;
+  padding:0 13px;
+  border:1px solid #E4D2A4;
+  border-radius:14px;
+  background:#fff;
+  color:#1E2E4F;
+  font-weight:700;
+}
+.catalog-order-summary{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin:14px 0;
+  padding:13px 15px;
+  border-radius:14px;
+  background:#F3E8D3;
+  color:#1E2E4F;
+  font-size:12px;
+}
+.catalog-order-summary strong{color:#9A7438}
+
+@media(max-width:768px){
+  body{
+    padding-bottom:92px;
+  }
+
+  header{
+    position:sticky !important;
+    top:0 !important;
+    left:auto !important;
+    transform:none !important;
+    width:100% !important;
+    border-radius:0 0 20px 20px !important;
+    border-top:0 !important;
+  }
+
+  nav{
+    height:62px !important;
+    padding:0 12px !important;
+  }
+
+  .brand img{
+    width:72px !important;
+    height:40px !important;
+  }
+
+  .nav-links,
+  .nav-actions .btn-outline,
+  .nav-actions .btn-primary{
+    display:none !important;
+  }
+
+  .menu-toggle{
+    display:inline-grid !important;
+    place-items:center;
+    width:42px;
+    height:42px;
+    padding:0 !important;
+  }
+
+  .shell{
+    width:min(100% - 22px,1180px) !important;
+  }
+
+  .hero{
+    min-height:auto !important;
+    padding:52px 0 42px !important;
+  }
+
+  .hero-grid{
+    grid-template-columns:1fr !important;
+    gap:26px !important;
+  }
+
+  .hero-copy{
+    text-align:center !important;
+  }
+
+  .hero p{
+    margin-inline:auto !important;
+    font-size:15px !important;
+  }
+
+  .hero-actions{
+    justify-content:center !important;
+  }
+
+  .hero-visual{
+    min-height:360px !important;
+  }
+
+  .perfume-card{
+    width:min(330px,88vw) !important;
+    border-radius:30px !important;
+  }
+
+  .brand-marquee-section{
+    padding-top:34px !important;
+    padding-bottom:34px !important;
+  }
+
+  .brand-marquee-section h2{
+    font-size:clamp(28px,9vw,42px) !important;
+    line-height:1.25 !important;
+  }
+
+  .hutoon-products-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px !important;
+  }
+
+  .hutoon-product-card{
+    border-radius:18px !important;
+  }
+
+  .hutoon-product-media{
+    height:180px !important;
+  }
+
+  .hutoon-product-body{
+    padding:12px !important;
+  }
+
+  .hutoon-product-body h3{
+    font-size:14px !important;
+    line-height:1.5 !important;
+  }
+
+  .hutoon-order-product{
+    width:100% !important;
+    min-height:42px !important;
+    padding:9px 10px !important;
+  }
+
+  .catalog-order-card{
+    width:calc(100vw - 20px) !important;
+    max-height:88vh !important;
+    overflow:auto !important;
+    padding:17px !important;
+    border-radius:22px !important;
+  }
+
+  .catalog-order-product{
+    grid-template-columns:78px 1fr !important;
+    gap:12px !important;
+    padding:12px !important;
+  }
+
+  .catalog-order-product img{
+    width:78px !important;
+    height:90px !important;
+  }
+
+  .catalog-order-options{
+    grid-template-columns:1fr !important;
+  }
+
+  .catalog-option-block{
+    width:100%;
+  }
+
+  .catalog-qty{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .catalog-order-summary{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .modal{
+    padding:10px !important;
+    align-items:flex-end !important;
+  }
+
+  .modal-card{
+    width:100% !important;
+    max-height:90vh !important;
+    overflow:auto !important;
+    border-radius:24px 24px 12px 12px !important;
+  }
+
+  .service-choice-grid,
+  .experience-grid,
+  .contact-grid,
+  .loyalty-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  input,select,textarea,button{
+    font-size:16px;
+  }
+
+  .mobile-floating-nav{
+    left:50% !important;
+    right:auto !important;
+    bottom:12px !important;
+    transform:translateX(-50%) !important;
+    width:calc(100% - 20px) !important;
+    max-width:520px !important;
+    border-radius:22px !important;
+    padding:7px 8px !important;
+    z-index:5000 !important;
+  }
+
+  .mobile-nav-item{
+    min-width:0 !important;
+    gap:3px !important;
+  }
+
+  .mobile-nav-item span{
+    font-size:9px !important;
+  }
+
+  .mobile-nav-item svg,
+  .mobile-nav-item i{
+    width:21px !important;
+    height:21px !important;
+  }
+}
+
+@media(max-width:420px){
+  .hutoon-products-grid{
+    grid-template-columns:1fr 1fr !important;
+  }
+
+  .hutoon-product-media{
+    height:150px !important;
+  }
+
+  .hutoon-product-body{
+    padding:10px !important;
+  }
+
+  .hero-actions .btn{
+    width:100% !important;
+  }
+}
+
+
+
+/* ===== SIZE OPTIONS: 2 / 5 / 10 ML ONLY ===== */
+.catalog-size-cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.catalog-size-card{
+  min-height:64px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1px;
+  border:1px solid #E4D2A4;
+  border-radius:14px;
+  background:#FFFDF8;
+  color:#1E2E4F;
+  transition:.2s ease;
+}
+.catalog-size-card strong{
+  font-size:21px;
+  line-height:1;
+}
+.catalog-size-card span{
+  font-size:11px;
+  color:#7A8595;
+}
+.catalog-size-card.active{
+  border-color:#C9A667;
+  background:linear-gradient(145deg,#1E2E4F,#243A61);
+  color:#FFFFFF;
+  box-shadow:0 9px 20px rgba(30,46,79,.18);
+  transform:translateY(-1px);
+}
+.catalog-size-card.active span{
+  color:#E4D2A4;
+}
+.catalog-size-card:active{
+  transform:scale(.97);
+}
+@media(max-width:768px){
+  .catalog-size-card{
+    min-height:58px;
+    border-radius:13px;
+  }
+  .catalog-size-card strong{
+    font-size:19px;
+  }
+}
+
+
+
+#catalogSizeBlock.hidden{
+  display:none !important;
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -7412,12 +7752,46 @@ main > #home + #perfumesCatalog{
 <span id="catalogOrderPrice">السعر عند الطلب</span>
 </div>
 </div>
-<label class="catalog-qty-label">الكمية</label>
-<div class="sample-quantity-control catalog-qty">
-<button onclick="changeCatalogQuantity(-1)" type="button">−</button>
-<strong id="catalogOrderQuantity">1</strong>
-<button onclick="changeCatalogQuantity(1)" type="button">+</button>
+<div class="catalog-order-options">
+  <div class="catalog-option-block">
+    <label>نوع الطلب</label>
+    <div class="catalog-mode-switch">
+      <button class="active" id="catalogFullMode" onclick="setCatalogOrderMode('full')" type="button">عبوة كاملة</button>
+      <button id="catalogSampleMode" onclick="setCatalogOrderMode('sample')" type="button">عينة</button>
+    </div>
+  </div>
+
+  <div class="catalog-option-block" id="catalogSizeBlock">
+    <label>الحجم</label>
+    <div class="catalog-size-cards" id="catalogSizeCards">
+      <button class="catalog-size-card active" data-size="2 مل" onclick="selectCatalogSize('2 مل')" type="button">
+        <strong>2</strong><span>مل</span>
+      </button>
+      <button class="catalog-size-card" data-size="5 مل" onclick="selectCatalogSize('5 مل')" type="button">
+        <strong>5</strong><span>مل</span>
+      </button>
+      <button class="catalog-size-card" data-size="10 مل" onclick="selectCatalogSize('10 مل')" type="button">
+        <strong>10</strong><span>مل</span>
+      </button>
+    </div>
+    <input id="catalogOrderSize" type="hidden" value="2 مل"/>
+  </div>
+
+  <div class="catalog-option-block">
+    <label>الكمية</label>
+    <div class="sample-quantity-control catalog-qty">
+      <button onclick="changeCatalogQuantity(-1)" type="button">−</button>
+      <strong id="catalogOrderQuantity">1</strong>
+      <button onclick="changeCatalogQuantity(1)" type="button">+</button>
+    </div>
+  </div>
 </div>
+
+<div class="catalog-order-summary">
+  <span>الطلب المختار</span>
+  <strong id="catalogOrderSummary">عبوة كاملة · الكمية 1</strong>
+</div>
+
 <button class="btn btn-primary catalog-order-submit" onclick="completeCatalogOrder()" type="button">
       حفظ الطلب وإنشاء الفاتورة
     </button>
@@ -10813,19 +11187,54 @@ document.addEventListener('DOMContentLoaded', function () {
   const WHATSAPP_NUMBER="96877353930";
   let selectedCatalogProduct=null;
   let catalogQty=1;
+  let catalogOrderMode='full';
   let pendingPerfumeFile=null;
 
   function money(value){
     const n=Number(value||0);
     return n>0?n.toFixed(3).replace(/\.000$/,"")+" ر.ع":"السعر عند الطلب";
   }
-  function currentUser(){
-    return window.state?.user||window.hutoonState?.user||null;
+  function readStoredUser(){
+    try{
+      const saved=JSON.parse(localStorage.getItem("hutoon_user")||"null");
+      if(saved&&typeof saved==="object"){
+        window.state=window.state||{};
+        window.state.user=window.state.user||saved;
+        return saved;
+      }
+    }catch(_){}
+    return null;
   }
+
+  function currentUser(){
+    const stateUser=window.state?.user||window.hutoonState?.user||readStoredUser();
+    if(stateUser)return stateUser;
+
+    try{
+      const firebaseUser=window.auth?.currentUser||window.firebase?.auth?.()?.currentUser;
+      if(firebaseUser){
+        const user={
+          uid:firebaseUser.uid,
+          email:firebaseUser.email||"",
+          name:firebaseUser.displayName||firebaseUser.email?.split("@")[0]||"عميل هتون",
+          phone:firebaseUser.phoneNumber||"",
+          role:"customer"
+        };
+        window.state=window.state||{};
+        window.state.user=user;
+        localStorage.setItem("hutoon_user",JSON.stringify(user));
+        return user;
+      }
+    }catch(_){}
+    return null;
+  }
+
   function requireLogin(){
-    if(currentUser())return true;
-    showToast("يجب تسجيل الدخول قبل إرسال الطلب");
-    openAuth();
+    const user=currentUser();
+    if(user)return true;
+
+    showToast("انتهت جلسة الدخول، سجّل الدخول مرة أخرى");
+    if(typeof openAuth==="function")openAuth();
     return false;
   }
   function orderId(){return "HT-"+Date.now().toString().slice(-8)}
@@ -10846,10 +11255,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if(location.protocol!=="file:"&&window.firebase?.firestore){
       const db=firebase.firestore();
       const authUser=firebase.auth()?.currentUser;
-      if(!authUser)throw new Error("يجب تسجيل الدخول");
+      const userId=authUser?.uid||user.uid||("local-"+Date.now());
       const ref=await db.collection("orders").add({
         ...full,
-        userId:authUser.uid,
+        userId,
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt:firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -11061,37 +11470,125 @@ document.addEventListener('DOMContentLoaded', function () {
     return saved;
   }
   // Catalog products.
+  function catalogSizesForMode(){
+    return ["2 مل","5 مل","10 مل"];
+  }
+
+  function renderCatalogSizes(preferred){
+    const sizes=catalogSizesForMode();
+    const selected=sizes.includes(preferred)?preferred:"2 مل";
+    const input=document.getElementById("catalogOrderSize");
+    if(input)input.value=selected;
+    document.querySelectorAll(".catalog-size-card").forEach(card=>{
+      card.classList.toggle("active",card.dataset.size===selected);
+    });
+  }
+
+  window.selectCatalogSize=function(size){
+    if(!catalogSizesForMode().includes(size))return;
+    const input=document.getElementById("catalogOrderSize");
+    if(input)input.value=size;
+    document.querySelectorAll(".catalog-size-card").forEach(card=>{
+      card.classList.toggle("active",card.dataset.size===size);
+    });
+    updateCatalogOrderSummary();
+  };
+
+  window.setCatalogOrderMode=function(mode){
+    catalogOrderMode=mode==="sample"?"sample":"full";
+    document.getElementById("catalogFullMode")?.classList.toggle("active",catalogOrderMode==="full");
+    document.getElementById("catalogSampleMode")?.classList.toggle("active",catalogOrderMode==="sample");
+
+    const sizeBlock=document.getElementById("catalogSizeBlock");
+    const sizeInput=document.getElementById("catalogOrderSize");
+
+    if(catalogOrderMode==="sample"){
+      if(sizeBlock)sizeBlock.classList.remove("hidden");
+      renderCatalogSizes("2 مل");
+    }else{
+      if(sizeBlock)sizeBlock.classList.add("hidden");
+      if(sizeInput)sizeInput.value="";
+    }
+
+    updateCatalogOrderSummary();
+  };
+
+  window.updateCatalogOrderSummary=function(){
+    const size=document.getElementById("catalogOrderSize")?.value||"";
+    const label=catalogOrderMode==="sample"?"عينة":"عبوة كاملة";
+    const summary=document.getElementById("catalogOrderSummary");
+    if(!summary)return;
+    summary.textContent=catalogOrderMode==="sample"
+      ? `${label} · ${size||"2 مل"} · الكمية ${catalogQty}`
+      : `${label} · الكمية ${catalogQty}`;
+  };
+
   window.openCatalogOrder=function(id){
     if(!requireLogin())return;
     const products=typeof hutoonMergedProducts==="function"?hutoonMergedProducts():(window.perfumeCatalog||[]);
     selectedCatalogProduct=products.find(p=>String(p.id)===String(id));
     if(!selectedCatalogProduct)return showToast("تعذر العثور على المنتج");
+
     catalogQty=1;
-    catalogOrderName.textContent=selectedCatalogProduct.name||"—";
-    catalogOrderBrand.textContent=selectedCatalogProduct.brand||"HUTOON";
-    catalogOrderPrice.textContent=money(selectedCatalogProduct.price);
-    catalogOrderImage.src=selectedCatalogProduct.image||"";
-    catalogOrderQuantity.textContent="1";
+    catalogOrderMode="full";
+
+    document.getElementById("catalogOrderName").textContent=selectedCatalogProduct.name||"—";
+    document.getElementById("catalogOrderBrand").textContent=selectedCatalogProduct.brand||"HUTOON";
+    document.getElementById("catalogOrderPrice").textContent=money(selectedCatalogProduct.price);
+    document.getElementById("catalogOrderImage").src=selectedCatalogProduct.image||"";
+    document.getElementById("catalogOrderQuantity").textContent="1";
+
+    document.getElementById("catalogFullMode")?.classList.add("active");
+    document.getElementById("catalogSampleMode")?.classList.remove("active");
+
+    const sizeBlock=document.getElementById("catalogSizeBlock");
+    const sizeInput=document.getElementById("catalogOrderSize");
+    if(sizeBlock)sizeBlock.classList.add("hidden");
+    if(sizeInput)sizeInput.value="";
+
+    updateCatalogOrderSummary();
+
     document.getElementById("catalogOrderModal")?.classList.add("show");
   };
-  window.closeCatalogOrder=function(){document.getElementById("catalogOrderModal")?.classList.remove("show")};
+
+  window.closeCatalogOrder=function(){
+    document.getElementById("catalogOrderModal")?.classList.remove("show");
+  };
+
   window.changeCatalogQuantity=function(diff){
     catalogQty=Math.max(1,Math.min(50,catalogQty+Number(diff||0)));
-    catalogOrderQuantity.textContent=String(catalogQty);
+    const quantity=document.getElementById("catalogOrderQuantity");
+    if(quantity)quantity.textContent=String(catalogQty);
+    updateCatalogOrderSummary();
   };
+
   window.completeCatalogOrder=async function(){
     if(!selectedCatalogProduct||!requireLogin())return;
+
+    const isSample=catalogOrderMode==="sample";
+    const selectedSize=isSample
+      ? (document.getElementById("catalogOrderSize")?.value||"2 مل")
+      : "";
+
     try{
       await finishOrder({
-        serviceType:"طلب منتج",
+        serviceType:isSample?"طلب عينة منتج":"طلب منتج",
         perfume:selectedCatalogProduct.name,
         brand:selectedCatalogProduct.brand||"",
+        size:selectedSize,
         qty:catalogQty,
-        unitPrice:Number(selectedCatalogProduct.price||0),
-        notes:selectedCatalogProduct.description||"", image:selectedCatalogProduct.image||""
+        unitPrice:isSample?0:Number(selectedCatalogProduct.price||0),
+        notes:[
+          isSample?"نوع الطلب: عينة":"نوع الطلب: عبوة كاملة",
+          selectedCatalogProduct.description||""
+        ].filter(Boolean).join(" | "),
+        image:selectedCatalogProduct.image||""
       });
       closeCatalogOrder();
-    }catch(error){console.error(error);showToast(error.message||"تعذر إرسال الطلب")}
+    }catch(error){
+      console.error(error);
+      showToast(error.message||"تعذر إرسال الطلب");
+    }
   };
 
   // Replace catalog WhatsApp anchors with full order buttons every time products render.
@@ -11224,6 +11721,35 @@ document.addEventListener('DOMContentLoaded', function () {
       if(e.target.id==="catalogOrderModal")closeCatalogOrder();
     });
   });
+})();
+</script>
+
+
+<script id="hutoon-session-restore">
+(function(){
+  function restoreHutoonSession(){
+    try{
+      const saved=JSON.parse(localStorage.getItem("hutoon_user")||"null");
+      if(saved){
+        window.state=window.state||{};
+        window.state.user=window.state.user||saved;
+        window.hutoonState=window.hutoonState||{};
+        window.hutoonState.user=window.hutoonState.user||saved;
+        if(typeof updateViews==="function")updateViews();
+        if(typeof refreshProfile==="function")refreshProfile();
+      }
+    }catch(error){
+      console.warn("Session restore failed",error);
+    }
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",restoreHutoonSession,{once:true});
+  }else{
+    restoreHutoonSession();
+  }
+
+  window.addEventListener("load",restoreHutoonSession,{once:true});
 })();
 </script>
 

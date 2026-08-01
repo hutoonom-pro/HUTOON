@@ -7280,12 +7280,6 @@ main > #home + #perfumesCatalog{
   }
 }
 
-
-
-#catalogSizeBlock.hidden{
-  display:none !important;
-}
-
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -7761,7 +7755,7 @@ main > #home + #perfumesCatalog{
     </div>
   </div>
 
-  <div class="catalog-option-block" id="catalogSizeBlock">
+  <div class="catalog-option-block hidden" id="catalogSizeBlock">
     <label>الحجم</label>
     <div class="catalog-size-cards" id="catalogSizeCards">
       <button class="catalog-size-card active" data-size="2 مل" onclick="selectCatalogSize('2 مل')" type="button">
@@ -11432,42 +11426,58 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function finishOrder(order){
-    showToast("جاري حفظ الطلب وإنشاء الفاتورة...");
-    const saved=await saveUnifiedOrder(order);
-
-    let blob=null;
-    let invoiceUrl="";
+    // Open a blank tab immediately while the click is still a trusted user action.
+    // This prevents mobile browsers and popup blockers from stopping WhatsApp.
+    const whatsappWindow=window.open("about:blank","_blank");
 
     try{
-      blob=await createInvoicePdf(saved);
-      invoiceUrl=await uploadInvoice(saved,blob);
+      showToast("جاري حفظ الطلب وإنشاء الفاتورة...");
+      const saved=await saveUnifiedOrder(order);
+
+      let blob=null;
+      let invoiceUrl="";
+
+      try{
+        blob=await createInvoicePdf(saved);
+        invoiceUrl=await uploadInvoice(saved,blob);
+      }catch(error){
+        console.warn("Invoice generation/upload failed:",error);
+      }
+
+      const text=whatsappText(saved,invoiceUrl);
+
+      // Download a PDF copy for the customer.
+      if(blob){
+        const localUrl=URL.createObjectURL(blob);
+        const a=document.createElement("a");
+        a.href=localUrl;
+        a.download=`HUTOON-${saved.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=>URL.revokeObjectURL(localUrl),6000);
+      }
+
+      // Go directly to the HUTOON store WhatsApp number with the prepared message.
+      const whatsappUrl=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+
+      if(whatsappWindow && !whatsappWindow.closed){
+        whatsappWindow.location.replace(whatsappUrl);
+      }else{
+        window.location.assign(whatsappUrl);
+      }
+
+      showToast(
+        invoiceUrl
+          ? "تم حفظ الطلب وتجهيز الفاتورة وفتح واتساب المتجر"
+          : "تم حفظ الطلب وفتح واتساب المتجر، وتم تنزيل نسخة الفاتورة"
+      );
+
+      return saved;
     }catch(error){
-      console.warn("Invoice generation/upload failed:",error);
+      if(whatsappWindow && !whatsappWindow.closed)whatsappWindow.close();
+      throw error;
     }
-
-    const text=whatsappText(saved,invoiceUrl);
-
-    // Keep a PDF copy for the customer.
-    if(blob){
-      const localUrl=URL.createObjectURL(blob);
-      const a=document.createElement("a");
-      a.href=localUrl;
-      a.download=`HUTOON-${saved.id}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(()=>URL.revokeObjectURL(localUrl),6000);
-    }
-
-    // Open the store WhatsApp number directly.
-    const whatsappUrl=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-    showToast("تم إرسال الطلب للأدمن وتجهيز الفاتورة، وسيُفتح واتساب المتجر");
-    setTimeout(()=>{
-      const popup=window.open(whatsappUrl,"_blank");
-      if(!popup)window.location.href=whatsappUrl;
-    },450);
-
-    return saved;
   }
   // Catalog products.
   function catalogSizesForMode(){
@@ -11503,23 +11513,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const sizeInput=document.getElementById("catalogOrderSize");
 
     if(catalogOrderMode==="sample"){
-      if(sizeBlock)sizeBlock.classList.remove("hidden");
+      sizeBlock?.classList.remove("hidden");
       renderCatalogSizes("2 مل");
     }else{
-      if(sizeBlock)sizeBlock.classList.add("hidden");
+      sizeBlock?.classList.add("hidden");
       if(sizeInput)sizeInput.value="";
+      document.querySelectorAll(".catalog-size-card").forEach(card=>card.classList.remove("active"));
     }
-
     updateCatalogOrderSummary();
   };
 
   window.updateCatalogOrderSummary=function(){
-    const size=document.getElementById("catalogOrderSize")?.value||"";
+    const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
     const label=catalogOrderMode==="sample"?"عينة":"عبوة كاملة";
     const summary=document.getElementById("catalogOrderSummary");
     if(!summary)return;
     summary.textContent=catalogOrderMode==="sample"
-      ? `${label} · ${size||"2 مل"} · الكمية ${catalogQty}`
+      ? `${label} · ${size} · الكمية ${catalogQty}`
       : `${label} · الكمية ${catalogQty}`;
   };
 
@@ -11540,12 +11550,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById("catalogFullMode")?.classList.add("active");
     document.getElementById("catalogSampleMode")?.classList.remove("active");
-
-    const sizeBlock=document.getElementById("catalogSizeBlock");
+    document.getElementById("catalogSizeBlock")?.classList.add("hidden");
     const sizeInput=document.getElementById("catalogOrderSize");
-    if(sizeBlock)sizeBlock.classList.add("hidden");
     if(sizeInput)sizeInput.value="";
-
+    document.querySelectorAll(".catalog-size-card").forEach(card=>card.classList.remove("active"));
     updateCatalogOrderSummary();
 
     document.getElementById("catalogOrderModal")?.classList.add("show");
@@ -11564,6 +11572,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.completeCatalogOrder=async function(){
     if(!selectedCatalogProduct||!requireLogin())return;
+
+    const button=document.querySelector(".catalog-order-submit");
+    const oldText=button?.textContent;
+
+    if(button){
+      button.disabled=true;
+      button.textContent="جاري تجهيز الطلب والفاتورة...";
+    }
 
     const isSample=catalogOrderMode==="sample";
     const selectedSize=isSample
@@ -11588,6 +11604,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }catch(error){
       console.error(error);
       showToast(error.message||"تعذر إرسال الطلب");
+    }finally{
+      if(button){
+        button.disabled=false;
+        button.textContent=oldText||"حفظ الطلب وإنشاء الفاتورة";
+      }
     }
   };
 

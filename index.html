@@ -11426,58 +11426,50 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function finishOrder(order){
-    // Open a blank tab immediately while the click is still a trusted user action.
-    // This prevents mobile browsers and popup blockers from stopping WhatsApp.
-    const whatsappWindow=window.open("about:blank","_blank");
+    showToast("جاري حفظ الطلب وإنشاء الفاتورة...");
+
+    const saved=await saveUnifiedOrder(order);
+
+    let blob=null;
+    let invoiceUrl="";
 
     try{
-      showToast("جاري حفظ الطلب وإنشاء الفاتورة...");
-      const saved=await saveUnifiedOrder(order);
+      blob=await createInvoicePdf(saved);
+      invoiceUrl=await uploadInvoice(saved,blob);
+    }catch(error){
+      console.warn("Invoice generation/upload failed:",error);
+    }
 
-      let blob=null;
-      let invoiceUrl="";
+    const text=whatsappText(saved,invoiceUrl);
+    const whatsappUrl=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
+    // Download a local copy of the invoice without opening any blank page.
+    if(blob){
       try{
-        blob=await createInvoicePdf(saved);
-        invoiceUrl=await uploadInvoice(saved,blob);
-      }catch(error){
-        console.warn("Invoice generation/upload failed:",error);
-      }
-
-      const text=whatsappText(saved,invoiceUrl);
-
-      // Download a PDF copy for the customer.
-      if(blob){
         const localUrl=URL.createObjectURL(blob);
         const a=document.createElement("a");
         a.href=localUrl;
         a.download=`HUTOON-${saved.id}.pdf`;
+        a.style.display="none";
         document.body.appendChild(a);
         a.click();
         a.remove();
         setTimeout(()=>URL.revokeObjectURL(localUrl),6000);
+      }catch(error){
+        console.warn("Invoice download failed:",error);
       }
-
-      // Go directly to the HUTOON store WhatsApp number with the prepared message.
-      const whatsappUrl=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-
-      if(whatsappWindow && !whatsappWindow.closed){
-        whatsappWindow.location.replace(whatsappUrl);
-      }else{
-        window.location.assign(whatsappUrl);
-      }
-
-      showToast(
-        invoiceUrl
-          ? "تم حفظ الطلب وتجهيز الفاتورة وفتح واتساب المتجر"
-          : "تم حفظ الطلب وفتح واتساب المتجر، وتم تنزيل نسخة الفاتورة"
-      );
-
-      return saved;
-    }catch(error){
-      if(whatsappWindow && !whatsappWindow.closed)whatsappWindow.close();
-      throw error;
     }
+
+    showToast(
+      invoiceUrl
+        ? "تم حفظ الطلب وتجهيز الفاتورة، جاري فتح واتساب المتجر"
+        : "تم حفظ الطلب، جاري فتح واتساب المتجر"
+    );
+
+    // Navigate in the same tab. This avoids the empty about:blank page completely.
+    window.location.href=whatsappUrl;
+
+    return saved;
   }
   // Catalog products.
   function catalogSizesForMode(){

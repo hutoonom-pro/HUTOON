@@ -7324,6 +7324,548 @@ header{
   font-weight:700;
 }
 
+
+
+/* =========================================================
+   HUTOON — CLOUDINARY LAUNCH READY
+   ========================================================= */
+:root{
+  --h-navy:#172944;
+  --h-navy-2:#102039;
+  --h-blue:#2B527D;
+  --h-gold:#B88B45;
+  --h-gold-soft:#D9BE8C;
+  --h-cream:#E8D9BF;
+  --h-cream-2:#F0E6D5;
+  --h-paper:#FFFDF8;
+  --h-text:#172944;
+  --h-muted:#5C6879;
+}
+
+body{
+  background:
+    radial-gradient(circle at 12% 9%,rgba(184,139,69,.16),transparent 28%),
+    linear-gradient(180deg,#F7F1E7 0%,#E9DCC6 100%)!important;
+}
+
+/* المناطق المحددة في الصور */
+.hero-fact,
+.hero-benefit,
+.hero .feature-item,
+.hero .hero-point{
+  background:linear-gradient(135deg,#E8D7B8,#DCC49A)!important;
+  border:1px solid rgba(89,63,26,.22)!important;
+  color:#213753!important;
+}
+.hero-fact:nth-child(2),
+.hero-benefit:nth-child(2),
+.hero .feature-item:nth-child(2),
+.hero .hero-point:nth-child(2){
+  background:linear-gradient(135deg,#D9E4EC,#C4D5E2)!important;
+}
+.hero-fact:nth-child(3),
+.hero-benefit:nth-child(3),
+.hero .feature-item:nth-child(3),
+.hero .hero-point:nth-child(3){
+  background:linear-gradient(135deg,#E2C99A,#D2AE69)!important;
+}
+
+.service-choice{
+  background:linear-gradient(145deg,#E8D8BD,#DCC6A1)!important;
+  border-color:rgba(91,66,31,.24)!important;
+}
+.service-choice:nth-child(2){
+  background:linear-gradient(145deg,#D7E4EC,#C2D4E2)!important;
+}
+.service-choice.active{
+  background:linear-gradient(145deg,#183456,#2B527D)!important;
+  color:#fff!important;
+}
+.service-choice.active *{color:#fff!important}
+
+.quiz-shell,
+.quiz-card,
+.quiz-step,
+.quiz-options button,
+.mood-quiz-card{
+  background:linear-gradient(145deg,#E8D9BF,#DDC7A2)!important;
+  border-color:rgba(93,67,30,.22)!important;
+}
+.quiz-options button:hover,
+.quiz-options button.selected{
+  background:linear-gradient(145deg,#183456,#2B527D)!important;
+  color:#fff!important;
+}
+
+.reward-card{
+  background:linear-gradient(155deg,#EEDFC6,#DCC39A)!important;
+  border-color:rgba(98,70,31,.24)!important;
+}
+.reward-card:nth-child(2){
+  background:linear-gradient(155deg,#DCE7EE,#C5D6E2)!important;
+}
+.reward-card:nth-child(3){
+  background:linear-gradient(155deg,#E5C990,#D3AA5D)!important;
+}
+
+/* Admin redesign */
+#adminView{
+  background:linear-gradient(180deg,#E4D3B7,#D2BB94)!important;
+}
+.admin-wrap{
+  max-width:1500px!important;
+  margin:auto!important;
+  gap:18px!important;
+}
+.admin-sidebar{
+  background:linear-gradient(180deg,#102039,#183253)!important;
+  border-radius:0 26px 26px 0!important;
+  box-shadow:18px 0 45px rgba(16,32,57,.18)!important;
+}
+.admin-sidebar button{
+  color:#EEE0C8!important;
+  border-radius:12px!important;
+}
+.admin-sidebar button:hover,
+.admin-sidebar button.active{
+  color:#102039!important;
+  background:linear-gradient(135deg,#B88B45,#D8BE89)!important;
+}
+.admin-main{
+  background:transparent!important;
+}
+.admin-main > section,
+.admin-main > .table-card,
+.admin-main > .admin-top,
+.admin-cloudinary-panel{
+  background:rgba(255,253,248,.94)!important;
+  border:1px solid rgba(104,74,32,.16)!important;
+  border-radius:22px!important;
+  box-shadow:0 16px 42px rgba(23,41,68,.10)!important;
+}
+.admin-main > .admin-top{
+  padding:18px 22px!important;
+  margin-bottom:18px!important;
+}
+
+.admin-cloudinary-panel{
+  padding:23px;
+  margin-bottom:22px;
+}
+.admin-section-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.admin-section-heading small{
+  color:var(--h-gold);
+  letter-spacing:2px;
+  font-weight:800;
+}
+.admin-section-heading h3{
+  margin:4px 0;
+  color:var(--h-navy);
+  font-size:26px;
+}
+.admin-section-heading p{
+  margin:0;
+  color:var(--h-muted);
+}
+.admin-section-heading > span{
+  width:48px;height:48px;
+  display:grid;place-items:center;
+  border-radius:15px;
+  background:linear-gradient(145deg,#183456,#2B527D);
+  color:#fff;
+  font-size:24px;
+}
+.cloudinary-config-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr auto auto;
+  gap:10px;
+  align-items:end;
+  margin-top:18px;
+}
+.cloudinary-config-grid label{
+  display:grid;
+  gap:6px;
+  color:var(--h-navy);
+  font-weight:700;
+  font-size:12px;
+}
+.cloudinary-config-grid input{
+  min-height:48px;
+  padding:0 13px;
+  border:1px solid #D8C39E;
+  border-radius:13px;
+  background:#FFFDF9;
+  color:#172944;
+}
+.cloudinary-status{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:13px;
+  padding:12px 14px;
+  border-radius:13px;
+  background:#EEE3D1;
+  color:#5D6878;
+}
+.cloudinary-status.ok{
+  background:#DDEDE4;
+  color:#2E6C53;
+}
+.cloudinary-status.bad{
+  background:#F3DEDA;
+  color:#984545;
+}
+.status-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#A99B83;
+}
+.cloudinary-status.ok .status-dot{background:#318467}
+.cloudinary-status.bad .status-dot{background:#B44D4D}
+.cloudinary-note{
+  margin-top:11px;
+  padding:11px 14px;
+  border-radius:12px;
+  background:#F7EACF;
+  color:#6C5732;
+  font-size:11px;
+  line-height:1.8;
+}
+
+.admin-perfume-row{
+  grid-template-columns:82px minmax(0,1fr) auto!important;
+  gap:15px!important;
+  padding:15px!important;
+  background:linear-gradient(145deg,#FFFDF9,#EFE2CC)!important;
+  border:1px solid rgba(101,72,31,.13)!important;
+}
+.admin-perfume-row img{
+  width:82px!important;height:82px!important;
+  border-radius:16px!important;
+}
+.admin-perfume-row-actions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-end!important;
+  max-width:390px;
+  gap:7px!important;
+}
+.admin-perfume-row-actions button{
+  padding:8px 10px!important;
+  border-radius:10px!important;
+}
+.admin-price-editor{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:8px;
+}
+.admin-price-editor input{
+  width:105px;
+  min-height:37px;
+  padding:0 8px;
+  border:1px solid #D7C198;
+  border-radius:9px;
+  background:#fff;
+}
+.media-pill-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:7px;
+}
+.media-pill{
+  padding:4px 8px;
+  border-radius:999px;
+  background:#E5D7BF;
+  color:#5A6677;
+  font-size:10px;
+}
+.media-pill.ok{
+  background:#DDECE3;
+  color:#2D6D53;
+}
+.media-action-btn{
+  background:#DCE6ED!important;
+  color:#173351!important;
+}
+.media-remove-btn{
+  background:#F0DEDA!important;
+  color:#9A4141!important;
+}
+.price-save-btn{
+  background:#183456!important;
+  color:#fff!important;
+}
+
+.media-upload-progress{
+  position:relative;
+  height:28px;
+  overflow:hidden;
+  border-radius:10px;
+  background:#E4D6BE;
+  margin-top:8px;
+}
+.media-upload-progress span{
+  position:absolute;
+  inset:0 auto 0 0;
+  width:0;
+  background:linear-gradient(90deg,#183456,#B88B45);
+  transition:width .18s ease;
+}
+.media-upload-progress b{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  height:100%;
+  color:#fff;
+  font-size:11px;
+}
+.remove-media-btn{
+  width:max-content;
+  margin-top:8px;
+  padding:7px 11px;
+  border:1px solid rgba(177,70,70,.28);
+  border-radius:10px;
+  background:#F4E2DE;
+  color:#9C4141;
+}
+.admin-audio-preview{
+  padding:11px;
+  border:1px solid #D7C29C;
+  border-radius:13px;
+  background:#FBF3E6;
+}
+.admin-audio-preview audio{width:100%}
+
+@media(max-width:900px){
+  .cloudinary-config-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:680px){
+  .cloudinary-config-grid{grid-template-columns:1fr}
+  .admin-perfume-row{grid-template-columns:64px 1fr!important}
+  .admin-perfume-row img{width:64px!important;height:64px!important}
+  .admin-perfume-row-actions{
+    grid-column:1/-1;
+    max-width:none;
+    justify-content:flex-start!important;
+  }
+}
+
+
+
+/* ===== EASY PRODUCT ADMIN ===== */
+.admin-products-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:18px;
+}
+.admin-products-head small{
+  color:#B88B45;
+  letter-spacing:2px;
+  font-weight:800;
+}
+.admin-products-head h3{
+  margin:4px 0;
+  color:#172944;
+  font-size:30px;
+}
+.admin-products-head p{
+  margin:0;
+  color:#5C6879;
+}
+.admin-add-product-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  min-height:48px;
+  padding:0 18px;
+  border:0;
+  border-radius:14px;
+  background:linear-gradient(135deg,#183456,#2B527D);
+  color:#fff;
+  font-weight:800;
+  box-shadow:0 12px 24px rgba(24,52,86,.22);
+}
+.admin-add-product-btn span{
+  font-size:24px;
+  line-height:1;
+}
+.admin-add-product-btn:hover{transform:translateY(-2px)}
+
+.admin-products-toolbar{
+  display:grid;
+  grid-template-columns:minmax(230px,1fr) 170px 170px auto;
+  gap:10px;
+  align-items:center;
+  margin-bottom:16px;
+  padding:12px;
+  border:1px solid rgba(95,67,28,.12);
+  border-radius:16px;
+  background:#F7EFE2;
+}
+.admin-product-search{
+  position:relative;
+  display:block;
+}
+.admin-product-search span{
+  position:absolute;
+  right:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#667386;
+  font-size:20px;
+}
+.admin-product-search input{
+  width:100%;
+  padding-right:40px!important;
+}
+.admin-products-toolbar input,
+.admin-products-toolbar select{
+  min-height:45px;
+  border:1px solid #D8C49F!important;
+  border-radius:12px!important;
+  background:#FFFDF9!important;
+}
+.admin-products-summary{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.admin-products-summary span{
+  padding:6px 10px;
+  border-radius:999px;
+  background:#EADBC2;
+  color:#4D5B70;
+  font-size:11px;
+  font-weight:700;
+}
+
+.admin-product-editor-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  justify-content:flex-start;
+  background:rgba(11,25,44,.44);
+  backdrop-filter:blur(5px);
+}
+.admin-product-editor-backdrop.show{display:flex}
+.admin-product-editor{
+  width:min(640px,100%);
+  height:100%;
+  overflow:auto;
+  padding:22px;
+  background:linear-gradient(180deg,#FFFDF9,#F1E5D1);
+  box-shadow:24px 0 70px rgba(16,32,57,.25);
+  animation:adminEditorIn .25s ease;
+}
+@keyframes adminEditorIn{
+  from{transform:translateX(-35px);opacity:.5}
+  to{transform:translateX(0);opacity:1}
+}
+.admin-product-editor-head{
+  position:sticky;
+  top:-22px;
+  z-index:5;
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-start;
+  margin:-22px -22px 18px;
+  padding:20px 22px 16px;
+  background:rgba(255,253,249,.94);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(95,67,28,.13);
+}
+.admin-product-editor-head small{
+  color:#B88B45;
+  letter-spacing:2px;
+  font-weight:800;
+}
+.admin-product-editor-head h3{
+  margin:4px 0 0;
+  color:#172944;
+}
+.admin-product-editor-close{
+  width:42px;height:42px;
+  display:grid;place-items:center;
+  border:0;
+  border-radius:12px;
+  background:#EADDC7;
+  color:#172944;
+  font-size:27px;
+}
+.admin-product-editor .admin-perfume-form{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.admin-product-editor .admin-perfume-grid{
+  grid-template-columns:1fr 1fr!important;
+  gap:12px!important;
+}
+.admin-product-editor .wide{grid-column:1/-1}
+.admin-product-editor .admin-perfume-actions{
+  position:sticky;
+  bottom:-22px;
+  z-index:4;
+  display:flex;
+  gap:10px;
+  margin:18px -22px -22px;
+  padding:15px 22px;
+  background:rgba(255,253,249,.95);
+  backdrop-filter:blur(14px);
+  border-top:1px solid rgba(95,67,28,.13);
+}
+.admin-product-editor .admin-product-save{
+  flex:1;
+}
+
+.admin-perfume-list{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px!important;
+}
+.admin-perfume-row{
+  grid-template-columns:88px minmax(0,1fr)!important;
+  position:relative;
+}
+.admin-perfume-row-actions{
+  grid-column:1/-1;
+  max-width:none!important;
+  justify-content:flex-start!important;
+  padding-top:10px;
+  border-top:1px solid rgba(94,67,29,.11);
+}
+.admin-perfume-row-actions button:first-child{
+  background:#183456!important;
+  color:#fff!important;
+}
+
+@media(max-width:1050px){
+  .admin-products-toolbar{grid-template-columns:1fr 1fr}
+  .admin-perfume-list{grid-template-columns:1fr!important}
+}
+@media(max-width:680px){
+  .admin-products-head{flex-direction:column}
+  .admin-add-product-btn{width:100%;justify-content:center}
+  .admin-products-toolbar{grid-template-columns:1fr}
+  .admin-product-editor .admin-perfume-grid{grid-template-columns:1fr!important}
+  .admin-product-editor .wide{grid-column:auto}
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -7979,6 +8521,7 @@ header{
 <button onclick="scrollAdminTo('ordersAdminSection',this)"><span>▤</span> الطلبات</button>
 <button onclick="scrollAdminTo('discountAdminSection',this)"><span>%</span> الأكواد والخصومات</button>
 <button onclick="scrollAdminTo('brandAdminSection',this)"><span>◆</span> إدارة البراندات</button>
+<button onclick="scrollAdminTo('cloudinaryAdminSection',this)"><span>☁</span> إعداد الملفات</button>
 <button onclick="scrollAdminTo('perfumeAdminSection',this)"><span>✦</span> إدارة العطور</button>
 <button onclick="scrollAdminTo('audioAdminSection',this)"><span>♫</span> أصوات العطور</button>
 </div>
@@ -8102,16 +8645,83 @@ header{
 </form>
 <div class="admin-brand-list" id="adminBrandList"></div>
 </section>
+
+<section class="admin-cloudinary-panel" id="cloudinaryAdminSection">
+  <div class="admin-section-heading">
+    <div>
+      <small>CLOUDINARY MEDIA</small>
+      <h3>إعداد رفع الصور والصوتيات</h3>
+      <p>أدخلي Cloud Name واسم الـUnsigned Upload Preset مرة واحدة، وسيُحفظان في هذا المتصفح.</p>
+    </div>
+    <span>☁</span>
+  </div>
+
+  <div class="cloudinary-config-grid">
+    <label>
+      Cloud Name
+      <input id="cloudinaryCloudName" placeholder="مثال: hutoon" autocomplete="off"/>
+    </label>
+    <label>
+      Unsigned Upload Preset
+      <input id="cloudinaryUploadPreset" placeholder="مثال: hutoon_unsigned" autocomplete="off"/>
+    </label>
+    <button class="btn btn-primary" type="button" onclick="saveCloudinarySettings()">حفظ الإعدادات</button>
+    <button class="btn btn-outline" type="button" onclick="testCloudinarySettings()">فحص الاتصال</button>
+  </div>
+
+  <div class="cloudinary-status" id="cloudinaryStatus">
+    <span class="status-dot"></span>
+    <strong>لم يتم إدخال إعدادات Cloudinary بعد</strong>
+  </div>
+
+  <div class="cloudinary-note">
+    لا تضعي API Secret داخل الموقع. الحذف هنا يزيل الصورة أو الصوت من المنتج والموقع،
+    أما حذف الملف نهائيًا من Cloudinary فيحتاج Backend آمن أو الحذف يدويًا من Media Library.
+  </div>
+</section>
+
 <section class="admin-perfume-manager" id="perfumeAdminSection">
-<div class="admin-audio-title">
-<div>
-<small>PERFUME CATALOG</small>
-<h3>إدارة العطور</h3>
-<p>أضف العطور المتوفرة وحدد تصنيفها وصورتها ووصفها وصوتها.</p>
+<div class="admin-products-head">
+  <div>
+    <small>PRODUCT CATALOG</small>
+    <h3>المنتجات</h3>
+    <p>أضيفي منتجًا جديدًا أو عدّلي الصور والصوت والأسعار بسرعة.</p>
+  </div>
+  <button class="admin-add-product-btn" type="button" onclick="openProductEditor()">
+    <span>＋</span> إضافة منتج
+  </button>
 </div>
-<span>✦</span>
+
+<div class="admin-products-toolbar">
+  <label class="admin-product-search">
+    <span>⌕</span>
+    <input id="adminProductSearch" type="search" placeholder="ابحثي باسم العطر أو البراند" oninput="filterAdminProducts()"/>
+  </label>
+  <select id="adminProductGenderFilter" onchange="filterAdminProducts()">
+    <option value="">كل الأنواع</option>
+    <option value="رجالي">رجالي</option>
+    <option value="نسائي">نسائي</option>
+    <option value="يونيسكس">يونيسكس</option>
+  </select>
+  <select id="adminProductAvailabilityFilter" onchange="filterAdminProducts()">
+    <option value="">الكل</option>
+    <option value="available">متوفر</option>
+    <option value="unavailable">غير متوفر</option>
+  </select>
+  <button class="btn btn-outline" type="button" onclick="renderAdminPerfumeList()">تحديث</button>
 </div>
-<form class="admin-perfume-form" onsubmit="hutoonSavePerfumeWithUpload(event)">
+
+<div class="admin-product-editor-backdrop" id="adminProductEditorBackdrop" onclick="closeProductEditor(event)">
+  <aside class="admin-product-editor" id="adminProductEditor" onclick="event.stopPropagation()">
+    <div class="admin-product-editor-head">
+      <div>
+        <small id="adminProductEditorEyebrow">NEW PRODUCT</small>
+        <h3 id="adminProductEditorTitle">إضافة منتج جديد</h3>
+      </div>
+      <button type="button" class="admin-product-editor-close" onclick="closeProductEditor()">×</button>
+    </div>
+
+<form class="admin-perfume-form" onsubmit="savePerfumeWithCloudinary(event)">
 <input id="perfumeEditId" type="hidden"/>
 <div class="admin-perfume-grid">
 <label>
@@ -8195,12 +8805,36 @@ header{
 <div class="admin-image-preview" id="perfumeImagePreview">
 <span>اختر صورة JPG أو PNG أو WEBP</span>
 </div>
-<small>سيتم رفع الصورة إلى Firebase Storage عند حفظ العطر.</small>
+<div class="media-upload-progress hidden" id="perfumeImageProgress">
+  <span></span><b>0%</b>
+</div>
+<button class="remove-media-btn" id="removePerfumeImageBtn" onclick="removeCurrentPerfumeImage()" type="button">
+  حذف الصورة الحالية من المنتج
+</button>
+<small>سيتم رفع الصورة إلى Cloudinary عند حفظ العطر.</small>
 </label>
 <label class="wide">
                 وصف العطر
                 <textarea id="perfumeDescription" placeholder="اكتب وصفًا مختصرًا وفخمًا للعطر" rows="3"></textarea>
 </label>
+
+<label class="wide cloudinary-audio-field">
+  ملف صوت العطر
+  <input accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac" id="perfumeAudioFile" type="file"/>
+  <input id="perfumeAudioUrl" type="hidden"/>
+  <input id="perfumeAudioPublicId" type="hidden"/>
+  <div class="admin-audio-preview" id="perfumeAudioPreview">
+    <span>لا يوجد صوت مرفوع لهذا العطر</span>
+  </div>
+  <div class="media-upload-progress hidden" id="perfumeAudioProgress">
+    <span></span><b>0%</b>
+  </div>
+  <button class="remove-media-btn" id="removePerfumeAudioBtn" onclick="removeCurrentPerfumeAudio()" type="button">
+    حذف الصوت الحالي من المنتج
+  </button>
+  <small>الصيغ المقبولة: MP3 وWAV وOGG وM4A/AAC — الحد الأقصى 20 MB.</small>
+</label>
+
 <label>
                 متوفر؟
                 <select id="perfumeAvailable">
@@ -8210,10 +8844,13 @@ header{
 </label>
 </div>
 <div class="admin-perfume-actions">
-<button class="btn btn-primary" type="submit">حفظ العطر</button>
-<button class="btn btn-outline" onclick="resetPerfumeForm()" type="button">إلغاء التعديل</button>
+<button class="btn btn-primary admin-product-save" type="submit">حفظ المنتج ونشره</button>
+<button class="btn btn-outline" onclick="closeProductEditor()" type="button">إلغاء</button>
 </div>
 </form>
+  </aside>
+</div>
+<div class="admin-products-summary" id="adminProductsSummary"></div>
 <div class="admin-perfume-list" id="adminPerfumeList"></div>
 </section>
 <section class="admin-audio-manager" id="audioAdminSection">
@@ -12253,6 +12890,781 @@ document.addEventListener('DOMContentLoaded', function () {
       if(typeof window.refreshAdmin==="function")window.refreshAdmin();
       repairLoyalty();
     }
+  });
+})();
+</script>
+
+
+<script id="hutoon-cloudinary-launch">
+(function(){
+  "use strict";
+
+  const CLOUD_KEY="hutoon_cloudinary_config_v1";
+  const LOCAL_PRODUCTS_KEY="hutoon_local_products_v2";
+  const LOCAL_AUDIO_KEY="hutoon_local_audio_v2";
+  const STORE_PHONE="96877353930";
+
+  let removeImageRequested=false;
+  let removeAudioRequested=false;
+
+  function config(){
+    try{
+      return JSON.parse(localStorage.getItem(CLOUD_KEY)||"{}")||{};
+    }catch(_){return {}}
+  }
+
+  function setCloudStatus(type,text){
+    const box=document.getElementById("cloudinaryStatus");
+    if(!box)return;
+    box.classList.remove("ok","bad");
+    if(type)box.classList.add(type);
+    const strong=box.querySelector("strong");
+    if(strong)strong.textContent=text;
+  }
+
+  window.saveCloudinarySettings=function(){
+    const cloudName=document.getElementById("cloudinaryCloudName")?.value.trim();
+    const uploadPreset=document.getElementById("cloudinaryUploadPreset")?.value.trim();
+    if(!cloudName||!uploadPreset){
+      setCloudStatus("bad","أدخلي Cloud Name وUpload Preset");
+      showToast("أكملي إعدادات Cloudinary");
+      return;
+    }
+    localStorage.setItem(CLOUD_KEY,JSON.stringify({cloudName,uploadPreset}));
+    setCloudStatus("ok","تم حفظ إعدادات Cloudinary");
+    showToast("تم حفظ إعدادات Cloudinary");
+  };
+
+  window.testCloudinarySettings=function(){
+    const c=config();
+    if(!c.cloudName||!c.uploadPreset){
+      setCloudStatus("bad","الإعدادات غير مكتملة");
+      return;
+    }
+    setCloudStatus("ok","الإعدادات محفوظة — جرّبي رفع صورة صغيرة للتأكد");
+  };
+
+  function restoreCloudConfig(){
+    const c=config();
+    const cloud=document.getElementById("cloudinaryCloudName");
+    const preset=document.getElementById("cloudinaryUploadPreset");
+    if(cloud)cloud.value=c.cloudName||"";
+    if(preset)preset.value=c.uploadPreset||"";
+    if(c.cloudName&&c.uploadPreset)setCloudStatus("ok","Cloudinary جاهزة للرفع");
+  }
+
+  function showProgress(id,percent,label){
+    const box=document.getElementById(id);
+    if(!box)return;
+    box.classList.remove("hidden");
+    const bar=box.querySelector("span");
+    const text=box.querySelector("b");
+    const value=Math.max(0,Math.min(100,Math.round(percent||0)));
+    if(bar)bar.style.width=value+"%";
+    if(text)text.textContent=label||value+"%";
+  }
+
+  function hideProgress(id){
+    const box=document.getElementById(id);
+    if(!box)return;
+    box.classList.add("hidden");
+    const bar=box.querySelector("span");
+    if(bar)bar.style.width="0";
+  }
+
+  function cloudinaryUpload(file,folder,progressId){
+    const c=config();
+    if(!c.cloudName||!c.uploadPreset){
+      throw new Error("أدخلي إعدادات Cloudinary في لوحة الأدمن أولًا");
+    }
+    const endpoint=`https://api.cloudinary.com/v1_1/${encodeURIComponent(c.cloudName)}/auto/upload`;
+    const form=new FormData();
+    form.append("file",file);
+    form.append("upload_preset",c.uploadPreset);
+    form.append("folder",folder);
+
+    return new Promise((resolve,reject)=>{
+      const xhr=new XMLHttpRequest();
+      xhr.open("POST",endpoint,true);
+      xhr.upload.onprogress=e=>{
+        if(e.lengthComputable)showProgress(progressId,e.loaded/e.total*100);
+      };
+      xhr.onerror=()=>reject(new Error("تعذر الاتصال بـCloudinary"));
+      xhr.onload=()=>{
+        let data={};
+        try{data=JSON.parse(xhr.responseText||"{}")}catch(_){}
+        if(xhr.status<200||xhr.status>=300){
+          reject(new Error(data?.error?.message||"فشل رفع الملف إلى Cloudinary"));
+          return;
+        }
+        showProgress(progressId,100,"تم الرفع");
+        resolve({
+          url:data.secure_url,
+          publicId:data.public_id,
+          resourceType:data.resource_type,
+          bytes:data.bytes
+        });
+      };
+      xhr.send(form);
+    });
+  }
+
+  function isAdmin(){
+    return window.state?.user?.role==="admin" ||
+      window.hutoonState?.user?.role==="admin";
+  }
+
+  function localProducts(){
+    try{return JSON.parse(localStorage.getItem(LOCAL_PRODUCTS_KEY)||"[]")||[]}
+    catch(_){return []}
+  }
+
+  function saveLocalProducts(items){
+    localStorage.setItem(LOCAL_PRODUCTS_KEY,JSON.stringify(items));
+  }
+
+  function localAudio(){
+    try{return JSON.parse(localStorage.getItem(LOCAL_AUDIO_KEY)||"{}")||{}}
+    catch(_){return {}}
+  }
+
+  function saveLocalAudio(map){
+    localStorage.setItem(LOCAL_AUDIO_KEY,JSON.stringify(map));
+  }
+
+  function currentCatalog(){
+    try{
+      if(Array.isArray(perfumeCatalog))return perfumeCatalog;
+    }catch(_){}
+    return [];
+  }
+
+  function replaceCatalog(items){
+    try{perfumeCatalog=items}catch(_){}
+    window.perfumeCatalog=items;
+    window.renderAdminPerfumeList?.();
+    window.renderHutoonProducts?.();
+    window.renderAllPerfumeAudioCards?.();
+  }
+
+  function mergeLocalCatalog(){
+    const remote=currentCatalog();
+    const locals=localProducts();
+    if(!locals.length)return;
+    const map=new Map(remote.map(x=>[String(x.id),x]));
+    locals.forEach(x=>map.set(String(x.id),{...(map.get(String(x.id))||{}),...x}));
+    replaceCatalog([...map.values()]);
+  }
+
+  function findProduct(id){
+    return currentCatalog().find(x=>String(x.id)===String(id));
+  }
+
+  async function persistProduct(id,payload){
+    if(window.firebase?.firestore){
+      try{
+        const db=firebase.firestore();
+        if(id){
+          await db.collection("perfumes").doc(String(id)).set(payload,{merge:true});
+          return String(id);
+        }
+        const ref=await db.collection("perfumes").add({
+          ...payload,
+          createdAt:firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return ref.id;
+      }catch(error){
+        console.warn("Firestore save fallback:",error);
+      }
+    }
+
+    const items=localProducts();
+    const finalId=String(id||("local-"+Date.now()));
+    const index=items.findIndex(x=>String(x.id)===finalId);
+    const saved={...payload,id:finalId,updatedAt:new Date().toISOString()};
+    if(index>=0)items[index]={...items[index],...saved};
+    else items.unshift(saved);
+    saveLocalProducts(items);
+    mergeLocalCatalog();
+    return finalId;
+  }
+
+  async function removeProductRecord(id){
+    if(window.firebase?.firestore){
+      try{
+        await firebase.firestore().collection("perfumes").doc(String(id)).delete();
+      }catch(error){
+        console.warn("Firestore delete fallback:",error);
+      }
+    }
+    const items=localProducts().filter(x=>String(x.id)!==String(id));
+    saveLocalProducts(items);
+    const catalog=currentCatalog().filter(x=>String(x.id)!==String(id));
+    replaceCatalog(catalog);
+  }
+
+  window.removeCurrentPerfumeImage=function(){
+    removeImageRequested=true;
+    const hidden=document.getElementById("perfumeImage");
+    if(hidden)hidden.value="";
+    const preview=document.getElementById("perfumeImagePreview");
+    if(preview)preview.innerHTML="<span>سيتم حذف الصورة من المنتج عند الحفظ</span>";
+    showToast("سيتم حذف الصورة من المنتج عند الحفظ");
+  };
+
+  window.removeCurrentPerfumeAudio=function(){
+    removeAudioRequested=true;
+    const hidden=document.getElementById("perfumeAudioUrl");
+    if(hidden)hidden.value="";
+    const preview=document.getElementById("perfumeAudioPreview");
+    if(preview)preview.innerHTML="<span>سيتم حذف الصوت من المنتج عند الحفظ</span>";
+    showToast("سيتم حذف الصوت من المنتج عند الحفظ");
+  };
+
+  const oldReset=window.resetPerfumeForm;
+  window.resetPerfumeForm=function(){
+    oldReset?.();
+    removeImageRequested=false;
+    removeAudioRequested=false;
+    const ids=["perfumeAudioUrl","perfumeAudioPublicId"];
+    ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value=""});
+    const audio=document.getElementById("perfumeAudioFile");
+    if(audio)audio.value="";
+    const imagePreview=document.getElementById("perfumeImagePreview");
+    if(imagePreview)imagePreview.innerHTML="<span>اختر صورة JPG أو PNG أو WEBP</span>";
+    const audioPreview=document.getElementById("perfumeAudioPreview");
+    if(audioPreview)audioPreview.innerHTML="<span>لا يوجد صوت مرفوع لهذا العطر</span>";
+    hideProgress("perfumeImageProgress");
+    hideProgress("perfumeAudioProgress");
+  };
+
+  const oldEdit=window.editPerfume;
+  window.editPerfume=function(id){
+    oldEdit?.(id);
+    removeImageRequested=false;
+    removeAudioRequested=false;
+    const product=findProduct(id);
+    if(!product)return;
+
+    const imagePreview=document.getElementById("perfumeImagePreview");
+    if(imagePreview){
+      imagePreview.innerHTML=product.image
+        ? `<img src="${product.image}" alt="${product.name||"العطر"}">`
+        : "<span>لا توجد صورة حالية</span>";
+    }
+
+    const audioMap=localAudio();
+    const audioUrl=product.audioUrl||audioMap[id]?.url||window.perfumeAudioCache?.[id]||"";
+    const audioHidden=document.getElementById("perfumeAudioUrl");
+    const publicHidden=document.getElementById("perfumeAudioPublicId");
+    if(audioHidden)audioHidden.value=audioUrl;
+    if(publicHidden)publicHidden.value=product.audioPublicId||audioMap[id]?.publicId||"";
+    const audioPreview=document.getElementById("perfumeAudioPreview");
+    if(audioPreview){
+      audioPreview.innerHTML=audioUrl
+        ? `<audio controls preload="metadata" src="${audioUrl}"></audio>`
+        : "<span>لا يوجد صوت مرفوع لهذا العطر</span>";
+    }
+  };
+
+  window.savePerfumeWithCloudinary=async function(event){
+    event.preventDefault();
+    if(!isAdmin()){
+      showToast("هذه العملية للإدارة فقط");
+      return;
+    }
+
+    const submit=event.currentTarget.querySelector('button[type="submit"]');
+    const oldText=submit?.textContent;
+    if(submit){
+      submit.disabled=true;
+      submit.textContent="جاري رفع الملفات وحفظ المنتج...";
+    }
+
+    try{
+      const editId=document.getElementById("perfumeEditId").value.trim();
+      const existing=findProduct(editId);
+      const imageFile=document.getElementById("perfumeImageFile")?.files?.[0];
+      const audioFile=document.getElementById("perfumeAudioFile")?.files?.[0];
+
+      if(imageFile){
+        if(!["image/jpeg","image/png","image/webp"].includes(imageFile.type)){
+          throw new Error("الصورة يجب أن تكون JPG أو PNG أو WEBP");
+        }
+        if(imageFile.size>8*1024*1024)throw new Error("الصورة أكبر من 8 MB");
+      }
+      if(audioFile){
+        if(!audioFile.type.startsWith("audio/"))throw new Error("اختر ملف صوت صحيح");
+        if(audioFile.size>20*1024*1024)throw new Error("الصوت أكبر من 20 MB");
+      }
+
+      let imageUrl=removeImageRequested?"":(document.getElementById("perfumeImage").value.trim()||existing?.image||"");
+      let imagePublicId=removeImageRequested?"":(existing?.imagePublicId||"");
+      let audioUrl=removeAudioRequested?"":(document.getElementById("perfumeAudioUrl").value.trim()||existing?.audioUrl||"");
+      let audioPublicId=removeAudioRequested?"":(document.getElementById("perfumeAudioPublicId").value.trim()||existing?.audioPublicId||"");
+
+      if(imageFile){
+        const uploaded=await cloudinaryUpload(imageFile,"hutoon/products/images","perfumeImageProgress");
+        imageUrl=uploaded.url;
+        imagePublicId=uploaded.publicId;
+      }
+      if(audioFile){
+        const uploaded=await cloudinaryUpload(audioFile,"hutoon/products/audio","perfumeAudioProgress");
+        audioUrl=uploaded.url;
+        audioPublicId=uploaded.publicId;
+      }
+
+      const payload={
+        name:document.getElementById("adminPerfumeName").value.trim(),
+        brand:document.getElementById("perfumeBrand").value,
+        gender:document.getElementById("perfumeGender").value,
+        season:document.getElementById("perfumeSeason").value,
+        use:document.getElementById("perfumeUse").value,
+        oud:document.getElementById("perfumeOud").value==="true",
+        image:imageUrl,
+        imagePublicId,
+        audioUrl,
+        audioPublicId,
+        description:document.getElementById("perfumeDescription").value.trim(),
+        price:Number(document.getElementById("perfumePrice").value||0),
+        oldPrice:Number(document.getElementById("perfumeOldPrice").value||0),
+        discount:Number(document.getElementById("perfumeDiscount").value||0),
+        badge:document.getElementById("perfumeBadge").value.trim(),
+        available:document.getElementById("perfumeAvailable").value==="true",
+        updatedAt:new Date().toISOString()
+      };
+
+      const id=await persistProduct(editId,payload);
+
+      const audioMap=localAudio();
+      if(audioUrl){
+        audioMap[id]={url:audioUrl,publicId:audioPublicId,title:payload.name};
+        if(window.perfumeAudioCache)window.perfumeAudioCache[id]=audioUrl;
+      }else{
+        delete audioMap[id];
+        if(window.perfumeAudioCache)delete window.perfumeAudioCache[id];
+      }
+      saveLocalAudio(audioMap);
+
+      showToast(editId?"تم تحديث المنتج والصورة والصوت":"تمت إضافة المنتج");
+      window.resetPerfumeForm();
+      mergeLocalCatalog();
+    }catch(error){
+      console.error(error);
+      showToast(error.message||"تعذر حفظ المنتج");
+    }finally{
+      if(submit){
+        submit.disabled=false;
+        submit.textContent=oldText||"حفظ العطر";
+      }
+      setTimeout(()=>{
+        hideProgress("perfumeImageProgress");
+        hideProgress("perfumeAudioProgress");
+      },1000);
+    }
+  };
+
+  window.quickSaveProductPrice=async function(id){
+    if(!isAdmin())return showToast("هذه العملية للإدارة فقط");
+    const product=findProduct(id);
+    if(!product)return;
+    const price=Number(document.getElementById("quick-price-"+id)?.value||0);
+    const oldPrice=Number(document.getElementById("quick-old-"+id)?.value||0);
+    const discount=Number(document.getElementById("quick-discount-"+id)?.value||0);
+    await persistProduct(id,{price,oldPrice,discount,updatedAt:new Date().toISOString()});
+    product.price=price;product.oldPrice=oldPrice;product.discount=discount;
+    replaceCatalog([...currentCatalog()]);
+    showToast("تم تحديث السعر");
+  };
+
+  window.chooseProductImage=function(id){
+    const input=document.createElement("input");
+    input.type="file";
+    input.accept="image/jpeg,image/png,image/webp";
+    input.onchange=async()=>{
+      const file=input.files?.[0];
+      if(!file)return;
+      try{
+        if(file.size>8*1024*1024)throw new Error("الصورة أكبر من 8 MB");
+        const uploaded=await cloudinaryUpload(file,"hutoon/products/images","perfumeImageProgress");
+        await persistProduct(id,{image:uploaded.url,imagePublicId:uploaded.publicId});
+        const product=findProduct(id);
+        if(product){product.image=uploaded.url;product.imagePublicId=uploaded.publicId}
+        replaceCatalog([...currentCatalog()]);
+        showToast("تم تحديث الصورة");
+      }catch(error){showToast(error.message||"تعذر رفع الصورة")}
+    };
+    input.click();
+  };
+
+  window.removeProductImage=async function(id){
+    if(!confirm("حذف الصورة من هذا المنتج؟"))return;
+    await persistProduct(id,{image:"",imagePublicId:""});
+    const product=findProduct(id);
+    if(product){product.image="";product.imagePublicId=""}
+    replaceCatalog([...currentCatalog()]);
+    showToast("تم حذف الصورة من الموقع");
+  };
+
+  window.chooseProductAudio=function(id,name){
+    const input=document.createElement("input");
+    input.type="file";
+    input.accept="audio/*";
+    input.onchange=async()=>{
+      const file=input.files?.[0];
+      if(!file)return;
+      try{
+        if(file.size>20*1024*1024)throw new Error("الصوت أكبر من 20 MB");
+        const uploaded=await cloudinaryUpload(file,"hutoon/products/audio","perfumeAudioProgress");
+        await persistProduct(id,{audioUrl:uploaded.url,audioPublicId:uploaded.publicId});
+        const product=findProduct(id);
+        if(product){product.audioUrl=uploaded.url;product.audioPublicId=uploaded.publicId}
+        const map=localAudio();
+        map[id]={url:uploaded.url,publicId:uploaded.publicId,title:name};
+        saveLocalAudio(map);
+        if(window.perfumeAudioCache)window.perfumeAudioCache[id]=uploaded.url;
+        replaceCatalog([...currentCatalog()]);
+        showToast("تم تحديث صوت العطر");
+      }catch(error){showToast(error.message||"تعذر رفع الصوت")}
+    };
+    input.click();
+  };
+
+  window.removeProductAudio=async function(id){
+    if(!confirm("حذف الصوت من هذا المنتج؟"))return;
+    await persistProduct(id,{audioUrl:"",audioPublicId:""});
+    const product=findProduct(id);
+    if(product){product.audioUrl="";product.audioPublicId=""}
+    const map=localAudio();
+    delete map[id];
+    saveLocalAudio(map);
+    if(window.perfumeAudioCache)delete window.perfumeAudioCache[id];
+    replaceCatalog([...currentCatalog()]);
+    showToast("تم حذف الصوت من الموقع");
+  };
+
+  window.deletePerfume=async function(id){
+    if(!isAdmin())return showToast("هذه العملية للإدارة فقط");
+    if(!confirm("هل تريد حذف هذا العطر؟"))return;
+    await removeProductRecord(id);
+    showToast("تم حذف المنتج");
+  };
+
+  window.renderAdminPerfumeList=function(){
+    const list=document.getElementById("adminPerfumeList");
+    if(!list)return;
+    const products=currentCatalog();
+    const audioMap=localAudio();
+
+    if(!products.length){
+      list.innerHTML='<div class="no-results">لا توجد عطور مضافة حتى الآن.</div>';
+      return;
+    }
+
+    list.innerHTML=products.map(product=>{
+      const hasImage=Boolean(product.image);
+      const hasAudio=Boolean(product.audioUrl||audioMap[product.id]?.url||window.perfumeAudioCache?.[product.id]);
+      return `
+        <article class="admin-perfume-row">
+          <img src="${product.image||'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=300&q=70'}"
+               alt="${product.name||"العطر"}">
+          <div class="admin-perfume-row-info">
+            <strong>${product.name||"-"}</strong>
+            <small>${product.brand||"-"} • ${product.gender||"-"} • ${product.available!==false?"متوفر":"غير متوفر"}</small>
+            <div class="media-pill-row">
+              <span class="media-pill ${hasImage?"ok":""}">${hasImage?"✓ صورة":"بدون صورة"}</span>
+              <span class="media-pill ${hasAudio?"ok":""}">${hasAudio?"✓ صوت":"بدون صوت"}</span>
+            </div>
+            <div class="admin-price-editor">
+              <input id="quick-price-${product.id}" type="number" min="0" step="0.001"
+                     value="${Number(product.price||0)}" title="السعر الحالي">
+              <input id="quick-old-${product.id}" type="number" min="0" step="0.001"
+                     value="${Number(product.oldPrice||0)}" title="السعر السابق">
+              <input id="quick-discount-${product.id}" type="number" min="0" max="100"
+                     value="${Number(product.discount||0)}" title="الخصم">
+              <button class="price-save-btn" onclick="quickSaveProductPrice('${product.id}')">حفظ السعر</button>
+            </div>
+          </div>
+          <div class="admin-perfume-row-actions">
+            <button onclick="editPerfume('${product.id}')">تعديل كامل</button>
+            <button class="media-action-btn" onclick="chooseProductImage('${product.id}')">رفع/تغيير الصورة</button>
+            <button class="media-remove-btn" onclick="removeProductImage('${product.id}')" ${hasImage?"":"disabled"}>حذف الصورة</button>
+            <button class="media-action-btn" onclick="chooseProductAudio('${product.id}',decodeURIComponent('${encodeURIComponent(product.name||"العطر")}'))">رفع/تغيير الصوت</button>
+            <button class="media-remove-btn" onclick="removeProductAudio('${product.id}')" ${hasAudio?"":"disabled"}>حذف الصوت</button>
+            <button class="media-remove-btn" onclick="deletePerfume('${product.id}')">حذف المنتج</button>
+          </div>
+        </article>`;
+    }).join("");
+  };
+
+  /* واتساب: فتح مباشر في نفس الصفحة دائمًا */
+  window.finishOrder=async function(order){
+    const user=window.state?.user||window.hutoonState?.user;
+    if(!user){
+      showToast("سجّل الدخول لإتمام الطلب");
+      window.openAuth?.();
+      throw new Error("يجب تسجيل الدخول");
+    }
+
+    const saved={
+      ...order,
+      id:order.id||("HT-"+Date.now().toString().slice(-8)),
+      customer:user.name||"عميل هتون",
+      phone:user.phone||"",
+      customerEmail:user.email||"",
+      status:"جديد",
+      date:new Date().toLocaleString("ar-OM"),
+      createdAt:new Date().toISOString()
+    };
+
+    try{
+      const orders=JSON.parse(localStorage.getItem("hutoon_orders")||"[]");
+      if(!orders.some(x=>String(x.id)===String(saved.id)))orders.unshift(saved);
+      localStorage.setItem("hutoon_orders",JSON.stringify(orders));
+      if(window.state)window.state.orders=orders;
+      if(window.hutoonState)window.hutoonState.orders=orders;
+      window.refreshAdmin?.();
+      window.refreshProfile?.();
+    }catch(error){console.warn(error)}
+
+    let invoiceBlob=null;
+    try{
+      invoiceBlob=await window.createInvoicePdf?.(saved);
+      if(invoiceBlob){
+        const url=URL.createObjectURL(invoiceBlob);
+        const a=document.createElement("a");
+        a.href=url;
+        a.download=`HUTOON-${saved.id}.pdf`;
+        a.style.display="none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),10000);
+      }
+    }catch(error){
+      console.warn("Invoice:",error);
+    }
+
+    const lines=[
+      "السلام عليكم، طلب جديد من موقع HUTOON 🌷",
+      "",
+      "رقم الطلب: "+saved.id,
+      "العميل: "+saved.customer,
+      "الخدمة: "+(saved.serviceType||"طلب"),
+      "الطلب: "+(saved.perfume||saved.productName||saved.details||"-"),
+      saved.size?"الحجم: "+saved.size:"",
+      "الكمية: "+(saved.qty||1),
+      "",
+      "يرجى إرسال ملف الفاتورة الذي تم تنزيله في هذه المحادثة لتأكيد الطلب."
+    ].filter(Boolean);
+
+    showToast("تم تجهيز الطلب والفاتورة، جاري فتح واتساب...");
+    window.location.href=`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(lines.join("\n"))}`;
+    return saved;
+  };
+
+  /* الطلبات الخاصة القديمة كانت تستخدم نافذة جديدة */
+  const oldSpecial=window.submitSpecialOrder;
+  window.submitSpecialOrder=function(event,type){
+    event.preventDefault();
+    const user=window.state?.user||window.hutoonState?.user;
+    if(!user){
+      showToast("سجّل الدخول أولًا");
+      window.openAuth?.();
+      return;
+    }
+
+    let order;
+    if(type==="distribution"){
+      order={
+        serviceType:"توزيعات",
+        perfume:document.getElementById("distributionName")?.value.trim()||"توزيعات هتون",
+        details:document.getElementById("distributionEvent")?.value.trim()||"",
+        size:document.getElementById("distributionSize")?.value||"",
+        qty:Number(document.getElementById("distributionQty")?.value||1),
+        notes:document.getElementById("distributionNotes")?.value.trim()||""
+      };
+    }else{
+      order={
+        serviceType:"إهداء",
+        perfume:document.getElementById("giftPerfume")?.value.trim()||"هدية هتون",
+        details:"إلى: "+(document.getElementById("giftReceiver")?.value.trim()||"-"),
+        size:document.getElementById("giftSize")?.value||"",
+        qty:Number(document.getElementById("giftQty")?.value||1),
+        notes:document.getElementById("giftNotes")?.value.trim()||""
+      };
+    }
+    window.finishOrder(order).then(()=>event.target.reset()).catch(console.error);
+  };
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    restoreCloudConfig();
+    setTimeout(()=>{
+      mergeLocalCatalog();
+      const audioMap=localAudio();
+      if(window.perfumeAudioCache){
+        Object.entries(audioMap).forEach(([id,item])=>{
+          if(item?.url)window.perfumeAudioCache[id]=item.url;
+        });
+      }
+      window.renderAdminPerfumeList?.();
+    },900);
+  });
+})();
+</script>
+
+
+<script id="hutoon-easy-product-admin">
+(function(){
+  "use strict";
+
+  let adminFilteredProducts=[];
+
+  function catalog(){
+    try{
+      if(Array.isArray(window.perfumeCatalog))return window.perfumeCatalog;
+      if(Array.isArray(perfumeCatalog))return perfumeCatalog;
+    }catch(_){}
+    return [];
+  }
+
+  window.openProductEditor=function(id){
+    if(!id){
+      window.resetPerfumeForm?.();
+      document.getElementById("adminProductEditorEyebrow").textContent="NEW PRODUCT";
+      document.getElementById("adminProductEditorTitle").textContent="إضافة منتج جديد";
+    }else{
+      document.getElementById("adminProductEditorEyebrow").textContent="EDIT PRODUCT";
+      document.getElementById("adminProductEditorTitle").textContent="تعديل المنتج";
+    }
+    document.getElementById("adminProductEditorBackdrop")?.classList.add("show");
+    document.body.style.overflow="hidden";
+    setTimeout(()=>document.getElementById("adminPerfumeName")?.focus(),120);
+  };
+
+  window.closeProductEditor=function(event){
+    if(event && event.target!==event.currentTarget)return;
+    document.getElementById("adminProductEditorBackdrop")?.classList.remove("show");
+    document.body.style.overflow="";
+    window.resetPerfumeForm?.();
+  };
+
+  const previousEdit=window.editPerfume;
+  window.editPerfume=function(id){
+    previousEdit?.(id);
+    window.openProductEditor(id);
+  };
+
+  function filteredProducts(){
+    const query=(document.getElementById("adminProductSearch")?.value||"").trim().toLowerCase();
+    const gender=document.getElementById("adminProductGenderFilter")?.value||"";
+    const availability=document.getElementById("adminProductAvailabilityFilter")?.value||"";
+
+    return catalog().filter(product=>{
+      const text=`${product.name||""} ${product.brand||""}`.toLowerCase();
+      const matchesQuery=!query||text.includes(query);
+      const matchesGender=!gender||product.gender===gender;
+      const isAvailable=product.available!==false;
+      const matchesAvailability=!availability ||
+        (availability==="available"&&isAvailable) ||
+        (availability==="unavailable"&&!isAvailable);
+      return matchesQuery&&matchesGender&&matchesAvailability;
+    });
+  }
+
+  function updateSummary(items){
+    const box=document.getElementById("adminProductsSummary");
+    if(!box)return;
+    const withImage=items.filter(x=>Boolean(x.image)).length;
+    const withAudio=items.filter(x=>Boolean(x.audioUrl||window.perfumeAudioCache?.[x.id])).length;
+    const available=items.filter(x=>x.available!==false).length;
+    box.innerHTML=`
+      <span>${items.length} منتج</span>
+      <span>${available} متوفر</span>
+      <span>${withImage} بصورة</span>
+      <span>${withAudio} بصوت</span>`;
+  }
+
+  window.filterAdminProducts=function(){
+    adminFilteredProducts=filteredProducts();
+    renderEasyAdminProducts(adminFilteredProducts);
+  };
+
+  function renderEasyAdminProducts(products){
+    const list=document.getElementById("adminPerfumeList");
+    if(!list)return;
+    updateSummary(products);
+
+    if(!products.length){
+      list.innerHTML=`
+        <div class="no-results">
+          <strong>لا توجد نتائج</strong>
+          <p>غيّري البحث أو أضيفي منتجًا جديدًا.</p>
+          <button class="admin-add-product-btn" onclick="openProductEditor()">＋ إضافة منتج</button>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML=products.map(product=>{
+      const hasImage=Boolean(product.image);
+      const hasAudio=Boolean(product.audioUrl||window.perfumeAudioCache?.[product.id]);
+      return `
+      <article class="admin-perfume-row">
+        <img src="${product.image||'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=300&q=70'}"
+             alt="${product.name||"العطر"}">
+        <div class="admin-perfume-row-info">
+          <strong>${product.name||"-"}</strong>
+          <small>${product.brand||"-"} • ${product.gender||"-"} • ${product.available!==false?"متوفر":"غير متوفر"}</small>
+          <div class="media-pill-row">
+            <span class="media-pill ${hasImage?"ok":""}">${hasImage?"✓ صورة":"بدون صورة"}</span>
+            <span class="media-pill ${hasAudio?"ok":""}">${hasAudio?"✓ صوت":"بدون صوت"}</span>
+          </div>
+          <div class="admin-price-editor">
+            <input id="quick-price-${product.id}" type="number" min="0" step="0.001"
+                   value="${Number(product.price||0)}" title="السعر الحالي">
+            <input id="quick-old-${product.id}" type="number" min="0" step="0.001"
+                   value="${Number(product.oldPrice||0)}" title="السعر السابق">
+            <input id="quick-discount-${product.id}" type="number" min="0" max="100"
+                   value="${Number(product.discount||0)}" title="الخصم">
+            <button class="price-save-btn" onclick="quickSaveProductPrice('${product.id}')">حفظ السعر</button>
+          </div>
+        </div>
+        <div class="admin-perfume-row-actions">
+          <button onclick="editPerfume('${product.id}')">تعديل المنتج</button>
+          <button class="media-action-btn" onclick="chooseProductImage('${product.id}')">تغيير الصورة</button>
+          <button class="media-action-btn" onclick="chooseProductAudio('${product.id}',decodeURIComponent('${encodeURIComponent(product.name||"العطر")}'))">تغيير الصوت</button>
+          <button class="media-remove-btn" onclick="removeProductImage('${product.id}')" ${hasImage?"":"disabled"}>حذف الصورة</button>
+          <button class="media-remove-btn" onclick="removeProductAudio('${product.id}')" ${hasAudio?"":"disabled"}>حذف الصوت</button>
+          <button class="media-remove-btn" onclick="deletePerfume('${product.id}')">حذف</button>
+        </div>
+      </article>`;
+    }).join("");
+  }
+
+  const previousRender=window.renderAdminPerfumeList;
+  window.renderAdminPerfumeList=function(){
+    adminFilteredProducts=filteredProducts();
+    renderEasyAdminProducts(adminFilteredProducts);
+  };
+
+  // Close editor automatically after successful save.
+  const previousSave=window.savePerfumeWithCloudinary;
+  window.savePerfumeWithCloudinary=async function(event){
+    const result=await previousSave(event);
+    window.closeProductEditor();
+    window.renderAdminPerfumeList();
+    window.renderHutoonProducts?.();
+    return result;
+  };
+
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&document.getElementById("adminProductEditorBackdrop")?.classList.contains("show")){
+      window.closeProductEditor();
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    setTimeout(()=>window.renderAdminPerfumeList(),1100);
   });
 })();
 </script>

@@ -8393,8 +8393,8 @@ body{
 <button class="tab" id="registerTab" onclick="switchAuth('register')">إنشاء حساب</button>
 </div>
 <form class="auth-form" id="loginForm" onsubmit="hutoonFixedLogin(event)">
-<label class="auth-label">البريد الإلكتروني</label>
-<input autocomplete="email" id="loginIdentifier" placeholder="name@example.com" required="" type="email"/>
+<label class="auth-label">البريد الإلكتروني أو رقم الهاتف</label>
+<input autocomplete="username" id="loginIdentifier" placeholder="البريد الإلكتروني أو رقم الهاتف" required="" type="text"/>
 <label class="auth-label">كلمة المرور</label>
 <input id="loginPassword" placeholder="••••••••" required="" type="password"/>
 <button class="btn btn-primary auth-submit">تسجيل الدخول</button>
@@ -11577,8 +11577,30 @@ document.addEventListener('DOMContentLoaded', function () {
   const ADMIN_PASSWORD = "Hutoon@123";
 
   function readAccounts(){
-    try{return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)||"[]")}
-    catch(_){return []}
+    const merged=[];
+    const add=item=>{
+      if(!item||typeof item!=="object")return;
+      const normalized={
+        id:item.id||item.uid||("legacy-"+merged.length),
+        email:String(item.email||"").trim().toLowerCase(),
+        phone:String(item.phone||"").trim(),
+        name:item.name||item.displayName||"عميل هتون",
+        password:String(item.password||""),
+        points:Number(item.points||0)
+      };
+      if(!normalized.password)return;
+      const exists=merged.some(saved=>(normalized.email&&saved.email===normalized.email)||(normalized.phone&&saved.phone===normalized.phone));
+      if(!exists)merged.push(normalized);
+    };
+    try{
+      const current=JSON.parse(localStorage.getItem(ACCOUNTS_KEY)||"[]");
+      if(Array.isArray(current))current.forEach(add);
+      const version2=JSON.parse(localStorage.getItem("hutoon_accounts_v2")||"[]");
+      if(Array.isArray(version2))version2.forEach(add);
+      add(JSON.parse(localStorage.getItem("hutoon_account")||"null"));
+      if(merged.length)localStorage.setItem(ACCOUNTS_KEY,JSON.stringify(merged));
+      return merged;
+    }catch(_){return merged}
   }
 
   function saveAccounts(items){
@@ -11639,10 +11661,36 @@ document.addEventListener('DOMContentLoaded', function () {
       button.textContent="جاري الدخول...";
     }
 
+    const localAccount=readAccounts().find(item=>
+      (String(item.email||"").toLowerCase()===identifier || String(item.phone||"")===identifier) &&
+      item.password===password
+    );
+
     try{
       // Hosted website: authenticate through Firebase.
       if(location.protocol!=="file:" && window.auth?.signInWithEmailAndPassword){
-        const credential=await window.auth.signInWithEmailAndPassword(identifier,password);
+        let credential;
+        try{
+          credential=await window.auth.signInWithEmailAndPassword(identifier,password);
+        }catch(firebaseError){
+          const canUseLegacy=localAccount&&[
+            "auth/user-not-found","auth/invalid-credential","auth/invalid-login-credentials","auth/wrong-password","auth/invalid-email"
+          ].includes(firebaseError?.code);
+          if(!canUseLegacy)throw firebaseError;
+          setLoggedUser({
+            uid:localAccount.id,
+            email:localAccount.email,
+            name:localAccount.name,
+            phone:localAccount.phone,
+            role:"customer",
+            points:Number(localAccount.points||0),
+            local:true
+          });
+          window.hutoonPersistUser?.(window.state.user);
+          if(typeof showToast==="function")showToast("تم تسجيل الدخول واستعادة حسابك القديم");
+          form?.reset();
+          return;
+        }
         const firebaseUser=credential.user;
 
         let profile={
@@ -11666,10 +11714,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       // Local file fallback.
-      const account=readAccounts().find(item=>
-        String(item.email||"").toLowerCase()===identifier &&
-        item.password===password
-      );
+      const account=localAccount;
 
       if(!account){
         if(typeof showToast==="function") showToast("بيانات تسجيل الدخول غير صحيحة");
@@ -11685,6 +11730,7 @@ document.addEventListener('DOMContentLoaded', function () {
         points:Number(account.points||0),
         local:true
       });
+      window.hutoonPersistUser?.(window.state.user);
 
       if(typeof showToast==="function") showToast("تم تسجيل الدخول بنجاح");
       form?.reset();

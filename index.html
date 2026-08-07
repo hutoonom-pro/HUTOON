@@ -10083,11 +10083,13 @@ body{
           if (!user) {
             unsubscribeOrders?.();
             unsubscribeProfile?.();
-            state.user = null;
-            state.orders = [];
-            localStorage.removeItem("hutoon_user");
+            const remembered = localStorage.getItem("hutoon_session_persistent") === "true"
+              ? JSON.parse(localStorage.getItem("hutoon_user") || "null")
+              : null;
+            state.user = remembered;
+            if (!remembered) state.orders = [];
             updateViews();
-            setConnectionStatus("online", "متصل — سجل الدخول");
+            setConnectionStatus("online", remembered ? "تم استعادة جلسة الدخول" : "متصل — سجل الدخول");
             return;
           }
 
@@ -12524,6 +12526,95 @@ document.addEventListener('DOMContentLoaded', function () {
   }catch(error){
     console.warn("Firebase persistence setup failed:",error);
   }
+})();
+</script>
+
+
+<script id="hutoon-loyalty-session-fix">
+(function(){
+  "use strict";
+
+  function activeUser(){
+    const restored=window.hutoonRestoreUser?.();
+    return window.state?.user||window.hutoonState?.user||restored||null;
+  }
+
+  window.redeemReward=async function(code,cost,title){
+    const user=activeUser();
+    if(!user){
+      showToast("سجل الدخول أولًا لاستبدال النقاط");
+      window.openAuth?.();
+      return;
+    }
+
+    const required=Number(cost||0);
+    const current=Number(user.points||window.getPointsByPhone?.(user.phone)||0);
+    if(current<required){
+      showToast(`تحتاج إلى ${required-current} نقطة إضافية`);
+      return;
+    }
+    if(!confirm(`تأكيد استبدال ${required} نقطة مقابل: ${title}؟`))return;
+
+    try{
+      const authUser=window.auth?.currentUser||window.firebase?.auth?.()?.currentUser;
+      const db=window.firebase?.firestore?.();
+      if(authUser&&db){
+        const userRef=db.collection("users").doc(authUser.uid);
+        await db.runTransaction(async transaction=>{
+          const snap=await transaction.get(userRef);
+          const points=Number(snap.data()?.points||0);
+          if(points<required)throw new Error("رصيد النقاط غير كافٍ");
+          transaction.update(userRef,{points:points-required,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        });
+      }else{
+        user.points=current-required;
+        window.hutoonPersistUser?.(user);
+        const loyalty=JSON.parse(localStorage.getItem("hutoon_loyalty")||"{}");
+        if(user.phone)loyalty[user.phone]=user.points;
+        localStorage.setItem("hutoon_loyalty",JSON.stringify(loyalty));
+      }
+
+      const redemptions=JSON.parse(localStorage.getItem("hutoon_redemptions")||"[]");
+      const redemption={
+        id:"RD-"+Date.now().toString().slice(-8),
+        userId:user.uid||"local-user",
+        customer:user.name,
+        phone:user.phone||"",
+        rewardCode:code,
+        reward:title,
+        cost:required,
+        status:"بانتظار اعتماد الإدارة",
+        date:new Date().toLocaleString("ar-OM")
+      };
+      redemptions.unshift(redemption);
+      localStorage.setItem("hutoon_redemptions",JSON.stringify(redemptions));
+      window.refreshLoyalty?.();
+      window.refreshProfile?.();
+
+      const message=[
+        "السلام عليكم ورحمة الله وبركاته 🌷",
+        "",
+        "طلب استبدال مكافأة من HUTOON",
+        "رقم الاستبدال: "+redemption.id,
+        "العميل: "+user.name,
+        "المكافأة: "+title,
+        "النقاط المستخدمة: "+required
+      ].join("\n");
+      showToast("تم تسجيل طلب استبدال المكافأة");
+      setTimeout(()=>window.location.assign("https://wa.me/96877353930?text="+encodeURIComponent(message)),600);
+    }catch(error){
+      console.error(error);
+      showToast(error.message||"تعذر استبدال المكافأة");
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    const user=activeUser();
+    if(user){
+      window.refreshProfile?.();
+      window.refreshLoyalty?.();
+    }
+  },{once:true});
 })();
 </script>
 

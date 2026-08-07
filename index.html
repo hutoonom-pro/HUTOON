@@ -8521,9 +8521,7 @@ body{
 <button onclick="scrollAdminTo('ordersAdminSection',this)"><span>▤</span> الطلبات</button>
 <button onclick="scrollAdminTo('discountAdminSection',this)"><span>%</span> الأكواد والخصومات</button>
 <button onclick="scrollAdminTo('brandAdminSection',this)"><span>◆</span> إدارة البراندات</button>
-<button onclick="scrollAdminTo('cloudinaryAdminSection',this)"><span>☁</span> إعداد الملفات</button>
 <button onclick="scrollAdminTo('perfumeAdminSection',this)"><span>✦</span> إدارة العطور</button>
-<button onclick="scrollAdminTo('audioAdminSection',this)"><span>♫</span> أصوات العطور</button>
 </div>
 </aside>
 <main class="admin-main" id="adminDashboardTop">
@@ -8644,40 +8642,6 @@ body{
 </div>
 </form>
 <div class="admin-brand-list" id="adminBrandList"></div>
-</section>
-
-<section class="admin-cloudinary-panel" id="cloudinaryAdminSection">
-  <div class="admin-section-heading">
-    <div>
-      <small>CLOUDINARY MEDIA</small>
-      <h3>إعداد رفع الصور والصوتيات</h3>
-      <p>أدخلي Cloud Name واسم الـUnsigned Upload Preset مرة واحدة، وسيُحفظان في هذا المتصفح.</p>
-    </div>
-    <span>☁</span>
-  </div>
-
-  <div class="cloudinary-config-grid">
-    <label>
-      Cloud Name
-      <input id="cloudinaryCloudName" placeholder="مثال: hutoon" autocomplete="off"/>
-    </label>
-    <label>
-      Unsigned Upload Preset
-      <input id="cloudinaryUploadPreset" placeholder="مثال: hutoon_unsigned" autocomplete="off"/>
-    </label>
-    <button class="btn btn-primary" type="button" onclick="saveCloudinarySettings()">حفظ الإعدادات</button>
-    <button class="btn btn-outline" type="button" onclick="testCloudinarySettings()">فحص الاتصال</button>
-  </div>
-
-  <div class="cloudinary-status" id="cloudinaryStatus">
-    <span class="status-dot"></span>
-    <strong>لم يتم إدخال إعدادات Cloudinary بعد</strong>
-  </div>
-
-  <div class="cloudinary-note">
-    لا تضعي API Secret داخل الموقع. الحذف هنا يزيل الصورة أو الصوت من المنتج والموقع،
-    أما حذف الملف نهائيًا من Cloudinary فيحتاج Backend آمن أو الحذف يدويًا من Media Library.
-  </div>
 </section>
 
 <section class="admin-perfume-manager" id="perfumeAdminSection">
@@ -8852,24 +8816,6 @@ body{
 </div>
 <div class="admin-products-summary" id="adminProductsSummary"></div>
 <div class="admin-perfume-list" id="adminPerfumeList"></div>
-</section>
-<section class="admin-audio-manager" id="audioAdminSection">
-<div class="admin-audio-title">
-<div>
-<small>PERFUME AUDIO</small>
-<h3>إدارة أصوات العطور</h3>
-<p>ارفع ملف MP3 أو WAV لكل عطر، ويمكنك استبداله في أي وقت.</p>
-</div>
-<span>🎧</span>
-</div>
-<div class="audio-admin-toolbar">
-<div>
-<strong>جميع العطور</strong>
-<small>يظهر هنا تلقائيًا كل عطر في كتالوج المنتجات، ويمكن رفع أو استبدال صوته في أي وقت.</small>
-</div>
-<button class="btn btn-outline" onclick="renderAllPerfumeAudioCards()" type="button">تحديث القائمة</button>
-</div>
-<div class="audio-admin-grid" id="allPerfumeAudioGrid"></div>
 </section>
 <div class="table-card" id="ordersAdminSection">
 <div class="admin-top"><h3>آخر الطلبات</h3><button class="btn btn-outline" onclick="exportOrders()">تصدير CSV</button></div>
@@ -12913,6 +12859,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }catch(_){return {}}
   }
 
+  function ensureCloudinaryConfig(){
+    const saved=config();
+    if(saved.cloudName&&saved.uploadPreset)return saved;
+
+    const cloudName=window.prompt("أدخل Cloud Name الخاص بـ Cloudinary (مرة واحدة فقط):",saved.cloudName||"")?.trim();
+    if(!cloudName)throw new Error("يلزم إدخال Cloud Name لرفع الصور والصوتيات");
+    const uploadPreset=window.prompt("أدخل اسم Unsigned Upload Preset (مرة واحدة فقط):",saved.uploadPreset||"")?.trim();
+    if(!uploadPreset)throw new Error("يلزم إدخال Unsigned Upload Preset لرفع الملفات");
+
+    const completed={cloudName,uploadPreset};
+    localStorage.setItem(CLOUD_KEY,JSON.stringify(completed));
+    return completed;
+  }
+
   function setCloudStatus(type,text){
     const box=document.getElementById("cloudinaryStatus");
     if(!box)return;
@@ -12973,10 +12933,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function cloudinaryUpload(file,folder,progressId){
-    const c=config();
-    if(!c.cloudName||!c.uploadPreset){
-      throw new Error("أدخلي إعدادات Cloudinary في لوحة الأدمن أولًا");
-    }
+    if(!(file instanceof File)||!file.size)throw new Error("لم يتم اختيار ملف صالح");
+    const c=ensureCloudinaryConfig();
     const endpoint=`https://api.cloudinary.com/v1_1/${encodeURIComponent(c.cloudName)}/auto/upload`;
     const form=new FormData();
     form.append("file",file);
@@ -12986,15 +12944,28 @@ document.addEventListener('DOMContentLoaded', function () {
     return new Promise((resolve,reject)=>{
       const xhr=new XMLHttpRequest();
       xhr.open("POST",endpoint,true);
+      xhr.timeout=120000;
       xhr.upload.onprogress=e=>{
         if(e.lengthComputable)showProgress(progressId,e.loaded/e.total*100);
       };
-      xhr.onerror=()=>reject(new Error("تعذر الاتصال بـCloudinary"));
+      xhr.onerror=()=>reject(new Error("تعذر الاتصال بـ Cloudinary. تحقق من الإنترنت وحاول مرة أخرى"));
+      xhr.ontimeout=()=>reject(new Error("استغرق رفع الملف وقتًا طويلًا. حاول بملف أصغر"));
+      xhr.onabort=()=>reject(new Error("تم إلغاء رفع الملف"));
       xhr.onload=()=>{
         let data={};
         try{data=JSON.parse(xhr.responseText||"{}")}catch(_){}
         if(xhr.status<200||xhr.status>=300){
-          reject(new Error(data?.error?.message||"فشل رفع الملف إلى Cloudinary"));
+          const cloudMessage=data?.error?.message||"";
+          if(/preset/i.test(cloudMessage)){
+            localStorage.removeItem(CLOUD_KEY);
+            reject(new Error("بيانات Cloudinary غير صحيحة. سيُطلب إدخالها مجددًا في المحاولة التالية"));
+          }else{
+            reject(new Error(cloudMessage||"فشل رفع الملف إلى Cloudinary"));
+          }
+          return;
+        }
+        if(!data.secure_url){
+          reject(new Error("اكتمل الرفع لكن لم يصل رابط الملف"));
           return;
         }
         showProgress(progressId,100,"تم الرفع");
@@ -13285,6 +13256,9 @@ document.addEventListener('DOMContentLoaded', function () {
       const file=input.files?.[0];
       if(!file)return;
       try{
+        if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+          throw new Error("الصورة يجب أن تكون JPG أو PNG أو WEBP");
+        }
         if(file.size>8*1024*1024)throw new Error("الصورة أكبر من 8 MB");
         const uploaded=await cloudinaryUpload(file,"hutoon/products/images","perfumeImageProgress");
         await persistProduct(id,{image:uploaded.url,imagePublicId:uploaded.publicId});
@@ -13314,6 +13288,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const file=input.files?.[0];
       if(!file)return;
       try{
+        const allowedAudio=["audio/mpeg","audio/wav","audio/x-wav","audio/ogg","audio/mp4","audio/aac","audio/x-m4a"];
+        if(!file.type.startsWith("audio/")&&!allowedAudio.includes(file.type)){
+          throw new Error("الصوت يجب أن يكون MP3 أو WAV أو OGG أو M4A أو AAC");
+        }
         if(file.size>20*1024*1024)throw new Error("الصوت أكبر من 20 MB");
         const uploaded=await cloudinaryUpload(file,"hutoon/products/audio","perfumeAudioProgress");
         await persistProduct(id,{audioUrl:uploaded.url,audioPublicId:uploaded.publicId});
@@ -13428,38 +13406,66 @@ document.addEventListener('DOMContentLoaded', function () {
     }catch(error){console.warn(error)}
 
     let invoiceBlob=null;
+    let invoiceDownloaded=false;
     try{
-      invoiceBlob=await window.createInvoicePdf?.(saved);
-      if(invoiceBlob){
-        const url=URL.createObjectURL(invoiceBlob);
-        const a=document.createElement("a");
-        a.href=url;
-        a.download=`HUTOON-${saved.id}.pdf`;
-        a.style.display="none";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(()=>URL.revokeObjectURL(url),10000);
+      if(typeof window.createInvoicePdf!=="function"){
+        throw new Error("أداة إنشاء الفاتورة غير متاحة");
       }
+      invoiceBlob=await window.createInvoicePdf(saved);
+      if(!invoiceBlob)throw new Error("لم يتم إنشاء ملف الفاتورة");
+
+      if(typeof window.hutoonStoreInvoiceBlob==="function"){
+        await window.hutoonStoreInvoiceBlob(saved.id,invoiceBlob);
+      }
+
+      const url=URL.createObjectURL(invoiceBlob);
+      const a=document.createElement("a");
+      a.href=url;
+      a.download=`HUTOON-${saved.id}.pdf`;
+      a.rel="noopener";
+      a.style.display="none";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      invoiceDownloaded=true;
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
+
+      // Give the browser time to start the PDF download before leaving the page.
+      await new Promise(resolve=>setTimeout(resolve,1200));
     }catch(error){
       console.warn("Invoice:",error);
+      showToast("تعذر تنزيل الفاتورة. لن يتم فتح واتساب حتى تُجهّز الفاتورة.");
+      throw new Error("تعذر إنشاء أو تنزيل الفاتورة");
     }
 
+    const unitPrice=Number(saved.unitPrice||saved.price||0);
+    const quantity=Math.max(1,Number(saved.qty||1));
+    const total=unitPrice>0?unitPrice*quantity:0;
+    const item=saved.perfume||saved.productName||saved.details||"طلب من هتون";
     const lines=[
-      "السلام عليكم، طلب جديد من موقع HUTOON 🌷",
+      "السلام عليكم ورحمة الله وبركاته 🌷",
       "",
-      "رقم الطلب: "+saved.id,
-      "العميل: "+saved.customer,
-      "الخدمة: "+(saved.serviceType||"طلب"),
-      "الطلب: "+(saved.perfume||saved.productName||saved.details||"-"),
-      saved.size?"الحجم: "+saved.size:"",
-      "الكمية: "+(saved.qty||1),
+      "أرغب في تأكيد طلبي من هتون ✨",
       "",
-      "يرجى إرسال ملف الفاتورة الذي تم تنزيله في هذه المحادثة لتأكيد الطلب."
+      "🧾 رقم الطلب: "+saved.id,
+      "👤 الاسم: "+saved.customer,
+      saved.phone?"📱 رقم الهاتف: "+saved.phone:"",
+      "🎁 نوع الطلب: "+(saved.serviceType||"طلب عطر"),
+      "🌸 المنتج: "+item,
+      saved.size?"📏 الحجم: "+saved.size:"",
+      "🔢 الكمية: "+quantity,
+      unitPrice>0?"💰 سعر الوحدة: "+unitPrice.toFixed(3)+" ر.ع":"",
+      total>0?"💳 الإجمالي: "+total.toFixed(3)+" ر.ع":"",
+      saved.notes?"📝 الملاحظات: "+saved.notes:"",
+      "",
+      "تم تنزيل فاتورة الطلب على جهازي، وسأرفقها في هذه المحادثة الآن لتأكيد الطلب.",
+      "شكرًا لكم 🤍"
     ].filter(Boolean);
 
-    showToast("تم تجهيز الطلب والفاتورة، جاري فتح واتساب...");
-    window.location.href=`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(lines.join("\n"))}`;
+    if(!invoiceDownloaded)throw new Error("لم يكتمل تنزيل الفاتورة");
+    showToast("تم تنزيل الفاتورة. جاري فتح واتساب لإرفاقها...");
+    const whatsappUrl=`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(lines.join("\n"))}`;
+    window.location.assign(whatsappUrl);
     return saved;
   };
 
@@ -13669,5 +13675,150 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 
+<style id="hutoon-final-color-polish">
+/* هوية هتون النظيفة: كريمي موحد، كحلي للنص، وذهبي للتفاصيل فقط */
+.hero-benefits{gap:11px!important}
+.hero-benefits li{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:56px!important;
+  padding:16px 52px 16px 20px!important;
+  color:#1c2b45!important;
+  font-weight:750!important;
+  background:rgba(255,255,255,.72)!important;
+  border:1px solid rgba(28,43,69,.10)!important;
+  border-right:3px solid #c5a46d!important;
+  box-shadow:0 8px 24px rgba(28,43,69,.055)!important;
+  backdrop-filter:blur(12px)!important;
+}
+.hero-benefits li:nth-child(2){
+  background:rgba(255,255,255,.72)!important;
+}
+.hero-benefits li::before{
+  color:#a77b3a!important;
+  background:#f5efe4!important;
+  box-shadow:none!important;
+}
+
+#creator .service-choice{
+  min-height:145px!important;
+  background:rgba(255,255,255,.76)!important;
+  border:1px solid rgba(28,43,69,.10)!important;
+  box-shadow:0 10px 28px rgba(28,43,69,.055)!important;
+}
+#creator .service-choice:first-child{
+  border-top:3px solid #203653!important;
+}
+#creator .service-choice:nth-child(2){
+  border-top:3px solid #c5a46d!important;
+}
+#creator .service-choice strong{color:#1c2b45!important}
+#creator .service-choice:nth-child(2) strong,
+#creator .service-choice:nth-child(2) small{color:#172b4d!important}
+#creator .service-choice.active{
+  background:#f3eee5!important;
+  border-color:rgba(197,164,109,.55)!important;
+  box-shadow:0 14px 32px rgba(28,43,69,.08)!important;
+}
+#creator .service-choice.active *{color:#1c2b45!important}
+#creator .service-choice:hover{transform:translateY(-5px)!important;box-shadow:0 17px 36px rgba(28,43,69,.12)!important}
+
+#moodQuiz .quiz-step.active,
+.mood-quiz-section .quiz-step.active{
+  background:rgba(255,255,255,.70)!important;
+  border:1px solid rgba(28,43,69,.10)!important;
+  border-top:3px solid #c5a46d!important;
+  box-shadow:0 14px 36px rgba(28,43,69,.06)!important;
+}
+#moodQuiz .quiz-step.active h3,
+#moodQuiz .quiz-step.active small{color:#1c2b45!important}
+#moodQuiz .quiz-options button{
+  color:#1c2b45!important;
+  background:#fbfaf7!important;
+  border:1px solid rgba(28,43,69,.11)!important;
+  box-shadow:0 6px 16px rgba(28,43,69,.045)!important;
+}
+#moodQuiz .quiz-options button:hover,
+#moodQuiz .quiz-options button.selected{
+  color:#1c2b45!important;
+  background:#eee6d8!important;
+  border-color:#c5a46d!important;
+  transform:translateY(-2px)!important;
+}
+
+#loyalty .reward-card{
+  overflow:hidden!important;
+  background:rgba(255,255,255,.74)!important;
+  border:1px solid rgba(28,43,69,.10)!important;
+  border-top:3px solid #d5c7ad!important;
+  box-shadow:0 12px 32px rgba(28,43,69,.055)!important;
+}
+#loyalty .reward-card.featured{
+  background:rgba(255,255,255,.82)!important;
+  border-color:rgba(28,43,69,.14)!important;
+  border-top-color:#c5a46d!important;
+  transform:translateY(-3px)!important;
+}
+#loyalty .reward-card.featured h3,
+#loyalty .reward-card.featured p,
+#loyalty .reward-card.featured strong,
+#loyalty .reward-card.featured small{color:#1c2b45!important}
+#loyalty .reward-card.featured .reward-symbol,
+#loyalty .reward-card.featured .reward-tag{background:#f1eadf!important;color:#1c2b45!important}
+#loyalty .reward-card:hover{transform:translateY(-6px)!important;box-shadow:0 20px 42px rgba(28,43,69,.12)!important}
+#loyalty .reward-btn{
+  background:#203653!important;
+  color:#fff!important;
+  box-shadow:0 9px 20px rgba(28,54,91,.14)!important;
+}
+#loyalty .featured .reward-btn{background:#203653!important;color:#fff!important}
+
+@media(max-width:700px){
+  .hero-benefits li{padding:15px 46px 15px 16px!important}
+  #loyalty .reward-card.featured{transform:none!important}
+}
+
+/* لوحة ألوان Luxury Pastel النهائية */
+.hero-benefits li:nth-child(1){background:#e7eef4!important;border-right-color:#526d89!important}
+.hero-benefits li:nth-child(2){background:#f3e7d7!important;border-right-color:#b9945a!important}
+.hero-benefits li:nth-child(3){background:#e4ece7!important;border-right-color:#718779!important}
+.hero-benefits li:nth-child(1)::before{background:#d6e1ea!important;color:#35536f!important}
+.hero-benefits li:nth-child(2)::before{background:#ead8bc!important;color:#8c6837!important}
+.hero-benefits li:nth-child(3)::before{background:#d2dfd6!important;color:#526c5a!important}
+
+#creator .service-choice:first-child{
+  background:#e6edf3!important;
+  border-color:#c5d2dc!important;
+  border-top-color:#526d89!important;
+}
+#creator .service-choice:nth-child(2){
+  background:#f3e7d7!important;
+  border-color:#e1cfb2!important;
+  border-top-color:#b9945a!important;
+}
+#creator .service-choice.active{
+  background:#1c304d!important;
+  border-color:#1c304d!important;
+}
+#creator .service-choice.active *{color:#fff!important}
+
+#moodQuiz .quiz-step.active{
+  background:linear-gradient(135deg,#edf2f5 0%,#f6ecdd 100%)!important;
+  border-color:#d8c8aa!important;
+  border-top-color:#b9945a!important;
+}
+#moodQuiz .quiz-options button:nth-child(1){background:#e7eef4!important}
+#moodQuiz .quiz-options button:nth-child(2){background:#f3e7d7!important}
+#moodQuiz .quiz-options button:nth-child(3){background:#e4ece7!important}
+#moodQuiz .quiz-options button:hover,
+#moodQuiz .quiz-options button.selected{background:#1c304d!important;color:#fff!important;border-color:#1c304d!important}
+
+#loyalty .reward-card:nth-child(1){background:#e7eef4!important;border-top-color:#526d89!important}
+#loyalty .reward-card:nth-child(2){background:#f3e7d7!important;border-top-color:#b9945a!important}
+#loyalty .reward-card:nth-child(3){background:#e4ece7!important;border-top-color:#718779!important}
+#loyalty .reward-card .reward-symbol{background:rgba(255,255,255,.55)!important;color:#1c304d!important}
+#loyalty .reward-card .reward-tag{background:rgba(255,255,255,.58)!important;color:#1c304d!important}
+#loyalty .reward-btn{background:#1c304d!important;color:#fff!important}
+</style>
 </body>
 </html>

@@ -2273,6 +2273,7 @@ max-width:340px!important;
 
 
 /* ===== SAMPLE ORDER FLOW ===== */
+.sample-order-modal{z-index:10050!important}
 .sample-order-card{width:min(520px,calc(100vw - 28px));padding:28px;border:1px solid rgba(180,139,78,.34);background:linear-gradient(180deg,#fbf5ea 0%,#efe0c9 100%);box-shadow:0 30px 80px rgba(20,31,53,.22)}
 .sample-order-card .modal-head{align-items:flex-start;margin-bottom:20px}
 .sample-order-card .modal-head p{margin:7px 0 0;color:#5d6879;line-height:1.7}
@@ -2292,9 +2293,16 @@ max-width:340px!important;
 .sample-order-review{display:grid;gap:1px;margin:22px 0 18px;overflow:hidden;border:1px solid rgba(180,139,78,.25);border-radius:17px;background:rgba(180,139,78,.18)}
 .sample-order-review>div{display:flex;justify-content:space-between;gap:14px;padding:13px 16px;background:#f9f0e2}
 .sample-order-review strong{color:#172741}
-.sample-order-submit{width:100%;min-height:52px;font-weight:900}
+.sample-order-submit{position:relative;z-index:3;width:100%;min-height:52px;font-weight:900;pointer-events:auto;touch-action:manipulation}
+.sample-order-submit[disabled]{cursor:wait;opacity:.72}
 .sample-login-note{margin:12px 0 0;text-align:center;color:#6c7380;font-size:.84rem}
-@media(max-width:520px){.sample-order-card{padding:22px 17px}.sample-size-options{grid-template-columns:1fr}}
+@media(max-width:520px){
+  .sample-order-modal{padding:8px!important;align-items:flex-end!important}
+  .sample-order-card{width:100%!important;max-height:calc(100dvh - 16px)!important;overflow-y:auto!important;overscroll-behavior:contain;padding:22px 17px calc(22px + env(safe-area-inset-bottom))!important}
+  .sample-size-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .sample-order-submit{position:sticky;bottom:0}
+  body.sample-order-open .mobile-floating-nav{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+}
 
 
 /* ===== MOBILE FLOATING INSTAGRAM NAV ===== */
@@ -11098,11 +11106,13 @@ document.addEventListener('DOMContentLoaded', function () {
     continueSampleAfterLogin=false;
     document.querySelectorAll(".sample-size-btn").forEach(btn=>btn.classList.toggle("selected",btn.dataset.size===selectedSampleSize));
     updateSampleOrderReview();
+    document.body.classList.add("sample-order-open");
     document.getElementById("sampleOrderModal")?.classList.add("show");
   };
 
   window.closeSampleOrder=function(){
     document.getElementById("sampleOrderModal")?.classList.remove("show");
+    document.body.classList.remove("sample-order-open");
     continueSampleAfterLogin=false;
     if(loginWatcher){clearInterval(loginWatcher);loginWatcher=null}
   };
@@ -13929,6 +13939,38 @@ document.addEventListener('DOMContentLoaded', function () {
   const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
   const money=value=>Number(value||0)>0?Number(value).toFixed(3)+" ر.ع":"السعر عند الطلب";
 
+  function isIOSDevice(){
+    return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  }
+  function reserveMobileInvoiceWindow(){
+    if(!isIOSDevice())return null;
+    const invoiceWindow=window.open("about:blank","hutoonInvoiceWindow");
+    if(invoiceWindow){
+      invoiceWindow.document.write('<!doctype html><html lang="ar" dir="rtl"><meta name="viewport" content="width=device-width,initial-scale=1"><title>فاتورة هتون</title><body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#faf6ee;color:#1e2e4f;font-family:Arial,sans-serif;text-align:center"><div><h2>HUTOON</h2><p>جاري تجهيز الفاتورة...</p></div></body></html>');
+      invoiceWindow.document.close();
+    }
+    return invoiceWindow;
+  }
+  function loadInvoiceScript(src,test){
+    if(test())return Promise.resolve();
+    return new Promise((resolve,reject)=>{
+      const script=document.createElement("script");
+      script.src=src;
+      script.async=true;
+      script.onload=()=>test()?resolve():reject(new Error("تعذر تشغيل مكتبة الفاتورة"));
+      script.onerror=()=>reject(new Error("تعذر تحميل مكتبة الفاتورة"));
+      document.head.appendChild(script);
+    });
+  }
+  async function ensureInvoiceLibraries(){
+    if(!window.html2canvas){
+      await loadInvoiceScript("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",()=>!!window.html2canvas);
+    }
+    if(!window.jspdf?.jsPDF){
+      await loadInvoiceScript("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js",()=>!!window.jspdf?.jsPDF);
+    }
+  }
+
   function auth(){
     try{return window.firebase?.auth?.()||window.auth||null}catch(_){return null}
   }
@@ -14055,6 +14097,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function createInvoice(order){
+    await ensureInvoiceLibraries();
     if(!window.html2canvas||!window.jspdf?.jsPDF)throw new Error("تعذر تحميل أدوات الفاتورة؛ تحقق من الإنترنت");
     let host=document.getElementById("hutoonFinalInvoiceRender");
     if(!host){
@@ -14091,12 +14134,29 @@ document.addEventListener('DOMContentLoaded', function () {
     return pdf.output("blob");
   }
 
-  async function saveAndDownloadInvoice(order){
-    const blob=await createInvoice(order);
+  function fallbackInvoiceBlob(order){
+    const qty=Math.max(1,Number(order.qty||1));
+    const total=Number(order.total||order.amountOMR||0);
+    const invoice=`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>فاتورة ${esc(order.id)}</title><style>body{margin:0;background:#f6efe3;color:#1e2e4f;font-family:Arial,sans-serif}.invoice{max-width:720px;margin:24px auto;padding:28px;background:#fff;border-top:5px solid #c9a667}.head{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #c9a667}.box{margin:18px 0;padding:15px;background:#faf6ee;border:1px solid #e4d2a4;border-radius:12px}table{width:100%;border-collapse:collapse}th{background:#1e2e4f;color:#fff}th,td{padding:13px;text-align:center;border-bottom:1px solid #e4d2a4}.total{font-size:20px;font-weight:bold}@media print{button{display:none}.invoice{margin:0}}button{width:100%;padding:14px;border:0;border-radius:12px;background:#1e2e4f;color:#fff;font-size:17px}</style></head><body><main class="invoice"><div class="head"><div><h1>HUTOON</h1><p>بيت العطور الفاخرة</p></div><div><p>فاتورة طلب</p><strong>${esc(order.id)}</strong><p>${esc(order.date)}</p></div></div><div class="box"><b>العميل:</b> ${esc(order.customer)}<br><b>الهاتف:</b> ${esc(order.phone||"-")}</div><table><thead><tr><th>الطلب</th><th>الحجم</th><th>الكمية</th><th>السعر</th></tr></thead><tbody><tr><td>${esc(order.perfume||order.details||order.serviceType)}</td><td>${esc(order.size||"عبوة كاملة")}</td><td>${qty}</td><td>${esc(money(order.unitPrice))}</td></tr></tbody></table><div class="box total">الإجمالي: ${esc(total>0?money(total):"يُحدد بعد التأكيد")}</div><button onclick="window.print()">حفظ أو طباعة الفاتورة</button></main></body></html>`;
+    return new Blob([invoice],{type:"text/html;charset=utf-8"});
+  }
+
+  async function saveAndDownloadInvoice(order,invoiceWindow){
+    let blob;
+    let extension="pdf";
+    let isPdf=true;
+    try{
+      blob=await createInvoice(order);
+    }catch(error){
+      console.warn("PDF invoice fallback:",error);
+      blob=fallbackInvoiceBlob(order);
+      extension="html";
+      isPdf=false;
+    }
     await window.hutoonStoreInvoiceBlob?.(order.id,blob);
     let invoiceUrl="";
     const firestore=db();
-    if(location.protocol!=="file:"&&window.firebase?.storage&&firestore&&!order.localOnly){
+    if(isPdf&&location.protocol!=="file:"&&window.firebase?.storage&&firestore&&!order.localOnly){
       try{
         const ref=window.firebase.storage().ref(`invoices/${order.id}.pdf`);
         await ref.put(blob,{contentType:"application/pdf"});
@@ -14105,19 +14165,23 @@ document.addEventListener('DOMContentLoaded', function () {
       }catch(error){console.warn("Invoice cloud upload:",error)}
     }
     const url=URL.createObjectURL(blob);
-    const link=document.createElement("a");
-    link.href=url;
-    link.download=`HUTOON-${order.id}.pdf`;
-    link.style.display="none";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),30000);
-    await new Promise(resolve=>setTimeout(resolve,1000));
-    return invoiceUrl;
+    if(invoiceWindow&&!invoiceWindow.closed){
+      invoiceWindow.location.replace(url);
+    }else{
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=`HUTOON-${order.id}.${extension}`;
+      link.style.display="none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+    setTimeout(()=>URL.revokeObjectURL(url),300000);
+    await new Promise(resolve=>setTimeout(resolve,650));
+    return {invoiceUrl,isPdf};
   }
 
-  window.finishOrder=async function(order){
+  window.finishOrder=async function(order,invoiceWindow=null){
     const currentUser=user();
     if(!currentUser){
       showToast("سجّل الدخول لإتمام الطلب");
@@ -14143,16 +14207,16 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     showToast("جاري حفظ الطلب وتجهيز الفاتورة...");
     const saved=await saveOrder(prepared);
-    await saveAndDownloadInvoice(saved);
+    const invoiceResult=await saveAndDownloadInvoice(saved,invoiceWindow);
     const message=[
       "السلام عليكم ورحمة الله وبركاته 🌷","","أرغب في تأكيد طلبي من هتون ✨","",
       "🧾 رقم الطلب: "+saved.id,"👤 الاسم: "+saved.customer,
       saved.phone?"📱 الهاتف: "+saved.phone:"","🌸 الطلب: "+(saved.perfume||saved.details||saved.serviceType),
       saved.size?"📏 الحجم: "+saved.size:"","🔢 الكمية: "+qty,
       unitPrice>0?"💰 سعر الوحدة: "+money(unitPrice):"",saved.total>0?"💳 الإجمالي: "+money(saved.total):"",
-      "","تم تنزيل الفاتورة وسأرفقها في هذه المحادثة لتأكيد الطلب."
+      "",invoiceResult.isPdf?"تم تنزيل فاتورة PDF وسأرفقها في هذه المحادثة لتأكيد الطلب.":"تم فتح الفاتورة وسأحفظها أو أرفقها في هذه المحادثة لتأكيد الطلب."
     ].filter(Boolean).join("\n");
-    showToast("تم تنزيل الفاتورة، جاري فتح واتساب...");
+    showToast(invoiceResult.isPdf?"تم تنزيل الفاتورة، جاري فتح واتساب...":"تم فتح الفاتورة، جاري فتح واتساب...");
     window.location.assign(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`);
     return saved;
   };
@@ -14165,6 +14229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const unitPrice=sizePrice(commerceProduct,size,mode);
     const button=document.querySelector(".catalog-order-submit");
     const oldText=button?.textContent;
+    const invoiceWindow=user()?reserveMobileInvoiceWindow():null;
     if(button){button.disabled=true;button.textContent="جاري تجهيز الطلب والفاتورة..."}
     try{
       await window.finishOrder({
@@ -14177,24 +14242,41 @@ document.addEventListener('DOMContentLoaded', function () {
         unitPrice,
         notes:mode==="sample"?`عينة ${size}`:"عبوة كاملة",
         image:commerceProduct.image||""
-      });
+      },invoiceWindow);
       window.closeCatalogOrder?.();
     }catch(error){console.error(error);showToast(error.message||"تعذر إرسال الطلب")}
     finally{if(button){button.disabled=false;button.textContent=oldText||"حفظ الطلب وإنشاء الفاتورة"}}
   };
 
   window.completeSampleOrder=async function(){
+    const button=document.querySelector(".sample-order-submit");
+    if(button?.disabled)return;
+    if(!user()){
+      showToast("سجّل الدخول أولًا لإتمام طلب العينة");
+      window.openAuth?.();
+      return;
+    }
     const perfume=document.getElementById("sampleReviewPerfume")?.textContent?.trim()||"عينة عطر";
     const size=document.getElementById("sampleReviewSize")?.textContent?.trim()||"2 مل";
     const qty=Math.max(1,Number(document.getElementById("sampleReviewQuantity")?.textContent||1));
     const product=products().find(p=>String(p.name||"").trim()===perfume);
+    const oldText=button?.textContent;
+    const invoiceWindow=reserveMobileInvoiceWindow();
+    if(button){button.disabled=true;button.setAttribute("aria-busy","true");button.textContent="جاري تجهيز الفاتورة..."}
     try{
       await window.finishOrder({
         productId:String(product?.id||""),serviceType:"طلب عينة",perfume,size,qty,
         unitPrice:sizePrice(product,size,"sample"),notes:"طلب عينة من عطرك على مزاجك"
-      });
+      },invoiceWindow);
       document.getElementById("sampleOrderModal")?.classList.remove("show");
-    }catch(error){console.error(error);showToast(error.message||"تعذر إكمال طلب العينة")}
+      document.body.classList.remove("sample-order-open");
+    }catch(error){
+      console.error(error);
+      if(invoiceWindow&&!invoiceWindow.closed)invoiceWindow.close();
+      showToast(error.message||"تعذر إكمال طلب العينة");
+    }finally{
+      if(button){button.disabled=false;button.removeAttribute("aria-busy");button.textContent=oldText||"إتمام الطلب"}
+    }
   };
 
   async function resolveUserRef(order,firestore){

@@ -8206,9 +8206,9 @@ body{
 </div>
 <div class="rewards-heading reveal reveal-up"><div><small>REDEEM YOUR POINTS</small><h3>استبدل نقاطك بمكافآت هتون</h3></div></div>
 <div class="reward-cards">
-<article class="reward-card"><div class="reward-top"><span class="reward-tag">خصم</span><strong>100 نقطة</strong></div><div class="reward-symbol">10%</div><h3>خصم 10% على السلة</h3><p>استبدل 100 نقطة واحصل على خصم 10% على طلبك.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('cart10',100,'خصم 10% على السلة')">استبدال العرض</button><small class="reward-status" id="rewardStatus-cart10">سجل الدخول لمعرفة أهليتك</small></article>
-<article class="reward-card featured"><div class="reward-top"><span class="reward-tag">خصم</span><strong>500 نقطة</strong></div><div class="reward-symbol">50%</div><h3>خصم 50% على منتج واحد</h3><p>استبدل 500 نقطة واحصل على خصم 50% على منتج واحد.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('item50',500,'خصم 50% على منتج واحد')">استبدال العرض</button><small class="reward-status" id="rewardStatus-item50">سجل الدخول لمعرفة أهليتك</small></article>
-<article class="reward-card"><div class="reward-top"><span class="reward-tag">هدية</span><strong>1000 نقطة</strong></div><div class="reward-symbol">✦</div><h3>عطر مجاني</h3><p>استبدل 1000 نقطة واحصل على عطر مجاني من العروض المؤهلة.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('freePerfume',1000,'عطر مجاني')">استبدال العرض</button><small class="reward-status" id="rewardStatus-freePerfume">سجل الدخول لمعرفة أهليتك</small></article>
+<article class="reward-card"><div class="reward-top"><span class="reward-tag">خصم</span><strong>1000 نقطة</strong></div><div class="reward-symbol">10%</div><h3>خصم 10% على السلة</h3><p>استبدل 1000 نقطة واحصل على خصم 10% على طلبك.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('cart10',1000,'خصم 10% على السلة')">استبدال العرض</button><small class="reward-status" id="rewardStatus-cart10">سجل الدخول لمعرفة أهليتك</small></article>
+<article class="reward-card featured"><div class="reward-top"><span class="reward-tag">خصم</span><strong>5000 نقطة</strong></div><div class="reward-symbol">50%</div><h3>خصم 50% على منتج واحد</h3><p>استبدل 5000 نقطة واحصل على خصم 50% على منتج واحد.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('item50',5000,'خصم 50% على منتج واحد')">استبدال العرض</button><small class="reward-status" id="rewardStatus-item50">سجل الدخول لمعرفة أهليتك</small></article>
+<article class="reward-card"><div class="reward-top"><span class="reward-tag">هدية</span><strong>10000 نقطة</strong></div><div class="reward-symbol">✦</div><h3>عطر مجاني</h3><p>استبدل 10000 نقطة واحصل على عطر مجاني من العروض المؤهلة.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('freePerfume',10000,'عطر مجاني')">استبدال العرض</button><small class="reward-status" id="rewardStatus-freePerfume">سجل الدخول لمعرفة أهليتك</small></article>
 </div>
 </div></section>
 <section class="contact-premium" id="contact">
@@ -8747,9 +8747,26 @@ body{
 </select>
 </label>
 <label>
-                السعر الحالي (ر.ع)
+                سعر العبوة الكاملة (ر.ع)
                 <input id="perfumePrice" min="0" placeholder="مثال: 12.500" step="0.001" type="number"/>
 </label>
+<div class="wide admin-size-prices">
+  <div class="admin-size-prices-head">
+    <strong>أسعار الأحجام والعينات</strong>
+    <small>حددي سعرًا مستقلًا لكل حجم، وسيظهر تلقائيًا للعميل والفاتورة.</small>
+  </div>
+  <div class="admin-size-price-grid">
+    <label>سعر 2 مل (ر.ع)
+      <input id="perfumePrice2ml" min="0" placeholder="مثال: 2.000" step="0.001" type="number"/>
+    </label>
+    <label>سعر 5 مل (ر.ع)
+      <input id="perfumePrice5ml" min="0" placeholder="مثال: 4.500" step="0.001" type="number"/>
+    </label>
+    <label>سعر 10 مل (ر.ع)
+      <input id="perfumePrice10ml" min="0" placeholder="مثال: 8.000" step="0.001" type="number"/>
+    </label>
+  </div>
+</div>
 <label>
                 السعر قبل الخصم (ر.ع)
                 <input id="perfumeOldPrice" min="0" placeholder="اختياري" step="0.001" type="number"/>
@@ -9172,9 +9189,9 @@ body{
       const pointsEl=document.getElementById("loyaltyPoints");
       if(pointsEl) pointsEl.textContent=points;
 
-      updateRewardStatus("cart10",100);
-      updateRewardStatus("item50",500);
-      updateRewardStatus("freePerfume",1000);
+      updateRewardStatus("cart10",1000);
+      updateRewardStatus("item50",5000);
+      updateRewardStatus("freePerfume",10000);
       refreshRaindrops();
 
       const profilePoints=document.getElementById("profileLoyaltyPoints");
@@ -11576,6 +11593,20 @@ document.addEventListener('DOMContentLoaded', function () {
   const ADMIN_EMAIL = "admin@hutoon.om";
   const ADMIN_PASSWORD = "Hutoon@123";
 
+  function firebaseAuth(){
+    try{return window.firebase?.auth?.()||window.auth||null}catch(_){return null}
+  }
+
+  function firestoreDb(){
+    try{return window.firebase?.firestore?.()||window.db||null}catch(_){return null}
+  }
+
+  async function enablePersistentFirebaseSession(auth){
+    if(!auth?.setPersistence)return;
+    const persistence=window.firebase?.auth?.Auth?.Persistence?.LOCAL;
+    if(persistence)await auth.setPersistence(persistence);
+  }
+
   function readAccounts(){
     const merged=[];
     const add=item=>{
@@ -11650,7 +11681,38 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if(identifier===ADMIN_EMAIL && password===ADMIN_PASSWORD){
-      enterAdmin();
+      const auth=firebaseAuth();
+      if(location.protocol!=="file:"&&auth){
+        try{
+          await enablePersistentFirebaseSession(auth);
+          let credential;
+          try{
+            credential=await auth.signInWithEmailAndPassword(ADMIN_EMAIL,ADMIN_PASSWORD);
+          }catch(error){
+            if(!["auth/user-not-found","auth/invalid-credential","auth/invalid-login-credentials"].includes(error?.code))throw error;
+            credential=await auth.createUserWithEmailAndPassword(ADMIN_EMAIL,ADMIN_PASSWORD);
+          }
+          const adminUser={
+            uid:credential.user.uid,email:ADMIN_EMAIL,name:"إدارة هتون",phone:"",role:"admin",points:0
+          };
+          const db=firestoreDb();
+          if(db){
+            await db.collection("users").doc(credential.user.uid).set({
+              ...adminUser,updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()
+            },{merge:true});
+          }
+          setLoggedUser(adminUser);
+          document.getElementById("adminView")?.classList.add("show");
+          window.refreshAdmin?.();
+          showToast("تم تسجيل دخول الإدارة وربطها بقاعدة البيانات");
+        }catch(error){
+          console.error("Admin Firebase login:",error);
+          showToast(error?.code==="auth/email-already-in-use"?"حساب الإدارة موجود؛ تحقق من كلمة المرور":"تعذر تسجيل دخول الإدارة إلى Firebase");
+          return;
+        }
+      }else{
+        enterAdmin();
+      }
       form?.reset();
       return;
     }
@@ -11668,26 +11730,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try{
       // Hosted website: authenticate through Firebase.
-      if(location.protocol!=="file:" && window.auth?.signInWithEmailAndPassword){
+      const auth=firebaseAuth();
+      if(location.protocol!=="file:" && auth?.signInWithEmailAndPassword){
+        await enablePersistentFirebaseSession(auth);
         let credential;
         try{
-          credential=await window.auth.signInWithEmailAndPassword(identifier,password);
+          credential=await auth.signInWithEmailAndPassword(identifier,password);
         }catch(firebaseError){
           const canUseLegacy=localAccount&&[
             "auth/user-not-found","auth/invalid-credential","auth/invalid-login-credentials","auth/wrong-password","auth/invalid-email"
           ].includes(firebaseError?.code);
           if(!canUseLegacy)throw firebaseError;
+
+          let migratedUser=null;
+          if(localAccount.email&&localAccount.email.includes("@")){
+            try{
+              const migrated=await auth.createUserWithEmailAndPassword(localAccount.email,password);
+              migratedUser=migrated.user;
+              await migratedUser.updateProfile?.({displayName:localAccount.name});
+              const db=firestoreDb();
+              if(db){
+                await db.collection("users").doc(migratedUser.uid).set({
+                  uid:migratedUser.uid,
+                  email:localAccount.email,
+                  name:localAccount.name,
+                  phone:localAccount.phone,
+                  role:"customer",
+                  points:Number(localAccount.points||0),
+                  migratedFromLocal:true,
+                  updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()
+                },{merge:true});
+              }
+            }catch(migrationError){
+              if(migrationError?.code!=="auth/email-already-in-use")throw migrationError;
+            }
+          }
+
           setLoggedUser({
-            uid:localAccount.id,
+            uid:migratedUser?.uid||localAccount.id,
             email:localAccount.email,
             name:localAccount.name,
             phone:localAccount.phone,
             role:"customer",
             points:Number(localAccount.points||0),
-            local:true
+            local:!migratedUser
           });
           window.hutoonPersistUser?.(window.state.user);
-          if(typeof showToast==="function")showToast("تم تسجيل الدخول واستعادة حسابك القديم");
+          if(typeof showToast==="function")showToast(migratedUser?"تم نقل حسابك إلى Firebase وتسجيل الدخول":"تم تسجيل الدخول واستعادة حسابك القديم");
           form?.reset();
           return;
         }
@@ -11702,8 +11791,9 @@ document.addEventListener('DOMContentLoaded', function () {
           points:0
         };
 
-        if(window.db){
-          const snapshot=await window.db.collection("users").doc(firebaseUser.uid).get();
+        const db=firestoreDb();
+        if(db){
+          const snapshot=await db.collection("users").doc(firebaseUser.uid).get();
           if(snapshot.exists) profile={...profile,...snapshot.data(),uid:firebaseUser.uid};
         }
 
@@ -11778,8 +11868,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try{
       // Hosted website: create Firebase account.
-      if(location.protocol!=="file:" && window.auth?.createUserWithEmailAndPassword){
-        const credential=await window.auth.createUserWithEmailAndPassword(email,password);
+      const auth=firebaseAuth();
+      if(location.protocol!=="file:" && auth?.createUserWithEmailAndPassword){
+        await enablePersistentFirebaseSession(auth);
+        const credential=await auth.createUserWithEmailAndPassword(email,password);
         const user=credential.user;
 
         if(user.updateProfile) await user.updateProfile({displayName:name});
@@ -11793,8 +11885,9 @@ document.addEventListener('DOMContentLoaded', function () {
           points:0
         };
 
-        if(window.db){
-          await window.db.collection("users").doc(user.uid).set({
+        const db=firestoreDb();
+        if(db){
+          await db.collection("users").doc(user.uid).set({
             ...profile,
             createdAt:window.firebase?.firestore?.FieldValue?.serverTimestamp?.()||new Date().toISOString()
           },{merge:true});
@@ -13254,6 +13347,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const product=findProduct(id);
     if(!product)return;
 
+    const sizePrices=product.sizePrices||{};
+    const price2=document.getElementById("perfumePrice2ml");
+    const price5=document.getElementById("perfumePrice5ml");
+    const price10=document.getElementById("perfumePrice10ml");
+    if(price2)price2.value=Number(sizePrices["2 مل"]||product.price2ml||0)||"";
+    if(price5)price5.value=Number(sizePrices["5 مل"]||product.price5ml||0)||"";
+    if(price10)price10.value=Number(sizePrices["10 مل"]||product.price10ml||0)||"";
+
     const imagePreview=document.getElementById("perfumeImagePreview");
     if(imagePreview){
       imagePreview.innerHTML=product.image
@@ -13335,6 +13436,11 @@ document.addEventListener('DOMContentLoaded', function () {
         audioPublicId,
         description:document.getElementById("perfumeDescription").value.trim(),
         price:Number(document.getElementById("perfumePrice").value||0),
+        sizePrices:{
+          "2 مل":Number(document.getElementById("perfumePrice2ml")?.value||0),
+          "5 مل":Number(document.getElementById("perfumePrice5ml")?.value||0),
+          "10 مل":Number(document.getElementById("perfumePrice10ml")?.value||0)
+        },
         oldPrice:Number(document.getElementById("perfumeOldPrice").value||0),
         discount:Number(document.getElementById("perfumeDiscount").value||0),
         badge:document.getElementById("perfumeBadge").value.trim(),
@@ -13812,8 +13918,469 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 
+<script id="hutoon-commerce-loyalty-final">
+(function(){
+  "use strict";
+
+  const STORE_PHONE="96877353930";
+  const POINTS_PER_OMR=30;
+  let commerceProduct=null;
+
+  const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  const money=value=>Number(value||0)>0?Number(value).toFixed(3)+" ر.ع":"السعر عند الطلب";
+
+  function auth(){
+    try{return window.firebase?.auth?.()||window.auth||null}catch(_){return null}
+  }
+  function db(){
+    try{return window.firebase?.firestore?.()||window.db||null}catch(_){return null}
+  }
+  function user(){
+    try{
+      const saved=JSON.parse(localStorage.getItem("hutoon_user")||"null");
+      return window.state?.user||window.hutoonState?.user||saved;
+    }catch(_){return window.state?.user||null}
+  }
+  function availablePoints(account){
+    if(!account)return 0;
+    const profilePoints=Number(account.points||0);
+    if(account.local||location.protocol==="file:"){
+      try{
+        const loyalty=JSON.parse(localStorage.getItem("hutoon_loyalty")||"{}");
+        return Math.max(profilePoints,Number(loyalty[account.phone]||0));
+      }catch(_){return profilePoints}
+    }
+    return profilePoints;
+  }
+  function products(){
+    try{
+      if(typeof window.hutoonMergedProducts==="function")return window.hutoonMergedProducts();
+      if(Array.isArray(window.perfumeCatalog))return window.perfumeCatalog;
+      if(typeof perfumeCatalog!=="undefined"&&Array.isArray(perfumeCatalog))return perfumeCatalog;
+    }catch(_){}
+    return [];
+  }
+  function findOrder(orderId){
+    const live=Array.isArray(window.state?.orders)?window.state.orders:[];
+    const local=JSON.parse(localStorage.getItem("hutoon_orders")||"[]");
+    return live.find(o=>String(o.id)===String(orderId))||local.find(o=>String(o.id)===String(orderId));
+  }
+  function sizePrice(product,size,mode){
+    if(mode!=="sample")return Number(product?.price||0);
+    const map=product?.sizePrices||{};
+    return Number(map[size]||product?.[{"2 مل":"price2ml","5 مل":"price5ml","10 مل":"price10ml"}[size]]||0);
+  }
+  function currentMode(){
+    return document.getElementById("catalogSampleMode")?.classList.contains("active")?"sample":"full";
+  }
+  function currentQty(){
+    return Math.max(1,Number(document.getElementById("catalogOrderQuantity")?.textContent||1));
+  }
+  function updateCatalogPrice(){
+    if(!commerceProduct)return;
+    const mode=currentMode();
+    const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
+    const unit=sizePrice(commerceProduct,size,mode);
+    const qty=currentQty();
+    const price=document.getElementById("catalogOrderPrice");
+    if(price)price.textContent=unit>0?(qty>1?`${money(unit)} × ${qty} = ${money(unit*qty)}`:money(unit)):"السعر عند الطلب";
+    const summary=document.getElementById("catalogOrderSummary");
+    if(summary){
+      summary.textContent=mode==="sample"
+        ? `عينة · ${size} · الكمية ${qty} · ${money(unit*qty)}`
+        : `عبوة كاملة · الكمية ${qty} · ${money(unit*qty)}`;
+    }
+  }
+
+  const previousOpenCatalog=window.openCatalogOrder;
+  window.openCatalogOrder=function(id){
+    commerceProduct=products().find(p=>String(p.id)===String(id))||null;
+    const result=previousOpenCatalog?.apply(this,arguments);
+    setTimeout(updateCatalogPrice,0);
+    return result;
+  };
+  const previousSelectSize=window.selectCatalogSize;
+  window.selectCatalogSize=function(size){
+    const result=previousSelectSize?.apply(this,arguments);
+    updateCatalogPrice();
+    return result;
+  };
+  const previousSetMode=window.setCatalogOrderMode;
+  window.setCatalogOrderMode=function(mode){
+    const result=previousSetMode?.apply(this,arguments);
+    updateCatalogPrice();
+    return result;
+  };
+  const previousChangeQty=window.changeCatalogQuantity;
+  window.changeCatalogQuantity=function(diff){
+    const result=previousChangeQty?.apply(this,arguments);
+    updateCatalogPrice();
+    return result;
+  };
+
+  async function saveOrder(order){
+    const currentUser=user();
+    const firebaseUser=auth()?.currentUser;
+    const firestore=db();
+    let saved={...order};
+
+    if(location.protocol!=="file:"&&firebaseUser&&firestore){
+      try{
+        const ref=await firestore.collection("orders").add({
+          ...order,
+          userId:firebaseUser.uid,
+          customerEmail:currentUser?.email||firebaseUser.email||"",
+          createdAt:window.firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()
+        });
+        saved={...order,id:ref.id,userId:firebaseUser.uid,localOnly:false};
+      }catch(error){
+        console.error("Firestore order save:",error);
+        showToast("تعذر ربط الطلب بقاعدة البيانات؛ سيُحفظ على هذا الجهاز ويُرسل عبر واتساب");
+        saved={...order,localOnly:true};
+      }
+    }else{
+      saved={...order,localOnly:true};
+    }
+
+    const local=JSON.parse(localStorage.getItem("hutoon_orders")||"[]");
+    const index=local.findIndex(item=>String(item.id)===String(saved.id));
+    if(index>=0)local[index]=saved;else local.unshift(saved);
+    localStorage.setItem("hutoon_orders",JSON.stringify(local));
+    window.state=window.state||{};
+    if(saved.localOnly||!Array.isArray(window.state.orders))window.state.orders=local;
+    window.refreshProfile?.();
+    window.refreshAdmin?.();
+    return saved;
+  }
+
+  async function createInvoice(order){
+    if(!window.html2canvas||!window.jspdf?.jsPDF)throw new Error("تعذر تحميل أدوات الفاتورة؛ تحقق من الإنترنت");
+    let host=document.getElementById("hutoonFinalInvoiceRender");
+    if(!host){
+      host=document.createElement("div");
+      host.id="hutoonFinalInvoiceRender";
+      host.style.cssText="position:fixed;right:-10000px;top:0;width:794px;background:#fff;z-index:-1";
+      document.body.appendChild(host);
+    }
+    const qty=Math.max(1,Number(order.qty||1));
+    const total=Number(order.total||order.amountOMR||0);
+    host.innerHTML=`<div dir="rtl" style="font-family:Arial,sans-serif;padding:54px;color:#1e2e4f;background:#fff">
+      <div style="display:flex;justify-content:space-between;gap:30px;border-bottom:3px solid #c9a667;padding-bottom:24px">
+        <div><h1 style="margin:0;font-size:42px;letter-spacing:4px">HUTOON</h1><p style="color:#9a7438">LUXURY PERFUME HOUSE</p></div>
+        <div style="text-align:left"><small>فاتورة طلب</small><h2 style="margin:8px 0">${esc(order.id)}</h2><span>${esc(order.date)}</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:28px 0">
+        <div style="padding:16px;background:#faf6ee;border:1px solid #e4d2a4;border-radius:14px"><small>العميل</small><br><strong>${esc(order.customer)}</strong></div>
+        <div style="padding:16px;background:#faf6ee;border:1px solid #e4d2a4;border-radius:14px"><small>الهاتف</small><br><strong>${esc(order.phone||"-")}</strong></div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-top:24px">
+        <thead><tr style="background:#1e2e4f;color:#fff"><th style="padding:14px">المنتج</th><th>الحجم</th><th>الكمية</th><th>السعر</th></tr></thead>
+        <tbody><tr><td style="padding:18px;border-bottom:1px solid #e4d2a4">${esc(order.perfume||order.details||order.serviceType)}</td><td style="text-align:center;border-bottom:1px solid #e4d2a4">${esc(order.size||"عبوة كاملة")}</td><td style="text-align:center;border-bottom:1px solid #e4d2a4">${qty}</td><td style="text-align:center;border-bottom:1px solid #e4d2a4">${esc(money(order.unitPrice))}</td></tr></tbody>
+      </table>
+      <div style="margin-top:28px;padding:20px;background:#efe4cc;border-radius:14px;display:flex;justify-content:space-between"><strong>الإجمالي</strong><strong>${esc(total>0?money(total):"يُحدد بعد التأكيد")}</strong></div>
+      <p style="margin-top:42px;text-align:center;color:#687589">شكرًا لاختياركم هتون · WhatsApp +968 77353930</p>
+    </div>`;
+    await document.fonts?.ready;
+    const canvas=await window.html2canvas(host,{scale:2,backgroundColor:"#ffffff",useCORS:true});
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:"portrait",unit:"pt",format:"a4"});
+    const width=595.28;
+    const height=canvas.height*width/canvas.width;
+    pdf.addImage(canvas.toDataURL("image/jpeg",.94),"JPEG",0,0,width,Math.min(height,841.89));
+    return pdf.output("blob");
+  }
+
+  async function saveAndDownloadInvoice(order){
+    const blob=await createInvoice(order);
+    await window.hutoonStoreInvoiceBlob?.(order.id,blob);
+    let invoiceUrl="";
+    const firestore=db();
+    if(location.protocol!=="file:"&&window.firebase?.storage&&firestore&&!order.localOnly){
+      try{
+        const ref=window.firebase.storage().ref(`invoices/${order.id}.pdf`);
+        await ref.put(blob,{contentType:"application/pdf"});
+        invoiceUrl=await ref.getDownloadURL();
+        await firestore.collection("orders").doc(order.id).set({invoiceUrl,invoiceReady:true},{merge:true});
+      }catch(error){console.warn("Invoice cloud upload:",error)}
+    }
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;
+    link.download=`HUTOON-${order.id}.pdf`;
+    link.style.display="none";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    await new Promise(resolve=>setTimeout(resolve,1000));
+    return invoiceUrl;
+  }
+
+  window.finishOrder=async function(order){
+    const currentUser=user();
+    if(!currentUser){
+      showToast("سجّل الدخول لإتمام الطلب");
+      window.openAuth?.();
+      throw new Error("يجب تسجيل الدخول");
+    }
+    const qty=Math.max(1,Number(order.qty||1));
+    const unitPrice=Number(order.unitPrice||order.price||0);
+    const prepared={
+      ...order,
+      id:order.id||("HT-"+Date.now().toString().slice(-8)),
+      customer:currentUser.name||"عميل هتون",
+      customerEmail:currentUser.email||"",
+      phone:currentUser.phone||"",
+      qty,
+      unitPrice,
+      total:unitPrice>0?unitPrice*qty:0,
+      amountOMR:unitPrice>0?unitPrice*qty:0,
+      status:"جديد",
+      pointsAwarded:0,
+      date:new Date().toLocaleString("ar-OM"),
+      createdAtISO:new Date().toISOString()
+    };
+    showToast("جاري حفظ الطلب وتجهيز الفاتورة...");
+    const saved=await saveOrder(prepared);
+    await saveAndDownloadInvoice(saved);
+    const message=[
+      "السلام عليكم ورحمة الله وبركاته 🌷","","أرغب في تأكيد طلبي من هتون ✨","",
+      "🧾 رقم الطلب: "+saved.id,"👤 الاسم: "+saved.customer,
+      saved.phone?"📱 الهاتف: "+saved.phone:"","🌸 الطلب: "+(saved.perfume||saved.details||saved.serviceType),
+      saved.size?"📏 الحجم: "+saved.size:"","🔢 الكمية: "+qty,
+      unitPrice>0?"💰 سعر الوحدة: "+money(unitPrice):"",saved.total>0?"💳 الإجمالي: "+money(saved.total):"",
+      "","تم تنزيل الفاتورة وسأرفقها في هذه المحادثة لتأكيد الطلب."
+    ].filter(Boolean).join("\n");
+    showToast("تم تنزيل الفاتورة، جاري فتح واتساب...");
+    window.location.assign(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`);
+    return saved;
+  };
+
+  window.completeCatalogOrder=async function(){
+    if(!commerceProduct){showToast("تعذر العثور على المنتج");return}
+    const mode=currentMode();
+    const size=mode==="sample"?(document.getElementById("catalogOrderSize")?.value||"2 مل"):"";
+    const qty=currentQty();
+    const unitPrice=sizePrice(commerceProduct,size,mode);
+    const button=document.querySelector(".catalog-order-submit");
+    const oldText=button?.textContent;
+    if(button){button.disabled=true;button.textContent="جاري تجهيز الطلب والفاتورة..."}
+    try{
+      await window.finishOrder({
+        productId:String(commerceProduct.id||""),
+        serviceType:mode==="sample"?"طلب عينة منتج":"طلب منتج",
+        perfume:commerceProduct.name,
+        brand:commerceProduct.brand||"",
+        size,
+        qty,
+        unitPrice,
+        notes:mode==="sample"?`عينة ${size}`:"عبوة كاملة",
+        image:commerceProduct.image||""
+      });
+      window.closeCatalogOrder?.();
+    }catch(error){console.error(error);showToast(error.message||"تعذر إرسال الطلب")}
+    finally{if(button){button.disabled=false;button.textContent=oldText||"حفظ الطلب وإنشاء الفاتورة"}}
+  };
+
+  window.completeSampleOrder=async function(){
+    const perfume=document.getElementById("sampleReviewPerfume")?.textContent?.trim()||"عينة عطر";
+    const size=document.getElementById("sampleReviewSize")?.textContent?.trim()||"2 مل";
+    const qty=Math.max(1,Number(document.getElementById("sampleReviewQuantity")?.textContent||1));
+    const product=products().find(p=>String(p.name||"").trim()===perfume);
+    try{
+      await window.finishOrder({
+        productId:String(product?.id||""),serviceType:"طلب عينة",perfume,size,qty,
+        unitPrice:sizePrice(product,size,"sample"),notes:"طلب عينة من عطرك على مزاجك"
+      });
+      document.getElementById("sampleOrderModal")?.classList.remove("show");
+    }catch(error){console.error(error);showToast(error.message||"تعذر إكمال طلب العينة")}
+  };
+
+  async function resolveUserRef(order,firestore){
+    if(order.userId)return firestore.collection("users").doc(order.userId);
+    if(order.customerEmail){
+      const snap=await firestore.collection("users").where("email","==",order.customerEmail).limit(1).get();
+      if(!snap.empty)return snap.docs[0].ref;
+    }
+    if(order.phone){
+      const snap=await firestore.collection("users").where("phone","==",order.phone).limit(1).get();
+      if(!snap.empty)return snap.docs[0].ref;
+    }
+    return null;
+  }
+
+  window.confirmOrderAndAwardPoints=async function(orderId){
+    if(user()?.role!=="admin"){showToast("هذه العملية للإدارة فقط");return}
+    const order=findOrder(orderId);
+    if(!order){showToast("الطلب غير موجود");return}
+    if(Number(order.pointsAwarded||0)>0){showToast("تم احتساب نقاط هذا الطلب مسبقًا");return}
+    let amount=Number(order.total||order.amountOMR||0);
+    if(!(amount>0)){
+      const entered=prompt("أدخل قيمة الطلب النهائية بالريال العماني:","");
+      if(entered===null)return;
+      amount=Number(entered);
+    }
+    if(!Number.isFinite(amount)||amount<=0){showToast("أدخل قيمة طلب صحيحة");return}
+    if(!confirm(`تأكيد استلام ${money(amount)} وإضافة ${Math.round(amount*POINTS_PER_OMR)} نقطة للعميل؟`))return;
+    const points=Math.round(amount*POINTS_PER_OMR);
+    const firestore=db();
+    const firebaseUser=auth()?.currentUser;
+
+    if(location.protocol!=="file:"&&firestore&&firebaseUser&&!order.localOnly){
+      try{
+        const userRef=await resolveUserRef(order,firestore);
+        if(!userRef)throw new Error("تعذر العثور على حساب العميل في Firebase");
+        const orderRef=firestore.collection("orders").doc(String(orderId));
+        await firestore.runTransaction(async transaction=>{
+          const [orderSnap,userSnap]=await Promise.all([transaction.get(orderRef),transaction.get(userRef)]);
+          if(!orderSnap.exists)throw new Error("الطلب غير موجود في قاعدة البيانات");
+          if(Number(orderSnap.data().pointsAwarded||0)>0)throw new Error("تم احتساب نقاط هذا الطلب مسبقًا");
+          if(!userSnap.exists)throw new Error("حساب العميل غير موجود");
+          transaction.update(userRef,{points:Number(userSnap.data().points||0)+points,updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()});
+          transaction.update(orderRef,{status:"مؤكد",amountOMR:amount,total:amount,pointsAwarded:points,pointsAwardedAt:window.firebase.firestore.FieldValue.serverTimestamp(),updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()});
+        });
+        showToast(`تم تأكيد الطلب وإضافة ${points} نقطة`);
+        return;
+      }catch(error){console.error(error);showToast(error.message||"تعذر تأكيد الطلب");return}
+    }
+
+    const orders=JSON.parse(localStorage.getItem("hutoon_orders")||"[]");
+    const index=orders.findIndex(item=>String(item.id)===String(orderId));
+    if(index<0){showToast("الطلب المحلي غير موجود");return}
+    if(Number(orders[index].pointsAwarded||0)>0){showToast("تم احتساب نقاط هذا الطلب مسبقًا");return}
+    orders[index]={...orders[index],status:"مؤكد",amountOMR:amount,total:amount,pointsAwarded:points,pointsAwardedAt:new Date().toISOString()};
+    localStorage.setItem("hutoon_orders",JSON.stringify(orders));
+    const loyalty=JSON.parse(localStorage.getItem("hutoon_loyalty")||"{}");
+    loyalty[order.phone]=Number(loyalty[order.phone]||0)+points;
+    localStorage.setItem("hutoon_loyalty",JSON.stringify(loyalty));
+    const savedUser=user();
+    if(savedUser&&savedUser.phone===order.phone){
+      savedUser.points=Number(savedUser.points||0)+points;
+      window.hutoonPersistUser?.(savedUser);
+    }
+    window.state.orders=orders;
+    window.refreshAdmin?.();window.refreshLoyalty?.();window.refreshProfile?.();
+    showToast(`تم تأكيد الطلب وإضافة ${points} نقطة`);
+  };
+
+  window.redeemReward=async function(code,cost,title){
+    const currentUser=user();
+    if(!currentUser){showToast("سجل الدخول أولًا لاستبدال النقاط");window.openAuth?.();return}
+    const required=Number(cost||0);
+    const available=availablePoints(currentUser);
+    if(available<required){showToast(`تحتاج إلى ${required-available} نقطة إضافية`);return}
+    if(!confirm(`تأكيد استبدال ${required} نقطة مقابل: ${title}؟`))return;
+    const firestore=db();
+    const firebaseUser=auth()?.currentUser;
+    try{
+      let redemptionId="RW-"+Date.now().toString().slice(-8);
+      if(location.protocol!=="file:"&&firestore&&firebaseUser&&!currentUser.local){
+        const userRef=firestore.collection("users").doc(firebaseUser.uid);
+        await firestore.runTransaction(async transaction=>{
+          const snap=await transaction.get(userRef);
+          const points=Number(snap.data()?.points||0);
+          if(points<required)throw new Error("رصيد النقاط غير كافٍ");
+          transaction.update(userRef,{points:points-required,updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()});
+        });
+        const ref=await firestore.collection("redemptions").add({userId:firebaseUser.uid,customer:currentUser.name,phone:currentUser.phone||"",rewardCode:code,reward:title,cost:required,status:"بانتظار اعتماد الإدارة",createdAt:window.firebase.firestore.FieldValue.serverTimestamp()});
+        redemptionId=ref.id;
+      }else{
+        currentUser.points=available-required;
+        window.hutoonPersistUser?.(currentUser);
+        const loyalty=JSON.parse(localStorage.getItem("hutoon_loyalty")||"{}");
+        loyalty[currentUser.phone]=currentUser.points;
+        localStorage.setItem("hutoon_loyalty",JSON.stringify(loyalty));
+        const redemptions=JSON.parse(localStorage.getItem("hutoon_redemptions")||"[]");
+        redemptions.unshift({id:redemptionId,customer:currentUser.name,phone:currentUser.phone,rewardCode:code,reward:title,cost:required,status:"بانتظار اعتماد الإدارة",date:new Date().toLocaleString("ar-OM")});
+        localStorage.setItem("hutoon_redemptions",JSON.stringify(redemptions));
+      }
+      window.refreshLoyalty?.();window.refreshProfile?.();
+      const message=`السلام عليكم ورحمة الله وبركاته 🌷\n\nطلب استبدال مكافأة HUTOON\nرقم الاستبدال: ${redemptionId}\nالعميل: ${currentUser.name}\nالمكافأة: ${title}\nالنقاط المستخدمة: ${required}`;
+      showToast("تم خصم النقاط وتسجيل طلب الاستبدال");
+      setTimeout(()=>window.location.assign(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`),500);
+    }catch(error){console.error(error);showToast(error.message||"تعذر استبدال المكافأة")}
+  };
+
+  window.refreshLoyalty=function(){
+    const currentUser=user();
+    const points=availablePoints(currentUser);
+    if(currentUser&&currentUser.local)currentUser.points=points;
+    const main=document.getElementById("loyaltyPoints");
+    const profile=document.getElementById("profileLoyaltyPoints");
+    if(main)main.textContent=String(points);
+    if(profile)profile.textContent=String(points);
+    const rewards=[
+      ["cart10",1000],["item50",5000],["freePerfume",10000]
+    ];
+    rewards.forEach(([id,cost])=>{
+      const label=document.getElementById("rewardStatus-"+id);
+      if(!label)return;
+      if(!currentUser)label.textContent="سجل الدخول لمعرفة أهليتك";
+      else if(points>=cost)label.textContent="العرض متاح للاستبدال الآن";
+      else label.textContent=`يتبقى ${cost-points} نقطة`;
+    });
+    try{window.refreshRaindrops?.()}catch(_){}
+  };
+
+  window.refreshAdmin=function(){
+    const orders=Array.isArray(window.state?.orders)?window.state.orders:JSON.parse(localStorage.getItem("hutoon_orders")||"[]");
+    const total=document.getElementById("adminTotal");
+    if(!total)return;
+    total.textContent=orders.length;
+    const newCount=document.getElementById("adminNew");if(newCount)newCount.textContent=orders.filter(order=>order.status==="جديد").length;
+    const users=document.getElementById("adminUsers");if(users)users.textContent=new Set(orders.map(order=>order.userId||order.phone).filter(Boolean)).size;
+    const table=document.getElementById("ordersTable");
+    if(!table)return;
+    table.innerHTML=orders.length?orders.map(order=>{
+      const awarded=Number(order.pointsAwarded||0);
+      return `<tr>
+        <td>${esc(order.id)}</td><td>${esc(order.serviceType||"طلب")}</td>
+        <td>${esc(order.customer||"-")}<br><small>${esc(order.phone||order.customerEmail||"-")}</small></td>
+        <td>${esc(order.perfume||order.details||"-")}<br><small>${esc(order.total>0?money(order.total):"القيمة تحدد عند التأكيد")}</small></td>
+        <td>${esc(order.size||"عبوة كاملة")}</td><td>${esc(order.qty||1)}</td>
+        <td><span class="status">${esc(order.status||"جديد")}</span></td>
+        <td>${awarded?`<small class="admin-points">أضيفت ${awarded} نقطة</small>`:`<button class="points-action" onclick="confirmOrderAndAwardPoints('${esc(order.id)}')">تأكيد الشراء وإضافة النقاط</button>`}<br>
+        <button class="admin-invoice-btn" onclick="downloadOrderInvoice('${esc(order.id)}')" type="button">فاتورة PDF</button></td>
+      </tr>`;
+    }).join(""):'<tr><td colspan="8">لا توجد طلبات حتى الآن.</td></tr>';
+  };
+
+  window.hutoonSystemAudit=function(){
+    const requiredFunctions=["finishOrder","completeCatalogOrder","confirmOrderAndAwardPoints","redeemReward","savePerfumeWithCloudinary","hutoonFixedLogin","hutoonFixedRegister"];
+    const missingFunctions=requiredFunctions.filter(name=>typeof window[name]!=="function");
+    const requiredIds=["perfumePrice","perfumePrice2ml","perfumePrice5ml","perfumePrice10ml","ordersTable","catalogOrderModal","loyaltyPoints"];
+    const missingIds=requiredIds.filter(id=>!document.getElementById(id));
+    return {ok:!missingFunctions.length&&!missingIds.length,missingFunctions,missingIds,firebaseConfigured:!!window.firebase?.apps?.length,invoiceLibraries:!!window.html2canvas&&!!window.jspdf?.jsPDF};
+  };
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    setTimeout(()=>{
+      console.info("HUTOON system audit",window.hutoonSystemAudit());
+      window.refreshAdmin?.();
+    },1200);
+  },{once:true});
+})();
+</script>
+
 <style id="hutoon-final-color-polish">
 /* هوية هتون النظيفة: كريمي موحد، كحلي للنص، وذهبي للتفاصيل فقط */
+.admin-size-prices{
+  padding:18px!important;
+  border:1px solid rgba(189,149,84,.32)!important;
+  border-radius:18px!important;
+  background:#faf6ee!important;
+}
+.admin-size-prices-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px}
+.admin-size-prices-head strong{color:#1e2e4f;font-size:16px}
+.admin-size-prices-head small{color:#69758a;font-size:12px}
+.admin-size-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.admin-size-price-grid label{display:grid;gap:7px;color:#1e2e4f!important;font-weight:700}
+.admin-size-price-grid input{background:#fff!important;color:#1e2e4f!important;border:1px solid #e4d2a4!important}
+@media(max-width:720px){
+  .admin-size-prices-head{align-items:flex-start;flex-direction:column}
+  .admin-size-price-grid{grid-template-columns:1fr}
+}
 .hero-benefits{gap:11px!important}
 .hero-benefits li{
   position:relative!important;
@@ -13916,28 +14483,41 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 /* لوحة ألوان Luxury Pastel النهائية */
-.hero-benefits li:nth-child(1){background:#e7eef4!important;border-right-color:#526d89!important}
-.hero-benefits li:nth-child(2){background:#f3e7d7!important;border-right-color:#b9945a!important}
-.hero-benefits li:nth-child(3){background:#e4ece7!important;border-right-color:#718779!important}
-.hero-benefits li:nth-child(1)::before{background:#d6e1ea!important;color:#35536f!important}
-.hero-benefits li:nth-child(2)::before{background:#ead8bc!important;color:#8c6837!important}
-.hero-benefits li:nth-child(3)::before{background:#d2dfd6!important;color:#526c5a!important}
+.hero-benefits li:nth-child(1),
+.hero-benefits li:nth-child(2),
+.hero-benefits li:nth-child(3){
+  background:linear-gradient(135deg,#f7f0e3,#e9d8b7)!important;
+  color:#1c2b45!important;
+  border-color:#d8c28f!important;
+  border-right-color:#bd9554!important;
+}
+.hero-benefits li:nth-child(1)::before,
+.hero-benefits li:nth-child(2)::before,
+.hero-benefits li:nth-child(3)::before{
+  background:#1e2e4f!important;
+  color:#e4d2a4!important;
+}
 
 #creator .service-choice:first-child{
-  background:#e6edf3!important;
-  border-color:#c5d2dc!important;
-  border-top-color:#526d89!important;
+  background:linear-gradient(135deg,#f7f0e3,#e9d8b7)!important;
+  border-color:#d8c28f!important;
+  border-top-color:#bd9554!important;
 }
 #creator .service-choice:nth-child(2){
-  background:#f3e7d7!important;
-  border-color:#e1cfb2!important;
-  border-top-color:#b9945a!important;
+  background:linear-gradient(135deg,#f7f0e3,#e9d8b7)!important;
+  border-color:#d8c28f!important;
+  border-top-color:#bd9554!important;
 }
 #creator .service-choice.active{
-  background:#1c304d!important;
-  border-color:#1c304d!important;
+  background:linear-gradient(135deg,#f7f0e3,#e9d8b7)!important;
+  border-color:#bd9554!important;
+  box-shadow:0 0 0 3px rgba(189,149,84,.16),0 17px 36px rgba(28,43,69,.10)!important;
 }
-#creator .service-choice.active *{color:#fff!important}
+#creator .service-choice.active *{color:#1c2b45!important}
+#creator .service-choice>span{
+  background:#1e2e4f!important;
+  color:#e4d2a4!important;
+}
 
 #moodQuiz .quiz-step.active{
   background:linear-gradient(135deg,#edf2f5 0%,#f6ecdd 100%)!important;
@@ -13950,12 +14530,30 @@ document.addEventListener('DOMContentLoaded', function () {
 #moodQuiz .quiz-options button:hover,
 #moodQuiz .quiz-options button.selected{background:#1c304d!important;color:#fff!important;border-color:#1c304d!important}
 
-#loyalty .reward-card:nth-child(1){background:#e7eef4!important;border-top-color:#526d89!important}
-#loyalty .reward-card:nth-child(2){background:#f3e7d7!important;border-top-color:#b9945a!important}
-#loyalty .reward-card:nth-child(3){background:#e4ece7!important;border-top-color:#718779!important}
-#loyalty .reward-card .reward-symbol{background:rgba(255,255,255,.55)!important;color:#1c304d!important}
-#loyalty .reward-card .reward-tag{background:rgba(255,255,255,.58)!important;color:#1c304d!important}
+#loyalty .reward-card:nth-child(1),
+#loyalty .reward-card:nth-child(2),
+#loyalty .reward-card:nth-child(3){
+  background:linear-gradient(135deg,#f7f0e3,#e9d8b7)!important;
+  border-color:#d8c28f!important;
+  border-top-color:#bd9554!important;
+}
+#loyalty .reward-card .reward-symbol{
+  background:transparent!important;
+  color:#1c2b45!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#loyalty .reward-card .reward-tag{
+  background:#faf6ee!important;
+  color:#1c2b45!important;
+  border:1px solid #d8c28f!important;
+}
 #loyalty .reward-btn{background:#1c304d!important;color:#fff!important}
+#loyalty .reward-cards{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
 </style>
 </body>
 </html>

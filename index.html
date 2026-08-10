@@ -8404,7 +8404,7 @@ body{
 <label class="auth-label">البريد الإلكتروني أو رقم الهاتف</label>
 <input autocomplete="username" id="loginIdentifier" placeholder="البريد الإلكتروني أو رقم الهاتف" required="" type="text"/>
 <label class="auth-label">كلمة المرور</label>
-<input id="loginPassword" placeholder="••••••••" required="" type="password"/>
+<input autocomplete="current-password" id="loginPassword" placeholder="••••••••" required="" type="password"/>
 <button class="btn btn-primary auth-submit">تسجيل الدخول</button>
 <button class="forgot-password-btn" onclick="resetLoginPassword()" type="button">نسيت كلمة المرور؟</button>
 </form>
@@ -8852,7 +8852,7 @@ body{
 </main>
 </div>
 </div>
-<div class="toast" id="toast"></div>
+<div aria-live="polite" class="toast" id="toast" role="status"></div>
 <script>
     // Promo controls must be global because the HTML buttons call them directly.
     window.closePromo = function closePromo(options = {}) {
@@ -9011,8 +9011,8 @@ body{
       const identifier = document.getElementById("loginIdentifier").value.trim();
       const password = document.getElementById("loginPassword").value;
 
-      const adminEmail = "admin@hutoon.om";
-      const adminPassword = "Hutoon@123";
+      const adminEmail = "admin@hutoon.com";
+      const adminPassword = "hutoon@2026";
 
       // Admin login is detected automatically and never appears as a separate option.
       if(identifier.toLowerCase() === adminEmail && password === adminPassword){
@@ -9544,6 +9544,7 @@ body{
 
       const ADMIN_EMAIL = "admin@hutoon.com";
       const ADMIN_PASSWORD = "hutoon@2026";
+      const ADMIN_EMAILS = new Set([ADMIN_EMAIL,"admin@hutoon.om"]);
 
       const openedAsFile = window.location.protocol === "file:";
       if (openedAsFile) {
@@ -10008,7 +10009,7 @@ body{
       }
 
       async function ensureProfile(user, extra = {}) {
-        const isAdmin = (user.email || "").toLowerCase() === ADMIN_EMAIL;
+        const isAdmin = ADMIN_EMAILS.has((user.email || "").toLowerCase());
         const fallback = {
           uid: user.uid,
           email: user.email || "",
@@ -10065,7 +10066,7 @@ body{
               uid: snap.id,
               ...liveData,
               email: auth.currentUser?.email || liveData.email || "",
-              role: liveEmail === ADMIN_EMAIL ? "admin" : "customer"
+              role: ADMIN_EMAILS.has(liveEmail) ? "admin" : "customer"
             };
             localStorage.setItem("hutoon_user", JSON.stringify(state.user));
             updateViews();
@@ -10165,7 +10166,7 @@ body{
             credential = await auth.signInWithEmailAndPassword(email, password);
           } catch (error) {
             const canCreateAdmin =
-              email === ADMIN_EMAIL &&
+              ADMIN_EMAILS.has(email) &&
               password === ADMIN_PASSWORD &&
               ["auth/user-not-found", "auth/invalid-credential", "auth/invalid-login-credentials"].includes(error.code);
 
@@ -10177,7 +10178,7 @@ body{
           closeAuth();
           event.target.reset();
 
-          const basicIsAdmin = email === ADMIN_EMAIL;
+          const basicIsAdmin = ADMIN_EMAILS.has(email);
           state.user = {
             uid: credential.user.uid,
             email: credential.user.email || email,
@@ -10239,7 +10240,7 @@ body{
           return;
         }
 
-        if (email === ADMIN_EMAIL) {
+        if (ADMIN_EMAILS.has(email)) {
           showToast("هذا البريد مخصص لإدارة هتون");
           return;
         }
@@ -11334,8 +11335,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const BRAND_KEY = "hutoon_admin_brands_v1";
   const NOTIFICATION_KEY = "hutoon_admin_notifications_v1";
   const LOCAL_ACCOUNT_KEY = "hutoon_accounts_v2";
-  const ADMIN_EMAIL_FALLBACK = "admin@hutoon.om";
-  const ADMIN_PASSWORD_FALLBACK = "Hutoon@123";
+  const ADMIN_EMAIL_FALLBACK = "admin@hutoon.com";
+  const ADMIN_PASSWORD_FALLBACK = "hutoon@2026";
   let knownOrderIds = new Set();
   let notificationsReady = false;
 
@@ -11600,8 +11601,13 @@ document.addEventListener('DOMContentLoaded', function () {
 <script id="hutoon-final-auth-fix">
 (function(){
   const ACCOUNTS_KEY = "hutoon_accounts_v3";
-  const ADMIN_EMAIL = "admin@hutoon.om";
-  const ADMIN_PASSWORD = "Hutoon@123";
+  const ADMIN_EMAIL = "admin@hutoon.com";
+  const ADMIN_PASSWORD = "hutoon@2026";
+  const ADMIN_ACCOUNTS = [
+    {email:ADMIN_EMAIL,initialPassword:ADMIN_PASSWORD},
+    {email:"admin@hutoon.om",initialPassword:"Hutoon@123"}
+  ];
+  const ADMIN_EMAILS = new Set(ADMIN_ACCOUNTS.map(account=>account.email));
 
   function firebaseAuth(){
     try{return window.firebase?.auth?.()||window.auth||null}catch(_){return null}
@@ -11682,7 +11688,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const form=event.currentTarget;
     const identifier=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
-    const password=document.getElementById("loginPassword")?.value||"";
+    const password=(document.getElementById("loginPassword")?.value||"").trim();
     const button=form?.querySelector('button[type="submit"],button:not([type])');
 
     if(!identifier||!password){
@@ -11690,20 +11696,36 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    if(identifier===ADMIN_EMAIL && password===ADMIN_PASSWORD){
-      const auth=firebaseAuth();
-      if(location.protocol!=="file:"&&auth){
-        try{
+    if(ADMIN_EMAILS.has(identifier)){
+      const selectedAdmin=ADMIN_ACCOUNTS.find(account=>account.email===identifier);
+      const initialPassword=selectedAdmin?.initialPassword||ADMIN_PASSWORD;
+      const oldButtonText=button?.textContent||"تسجيل الدخول";
+      if(button){button.disabled=true;button.textContent="جاري دخول الإدارة..."}
+      try{
+        const auth=firebaseAuth();
+        if(location.protocol==="file:"){
+          if(password!==initialPassword)throw Object.assign(new Error("كلمة مرور الأدمن غير صحيحة"),{code:"auth/wrong-password"});
+          const localAdmin={uid:"local-admin",email:identifier,name:"إدارة هتون",phone:"",role:"admin",points:0,local:true};
+          setLoggedUser(localAdmin);
+          document.getElementById("adminView")?.classList.add("show");
+          window.refreshAdmin?.();
+          showToast("تم تسجيل دخول الإدارة");
+        }else{
+          if(!auth?.signInWithEmailAndPassword)throw new Error("خدمة تسجيل الدخول غير متاحة الآن");
           await enablePersistentFirebaseSession(auth);
           let credential;
           try{
-            credential=await auth.signInWithEmailAndPassword(ADMIN_EMAIL,ADMIN_PASSWORD);
+            // Firebase هو المرجع الفعلي لكلمة مرور الإدارة، حتى بعد تغييرها.
+            credential=await auth.signInWithEmailAndPassword(identifier,password);
           }catch(error){
-            if(!["auth/user-not-found","auth/invalid-credential","auth/invalid-login-credentials"].includes(error?.code))throw error;
-            credential=await auth.createUserWithEmailAndPassword(ADMIN_EMAIL,ADMIN_PASSWORD);
+            const canCreateFirstAdmin=
+              password===initialPassword&&
+              ["auth/user-not-found","auth/invalid-credential","auth/invalid-login-credentials"].includes(error?.code);
+            if(!canCreateFirstAdmin)throw error;
+            credential=await auth.createUserWithEmailAndPassword(identifier,password);
           }
           const adminUser={
-            uid:credential.user.uid,email:ADMIN_EMAIL,name:"إدارة هتون",phone:"",role:"admin",points:0
+            uid:credential.user.uid,email:identifier,name:"إدارة هتون",phone:"",role:"admin",points:0
           };
           const db=firestoreDb();
           if(db){
@@ -11715,15 +11737,25 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById("adminView")?.classList.add("show");
           window.refreshAdmin?.();
           showToast("تم تسجيل دخول الإدارة وربطها بقاعدة البيانات");
-        }catch(error){
-          console.error("Admin Firebase login:",error);
-          showToast(error?.code==="auth/email-already-in-use"?"حساب الإدارة موجود؛ تحقق من كلمة المرور":"تعذر تسجيل دخول الإدارة إلى Firebase");
-          return;
         }
-      }else{
-        enterAdmin();
+        form?.reset();
+      }catch(error){
+        console.error("Admin Firebase login:",error);
+        const code=error?.code||"";
+        let message="تعذر تسجيل دخول الإدارة";
+        if(["auth/wrong-password","auth/invalid-password","auth/invalid-credential","auth/invalid-login-credentials"].includes(code)){
+          message="كلمة مرور الأدمن غير صحيحة؛ استخدم «نسيت كلمة المرور؟» لإعادة ضبطها";
+        }else if(code==="auth/email-already-in-use"){
+          message="حساب الأدمن موجود في Firebase؛ اضغط «نسيت كلمة المرور؟» لإعادة ضبطها";
+        }else if(code==="auth/network-request-failed"){
+          message="تعذر الاتصال بالإنترنت؛ حاول مرة أخرى";
+        }else if(error?.message){
+          message=error.message;
+        }
+        showToast(message);
+      }finally{
+        if(button){button.disabled=false;button.textContent=oldButtonText}
       }
-      form?.reset();
       return;
     }
 
@@ -14637,5 +14669,154 @@ document.addEventListener('DOMContentLoaded', function () {
   box-shadow:none!important;
 }
 </style>
+<style id="hutoon-mobile-admin-ux-final">
+/* تحسين الاستخدام النهائي للهاتف ولوحة الإدارة */
+@media(max-width:768px){
+  html,body{max-width:100%;overflow-x:clip}
+  body{padding-bottom:calc(94px + env(safe-area-inset-bottom))!important}
+  header{display:none!important}
+  section{scroll-margin-top:14px}
+  button,a,input,select,textarea{touch-action:manipulation}
+  button,.btn,.mobile-nav-item{min-height:44px}
+  input,select,textarea{font-size:16px!important}
+
+  .hutoon-announcement-board{margin-top:12px!important;width:calc(100% - 20px)!important}
+  .shell{width:calc(100% - 20px)!important}
+  .hero{padding:38px 0 34px!important}
+  .hero-title-luxury .hero-title-brand{font-size:clamp(24px,7vw,34px)!important;letter-spacing:3px!important}
+  .hero-title-luxury .hero-title-main{font-size:clamp(42px,13vw,64px)!important;line-height:1.12!important}
+  .hero-actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important;gap:10px!important}
+  .hero-actions .btn{width:100%!important}
+  .hero-benefits{gap:8px!important}
+  .hero-benefits li{min-height:52px!important;padding:14px 46px 14px 14px!important;font-size:13px!important}
+  .hero-visual{min-height:310px!important}
+  .perfume-card{width:min(300px,86vw)!important}
+
+  .section-title h2{font-size:clamp(28px,9vw,40px)!important;line-height:1.25!important}
+  .service-selector,.services-grid{width:100%!important;max-width:none!important;gap:12px!important}
+  .service-selector>*,.services-grid>*{flex-basis:100%!important;max-width:100%!important}
+  .special-order-form,.wizard,.mood-quiz-card,.loyalty-overview{padding:18px 14px!important;border-radius:22px!important}
+  .form-grid{grid-template-columns:1fr!important}
+  .full-field{grid-column:auto!important}
+  .special-order-footer{align-items:stretch!important}
+  .special-order-footer .btn{width:100%!important}
+
+  .hutoon-product-filters{margin-inline:-2px;padding:10px 2px 18px!important;scroll-snap-type:x proximity}
+  .hutoon-product-filters button{scroll-snap-align:start;min-height:42px!important;padding:9px 15px!important}
+  .hutoon-products-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  .hutoon-product-media,.hutoon-product-image{height:170px!important}
+  .hutoon-product-body{padding:11px!important}
+  .hutoon-product-body h3{font-size:14px!important}
+  .hutoon-order-product{min-height:46px!important;font-size:13px!important}
+
+  .mobile-floating-nav{z-index:9000!important;bottom:calc(10px + env(safe-area-inset-bottom))!important}
+  body.hutoon-overlay-open .mobile-floating-nav,
+  body.hutoon-admin-open .mobile-floating-nav{
+    opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translate(-50%,24px)!important
+  }
+
+  .modal{z-index:11000!important;padding:8px!important;align-items:flex-end!important}
+  .modal-card{width:100%!important;max-height:calc(100dvh - 16px)!important;overflow-y:auto!important;overscroll-behavior:contain;border-radius:24px 24px 10px 10px!important;padding:20px 16px calc(18px + env(safe-area-inset-bottom))!important}
+  .auth-premium-card{padding:22px 17px calc(20px + env(safe-area-inset-bottom))!important}
+  .auth-form input{min-height:52px!important}
+  .auth-submit{width:100%!important;min-height:52px!important}
+  .close-btn{min-width:44px!important;min-height:44px!important}
+  .side-panel{z-index:11000!important;top:0!important;left:-100%!important;width:100%!important;max-width:430px!important;height:100dvh!important;padding-bottom:calc(24px + env(safe-area-inset-bottom))!important}
+  .side-panel.show{left:0!important}
+  .catalog-order-card,.sample-order-card{max-height:calc(100dvh - 16px)!important}
+  .catalog-order-submit,.sample-order-submit{position:sticky!important;bottom:0!important;z-index:5!important;min-height:52px!important}
+  .toast{right:10px!important;left:10px!important;bottom:calc(104px + env(safe-area-inset-bottom))!important;text-align:center!important;z-index:14000!important}
+
+  #adminView{z-index:12000!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;background:#faf6ee!important}
+  #adminView .admin-wrap{display:block!important;min-height:100dvh!important}
+  #adminView .admin-sidebar{
+    display:block!important;position:sticky!important;top:0!important;z-index:30!important;
+    width:100%!important;height:auto!important;padding:10px 10px 8px!important;
+    border:0!important;border-radius:0 0 18px 18px!important;box-shadow:0 10px 26px rgba(20,31,53,.22)!important
+  }
+  #adminView .admin-brand{display:flex!important;align-items:center!important;justify-content:space-between!important;padding:2px 6px 8px!important}
+  #adminView .admin-brand small,#adminView .admin-brand p{display:none!important}
+  #adminView .admin-brand h2{font-size:18px!important}
+  #adminView .admin-menu{
+    display:flex!important;grid-template-columns:none!important;gap:7px!important;margin:0!important;
+    padding:0 0 3px!important;overflow-x:auto!important;scroll-snap-type:x proximity;scrollbar-width:none
+  }
+  #adminView .admin-menu::-webkit-scrollbar{display:none}
+  #adminView .admin-menu button{
+    flex:0 0 auto!important;width:auto!important;min-height:44px!important;padding:8px 11px!important;
+    white-space:nowrap!important;scroll-snap-align:start;font-size:12px!important;transform:none!important
+  }
+  #adminView .admin-menu button span{width:26px!important;height:26px!important}
+  #adminView .admin-main{padding:12px 10px calc(34px + env(safe-area-inset-bottom))!important}
+  #adminView .admin-top{padding:16px!important;margin-bottom:12px!important;border-radius:18px!important}
+  #adminView .admin-top h2{font-size:22px!important}
+  #adminView .admin-top-actions{width:100%!important;display:grid!important;grid-template-columns:48px 1fr!important;gap:8px!important}
+  #adminView .admin-top-actions .btn{width:100%!important}
+  #adminView .dashboard-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;margin-bottom:12px!important}
+  #adminView .metric{min-height:92px!important;padding:14px!important;border-radius:15px!important}
+  #adminView .metric strong{font-size:24px!important;margin-top:9px!important}
+  #adminView .admin-perfume-manager,
+  #adminView .admin-audio-manager,
+  #adminView .admin-brand-manager,
+  #adminView .admin-discount-manager,
+  #adminView .table-card{margin-top:12px!important;padding:14px 11px!important;border-radius:18px!important;scroll-margin-top:116px}
+  #adminView .table-card{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  #adminView .table-card table{min-width:760px!important;font-size:12px!important}
+  #adminView th,#adminView td{padding:10px 8px!important}
+  #adminView .admin-perfume-grid,
+  #adminView .admin-brand-form-grid,
+  #adminView .admin-discount-grid{grid-template-columns:1fr!important}
+  #adminView .admin-perfume-grid .wide,
+  #adminView .admin-discount-grid .wide{grid-column:auto!important}
+  #adminView .admin-perfume-actions,
+  #adminView .admin-brand-actions,
+  #adminView .admin-discount-actions{display:grid!important;grid-template-columns:1fr!important}
+  #adminView .admin-perfume-actions .btn,
+  #adminView .admin-brand-actions .btn,
+  #adminView .admin-discount-actions .btn{width:100%!important;min-height:48px!important}
+  #adminView input,#adminView select,#adminView textarea{min-height:48px!important}
+  .admin-product-editor-backdrop{z-index:13000!important}
+  .admin-product-editor{width:100%!important;height:100dvh!important;padding:16px 12px calc(30px + env(safe-area-inset-bottom))!important}
+  .admin-product-editor-head{top:-16px!important;margin:-16px -12px 14px!important;padding:15px 12px!important}
+  .admin-notification-drawer{z-index:13010!important;width:100%!important;height:100dvh!important;padding-bottom:calc(22px + env(safe-area-inset-bottom))!important}
+}
+
+@media(max-width:350px){
+  .hutoon-products-grid{grid-template-columns:1fr!important}
+  #adminView .dashboard-cards{grid-template-columns:1fr!important}
+}
+</style>
+<script id="hutoon-mobile-admin-ux-final">
+(function(){
+  "use strict";
+  const body=document.body;
+  const adminView=document.getElementById("adminView");
+  const observed=[
+    adminView,
+    ...document.querySelectorAll(".modal,.side-panel,.admin-notification-drawer,.admin-product-editor-backdrop")
+  ].filter(Boolean);
+
+  function syncMobileUiState(){
+    const adminOpen=Boolean(adminView?.classList.contains("show"));
+    const overlayOpen=observed.some(element=>
+      element!==adminView&&element.classList.contains("show")
+    );
+    body.classList.toggle("hutoon-admin-open",adminOpen);
+    body.classList.toggle("hutoon-overlay-open",overlayOpen);
+    const accountLabel=document.querySelector("#mobileAccountButton span");
+    if(accountLabel){
+      const currentUser=window.state?.user||window.hutoonState?.user;
+      accountLabel.textContent=currentUser?.role==="admin"?"الإدارة":currentUser?"حسابي":"دخول";
+    }
+  }
+
+  const observer=new MutationObserver(syncMobileUiState);
+  observed.forEach(element=>observer.observe(element,{attributes:true,attributeFilter:["class"]}));
+  window.addEventListener("storage",syncMobileUiState);
+  window.addEventListener("resize",syncMobileUiState,{passive:true});
+  document.addEventListener("click",()=>setTimeout(syncMobileUiState,0));
+  syncMobileUiState();
+})();
+</script>
 </body>
 </html>

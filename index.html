@@ -11617,6 +11617,19 @@ document.addEventListener('DOMContentLoaded', function () {
     try{return window.firebase?.firestore?.()||window.db||null}catch(_){return null}
   }
 
+  function clearAuthDiagnostic(){
+    document.getElementById("authErrorPanel")?.classList.add("hidden");
+    const text=document.getElementById("authErrorText");
+    if(text)text.textContent="";
+  }
+
+  function showAuthDiagnostic(message,code=""){
+    const panel=document.getElementById("authErrorPanel");
+    const text=document.getElementById("authErrorText");
+    if(text)text.textContent=code?`${message} (${code})`:message;
+    panel?.classList.remove("hidden");
+  }
+
   async function enablePersistentFirebaseSession(auth){
     if(!auth?.setPersistence)return;
     const persistence=window.firebase?.auth?.Auth?.Persistence?.LOCAL;
@@ -11658,6 +11671,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.state = window.state || {};
     window.state.user = user;
     localStorage.setItem("hutoon_user",JSON.stringify(user));
+    clearAuthDiagnostic();
 
     if(typeof closeAuth==="function") closeAuth();
     if(typeof updateViews==="function") updateViews();
@@ -11685,6 +11699,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.hutoonFixedLogin = async function(event){
     event.preventDefault();
+    clearAuthDiagnostic();
 
     const form=event.currentTarget;
     const identifier=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
@@ -11747,11 +11762,18 @@ document.addEventListener('DOMContentLoaded', function () {
           message="كلمة مرور الأدمن غير صحيحة؛ استخدم «نسيت كلمة المرور؟» لإعادة ضبطها";
         }else if(code==="auth/email-already-in-use"){
           message="حساب الأدمن موجود في Firebase؛ اضغط «نسيت كلمة المرور؟» لإعادة ضبطها";
+        }else if(code==="auth/operation-not-allowed"){
+          message="فعّل Email/Password من Firebase Authentication ثم حاول مجددًا";
+        }else if(code==="auth/unauthorized-domain"){
+          message=`أضف نطاق ${location.hostname} إلى Authorized domains في Firebase`;
+        }else if(["auth/api-key-not-valid","auth/app-not-authorized","auth/configuration-not-found"].includes(code)){
+          message="إعدادات Firebase على الاستضافة غير مكتملة أو غير مصرح بها";
         }else if(code==="auth/network-request-failed"){
           message="تعذر الاتصال بالإنترنت؛ حاول مرة أخرى";
         }else if(error?.message){
           message=error.message;
         }
+        showAuthDiagnostic(message,code);
         showToast(message);
       }finally{
         if(button){button.disabled=false;button.textContent=oldButtonText}

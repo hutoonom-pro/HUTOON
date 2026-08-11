@@ -11617,6 +11617,19 @@ document.addEventListener('DOMContentLoaded', function () {
     try{return window.firebase?.firestore?.()||window.db||null}catch(_){return null}
   }
 
+  function withAuthTimeout(promise,timeoutMs,stage){
+    let timer;
+    const timeout=new Promise((_,reject)=>{
+      timer=setTimeout(()=>{
+        reject(Object.assign(
+          new Error(`تأخر ${stage} أكثر من المتوقع. تحقق من الإنترنت وإعدادات Firebase ثم حاول مجددًا.`),
+          {code:"auth/request-timeout",stage}
+        ));
+      },timeoutMs);
+    });
+    return Promise.race([Promise.resolve(promise),timeout]).finally(()=>clearTimeout(timer));
+  }
+
   function clearAuthDiagnostic(){
     document.getElementById("authErrorPanel")?.classList.add("hidden");
     const text=document.getElementById("authErrorText");
@@ -11633,7 +11646,13 @@ document.addEventListener('DOMContentLoaded', function () {
   async function enablePersistentFirebaseSession(auth){
     if(!auth?.setPersistence)return;
     const persistence=window.firebase?.auth?.Auth?.Persistence?.LOCAL;
-    if(persistence)await auth.setPersistence(persistence);
+    if(!persistence)return;
+    try{
+      // حفظ الجلسة مهم، لكنه لا يجب أن يمنع الدخول إذا كان اتصال الهاتف بطيئًا.
+      await withAuthTimeout(auth.setPersistence(persistence),6000,"حفظ جلسة الدخول");
+    }catch(error){
+      console.warn("Firebase persistence skipped:",error);
+    }
   }
 
   function readAccounts(){
@@ -11731,27 +11750,47 @@ document.addEventListener('DOMContentLoaded', function () {
           let credential;
           try{
             // Firebase هو المرجع الفعلي لكلمة مرور الإدارة، حتى بعد تغييرها.
-            credential=await auth.signInWithEmailAndPassword(identifier,password);
+            credential=await withAuthTimeout(
+              auth.signInWithEmailAndPassword(identifier,password),
+              20000,
+              "تسجيل دخول الإدارة"
+            );
           }catch(error){
             const canCreateFirstAdmin=
               password===initialPassword&&
               ["auth/user-not-found","auth/invalid-credential","auth/invalid-login-credentials"].includes(error?.code);
             if(!canCreateFirstAdmin)throw error;
-            credential=await auth.createUserWithEmailAndPassword(identifier,password);
+            credential=await withAuthTimeout(
+              auth.createUserWithEmailAndPassword(identifier,password),
+              20000,
+              "إنشاء حساب الإدارة"
+            );
           }
           const adminUser={
             uid:credential.user.uid,email:identifier,name:"إدارة هتون",phone:"",role:"admin",points:0
           };
-          const db=firestoreDb();
-          if(db){
-            await db.collection("users").doc(credential.user.uid).set({
-              ...adminUser,updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()
-            },{merge:true});
-          }
+
+          // افتح لوحة الإدارة فور نجاح Firebase Auth. لا تنتظر Firestore لأن
+          // قواعده أو بطء الشبكة كانا يتركان الزر معلقًا على الهاتف.
           setLoggedUser(adminUser);
           document.getElementById("adminView")?.classList.add("show");
           window.refreshAdmin?.();
-          showToast("تم تسجيل دخول الإدارة وربطها بقاعدة البيانات");
+          form?.reset();
+          showToast("تم تسجيل دخول الإدارة");
+
+          const db=firestoreDb();
+          if(db){
+            withAuthTimeout(
+              db.collection("users").doc(credential.user.uid).set({
+                ...adminUser,updatedAt:window.firebase.firestore.FieldValue.serverTimestamp()
+              },{merge:true}),
+              12000,
+              "مزامنة صلاحية الإدارة"
+            ).catch(error=>{
+              console.warn("Admin profile sync:",error);
+              showToast("تم الدخول، لكن مزامنة بيانات الإدارة متأخرة");
+            });
+          }
         }
         form?.reset();
       }catch(error){
@@ -11770,6 +11809,8 @@ document.addEventListener('DOMContentLoaded', function () {
           message="إعدادات Firebase على الاستضافة غير مكتملة أو غير مصرح بها";
         }else if(code==="auth/network-request-failed"){
           message="تعذر الاتصال بالإنترنت؛ حاول مرة أخرى";
+        }else if(code==="auth/request-timeout"){
+          message="الاتصال بخدمة تسجيل الدخول تأخر. تأكد أن Firebase يسمح بدومين الموقع ثم حاول مجددًا";
         }else if(error?.message){
           message=error.message;
         }
@@ -14808,7 +14849,7 @@ document.addEventListener('DOMContentLoaded', function () {
   #adminView .dashboard-cards{grid-template-columns:1fr!important}
 }
 </style>
-<script id="hutoon-mobile-admin-ux-final">
+<script id="hutoon-mobile-admin-ux-final-script">
 (function(){
   "use strict";
   const body=document.body;

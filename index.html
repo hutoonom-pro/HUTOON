@@ -7877,6 +7877,125 @@ body{
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style id="hutoon-cute-brands-step-one">
+/* الخطوة الأولى: تصغير شريط البراندات فقط */
+.brand-marquee-section.brand-marquee-refined{
+  padding:38px 0 36px !important;
+}
+.brand-marquee-section.brand-marquee-refined::before{
+  width:210px !important;
+  height:210px !important;
+  top:-135px !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-intro{
+  width:min(620px,calc(100% - 32px)) !important;
+  margin:0 auto 18px !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-intro small{
+  margin-bottom:6px !important;
+  font-size:9px !important;
+  letter-spacing:3px !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-intro h2{
+  margin-bottom:7px !important;
+  font-size:clamp(23px,3vw,34px) !important;
+  letter-spacing:-.5px !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-intro p{
+  max-width:560px !important;
+  font-size:12.5px !important;
+  line-height:1.7 !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-shell{
+  padding:6px 0 !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-infinite-track{
+  animation-duration:29s !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-group{
+  gap:20px !important;
+  padding-inline:10px !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark{
+  width:auto !important;
+  min-width:138px !important;
+  min-height:52px !important;
+  gap:1px !important;
+  padding:7px 10px !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark strong,
+.brand-marquee-section.brand-marquee-refined .brand-wordmark:nth-child(n) strong{
+  font-size:14px !important;
+  letter-spacing:1px !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark small{
+  font-size:9px !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark::after{
+  width:4px !important;
+  height:4px !important;
+  margin-top:5px !important;
+  border-radius:50% !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark:hover{
+  transform:translateY(-2px) scale(1.035) !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark:hover strong{
+  color:#9A7438 !important;
+  -webkit-text-fill-color:#9A7438 !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark:hover small{
+  color:#1E2E4F !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-wordmark:hover::after{
+  background:#C9A667 !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-fade{
+  width:min(72px,7vw) !important;
+}
+.brand-marquee-section.brand-marquee-refined .brand-marquee-note{
+  margin-top:14px !important;
+  font-size:10px !important;
+}
+@media(max-width:700px){
+  .brand-marquee-section.brand-marquee-refined{
+    padding:28px 0 27px !important;
+  }
+  .brand-marquee-section.brand-marquee-refined .brand-marquee-intro{
+    margin-bottom:14px !important;
+  }
+  .brand-marquee-section.brand-marquee-refined .brand-marquee-intro h2{
+    font-size:23px !important;
+  }
+  .brand-marquee-section.brand-marquee-refined .brand-marquee-intro p{
+    font-size:11.5px !important;
+    padding-inline:8px !important;
+  }
+  .brand-marquee-section.brand-marquee-refined .brand-wordmark{
+    width:auto !important;
+    min-width:112px !important;
+    min-height:46px !important;
+    padding:6px 7px !important;
+  }
+  .brand-marquee-section.brand-marquee-refined .brand-wordmark strong{
+    font-size:12px !important;
+    letter-spacing:.7px !important;
+  }
+  .brand-marquee-section.brand-marquee-refined .brand-wordmark small{
+    font-size:8px !important;
+  }
+  .brand-marquee-section.brand-marquee-refined .brand-marquee-note{
+    margin-top:11px !important;
+  }
+}
+</style>
 </head>
 <body>
 <div class="local-protocol-warning hidden" id="localProtocolWarning">
@@ -7912,8 +8031,8 @@ body{
 </div>
 <div class="nav-actions">
 <button class="icon-btn menu-toggle" onclick="toggleMenu()">☰</button>
-<button class="btn btn-outline" onclick="openProfile()">الملف الشخصي</button>
-<button class="btn btn-primary" onclick="openAuth()">تسجيل الدخول</button>
+<button aria-label="فتح حسابي" class="btn btn-outline" hidden="" id="hutoonHeaderAccountButton" onclick="openHeaderAccount()">حسابي</button>
+<button class="btn btn-primary" id="hutoonHeaderLoginButton" onclick="openAuth()">تسجيل الدخول</button>
 </div>
 </nav>
 </header>
@@ -8082,8 +8201,8 @@ body{
 <p>تجربتان أنيقتان تناسبان توزيعات مناسبتك أو هديتك المميزة.</p>
 </div>
 <div class="service-selector reveal reveal-up">
-<button class="service-choice active" onclick="selectService('distribution',this)"><span>❖</span><strong>التوزيعات</strong><small>اختر 2 أو 5 أو 10 مل</small></button>
-<button class="service-choice" onclick="selectService('gift',this)"><span>♢</span><strong>الإهداء</strong><small>هدية عطرية راقية</small></button>
+<button aria-controls="distributionServicePanel" aria-expanded="false" class="service-choice" onclick="selectService('distribution',this)" type="button"><span>❖</span><strong>التوزيعات</strong><small>اختر 2 أو 5 أو 10 مل</small></button>
+<button aria-controls="giftServicePanel" aria-expanded="false" class="service-choice" onclick="selectService('gift',this)" type="button"><span>♢</span><strong>الإهداء</strong><small>هدية عطرية راقية</small></button>
 </div>
 <div class="service-panel" id="customServicePanel" style="display:none!important">
 <div class="service-panel-head"><div><small>01 • CUSTOM PERFUME</small><h3>اطلب عطرك على مزاجك</h3><p>اختر الاسم والحجم والكمية ثم أضف ملاحظاتك.</p></div><span class="panel-badge">خاص بك</span></div>
@@ -8097,9 +8216,9 @@ body{
 <div class="wizard-nav"><button class="btn btn-outline" id="prevBtn" onclick="prevStep()">السابق</button><button class="btn btn-primary" id="nextBtn" onclick="nextStep()">التالي</button></div>
 </div>
 </div>
-<div class="service-panel active" id="distributionServicePanel">
+<div class="service-panel" id="distributionServicePanel">
 <div class="service-panel-head"><div><small>02 • EVENT DISTRIBUTIONS</small><h3>توزيعات هتون</h3><p>عبوات عطر بحجم ثابت 2 مل للأعراس والمناسبات والفعاليات.</p></div><span class="panel-badge">2 مل</span></div>
-<form class="special-order-form" onsubmit="submitSpecialOrder(event,'distribution')">
+<form class="special-order-form" id="distributionOrderForm" onsubmit="submitSpecialOrder(event,'distribution')">
 <div class="form-grid">
 <label><span>اسم المناسبة</span><input id="distributionEvent" placeholder="مثال: زفاف، تخرج، مولود" required=""/></label>
 <label><span>الاسم أو العبارة</span><input id="distributionName" placeholder="المطلوب كتابته على التوزيعة" required=""/></label>
@@ -8129,7 +8248,7 @@ body{
 </div>
 <div class="service-panel" id="giftServicePanel">
 <div class="service-panel-head"><div><small>03 • GIFT EXPERIENCE</small><h3>إهداء من هتون</h3><p>اختر تفاصيل الهدية واترك لنا تقديمها بصورة تليق بالمناسبة.</p></div><span class="panel-badge">إهداء</span></div>
-<form class="special-order-form" onsubmit="submitSpecialOrder(event,'gift')">
+<form class="special-order-form" id="giftOrderForm" onsubmit="submitSpecialOrder(event,'gift')">
 <div class="form-grid">
 <label><span>اسم المُهدي</span><input id="giftSender" placeholder="اسم الشخص المُرسل" required=""/></label>
 <label>
@@ -8394,7 +8513,7 @@ body{
 <small class="auth-kicker">HUTOON ACCESS</small>
 <h3>مرحبًا بك في هتون</h3>
 </div>
-<button class="close-btn" onclick="closeAuth()">×</button>
+<button aria-label="إغلاق نافذة تسجيل الدخول" class="close-btn auth-close-button" id="hutoonAuthCloseButton" onclick="closeAuth()" type="button">×</button>
 </div>
 <div class="tabs customer-tabs">
 <button class="tab active" id="loginTab" onclick="switchAuth('login')">تسجيل الدخول</button>
@@ -8416,7 +8535,7 @@ body{
 <label class="auth-label">رقم الهاتف</label>
 <input id="regPhone" placeholder="مثال: 9XXXXXXX" required="" type="tel"/>
 <label class="auth-label">كلمة المرور</label>
-<input id="regPassword" minlength="4" placeholder="أنشئ كلمة مرور" required="" type="password"/>
+<input autocomplete="new-password" id="regPassword" minlength="6" placeholder="6 أحرف على الأقل" required="" type="password"/>
 <button class="btn btn-primary auth-submit">إنشاء الحساب</button>
 </form>
 <p class="auth-note">يتم تحديد صلاحية الحساب تلقائيًا بعد تسجيل الدخول.</p>
@@ -8653,6 +8772,21 @@ body{
 </section>
 
 <section class="admin-perfume-manager" id="perfumeAdminSection">
+<div class="admin-cloudinary-panel">
+  <div class="admin-audio-title">
+    <div><small>MEDIA UPLOAD</small><h3>ربط الصور والصوت</h3><p>أدخل إعدادات Cloudinary مرة واحدة ليعمل رفع صور المنتجات وملفات الصوت.</p></div>
+    <span>☁</span>
+  </div>
+  <div class="cloudinary-config-grid">
+    <label>Cloud Name<input id="cloudinaryCloudName" autocomplete="off" placeholder="اسم السحابة"/></label>
+    <label>Unsigned Upload Preset<input id="cloudinaryUploadPreset" autocomplete="off" placeholder="اسم إعداد الرفع"/></label>
+  </div>
+  <div class="admin-brand-actions">
+    <button class="btn btn-primary" type="button" onclick="saveCloudinarySettings()">حفظ إعداد الرفع</button>
+    <button class="btn btn-outline" type="button" onclick="testCloudinarySettings()">فحص الإعداد</button>
+  </div>
+  <div class="cloudinary-status" id="cloudinaryStatus"><span class="status-dot"></span><strong>أكمل Cloud Name وUnsigned Upload Preset لتفعيل الرفع</strong></div>
+</div>
 <div class="admin-products-head">
   <div>
     <small>PRODUCT CATALOG</small>
@@ -8693,7 +8827,7 @@ body{
       <button type="button" class="admin-product-editor-close" onclick="closeProductEditor()">×</button>
     </div>
 
-<form class="admin-perfume-form" onsubmit="savePerfumeWithCloudinary(event)">
+<form class="admin-perfume-form" id="hutoonProductForm" novalidate onsubmit="return hutoonStableProductSubmit(event)">
 <input id="perfumeEditId" type="hidden"/>
 <div class="admin-perfume-grid">
 <label>
@@ -8832,8 +8966,9 @@ body{
 </select>
 </label>
 </div>
+<div aria-live="assertive" class="hutoon-product-save-status show" id="hutoonProductSaveStatus" role="status">جاهز لحفظ المنتج</div>
 <div class="admin-perfume-actions">
-<button class="btn btn-primary admin-product-save" type="submit">حفظ المنتج ونشره</button>
+<button class="btn btn-primary admin-product-save" id="hutoonProductSaveButton" type="submit">حفظ المنتج ونشره</button>
 <button class="btn btn-outline" onclick="closeProductEditor()" type="button">إلغاء</button>
 </div>
 </form>
@@ -8986,7 +9121,9 @@ body{
     }
 
     function openAuth(){
-      document.getElementById("authModal").classList.add("show");
+      const modal=document.getElementById("authModal");
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden","false");
       switchAuth("login");
     }
     function closeAuth(){document.getElementById("authModal").classList.remove("show")}
@@ -9012,7 +9149,7 @@ body{
       const password = document.getElementById("loginPassword").value;
 
       const adminEmail = "admin@hutoon.com";
-      const adminPassword = "hutoon@2026";
+      const adminPassword = "";
 
       // Admin login is detected automatically and never appears as a separate option.
       if(identifier.toLowerCase() === adminEmail && password === adminPassword){
@@ -9543,7 +9680,7 @@ body{
       };
 
       const ADMIN_EMAIL = "admin@hutoon.com";
-      const ADMIN_PASSWORD = "hutoon@2026";
+      const ADMIN_PASSWORD = "";
       const ADMIN_EMAILS = new Set([ADMIN_EMAIL,"admin@hutoon.om"]);
 
       const openedAsFile = window.location.protocol === "file:";
@@ -11240,6 +11377,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function openMobileAccount(){
+    if(typeof window.openHeaderAccount === "function"){
+      window.openHeaderAccount();
+      return;
+    }
     try{
       if(typeof state !== "undefined" && state && state.user){
         if(typeof openProfile === "function") openProfile();
@@ -11336,7 +11477,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const NOTIFICATION_KEY = "hutoon_admin_notifications_v1";
   const LOCAL_ACCOUNT_KEY = "hutoon_accounts_v2";
   const ADMIN_EMAIL_FALLBACK = "admin@hutoon.com";
-  const ADMIN_PASSWORD_FALLBACK = "hutoon@2026";
+  const ADMIN_PASSWORD_FALLBACK = "";
   let knownOrderIds = new Set();
   let notificationsReady = false;
 
@@ -11598,14 +11739,14 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 })();
 </script>
-<script id="hutoon-final-auth-fix">
+<script type="application/hutoon-disabled" id="hutoon-final-auth-fix">
 (function(){
   const ACCOUNTS_KEY = "hutoon_accounts_v3";
   const ADMIN_EMAIL = "admin@hutoon.com";
-  const ADMIN_PASSWORD = "hutoon@2026";
+  const ADMIN_PASSWORD = "";
   const ADMIN_ACCOUNTS = [
     {email:ADMIN_EMAIL,initialPassword:ADMIN_PASSWORD},
-    {email:"admin@hutoon.om",initialPassword:"Hutoon@123"}
+    {email:"admin@hutoon.om",initialPassword:""}
   ];
   const ADMIN_EMAILS = new Set(ADMIN_ACCOUNTS.map(account=>account.email));
 
@@ -12650,7 +12791,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<script id="hutoon-session-restore">
+<script type="application/hutoon-disabled" id="hutoon-session-restore">
 (function(){
   function restoreHutoonSession(){
     try{
@@ -12679,7 +12820,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<script id="hutoon-persistent-login-fix">
+<script type="application/hutoon-disabled" id="hutoon-persistent-login-fix">
 (function(){
   const USER_KEY="hutoon_user";
   const SESSION_KEY="hutoon_session_persistent";
@@ -12774,7 +12915,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<script id="hutoon-loyalty-session-fix">
+<script type="application/hutoon-disabled" id="hutoon-loyalty-session-fix">
 (function(){
   "use strict";
 
@@ -12863,7 +13004,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<script id="hutoon-audited-system-support">
+<script type="application/hutoon-disabled" id="hutoon-audited-system-support">
 (function(){
   "use strict";
 
@@ -13176,7 +13317,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<script id="hutoon-cloudinary-launch">
+<script type="application/hutoon-disabled" id="hutoon-cloudinary-launch">
 (function(){
   "use strict";
 
@@ -13868,7 +14009,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<script id="hutoon-easy-product-admin">
+<script type="application/hutoon-disabled" id="hutoon-easy-product-admin">
 (function(){
   "use strict";
 
@@ -14023,7 +14164,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 
-<script id="hutoon-commerce-loyalty-final">
+<script type="application/hutoon-disabled" id="hutoon-commerce-loyalty-final">
 (function(){
   "use strict";
 
@@ -14879,6 +15020,1618 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener("resize",syncMobileUiState,{passive:true});
   document.addEventListener("click",()=>setTimeout(syncMobileUiState,0));
   syncMobileUiState();
+})();
+</script>
+<style id="hutoon-stable-release-style">
+:root{
+  --hutoon-cream:#fbf7ef;
+  --hutoon-mood:#f1e8d9;
+  --hutoon-card:#fffdf9;
+  --hutoon-navy:#16213a;
+  --hutoon-gold:#b88b45;
+  --hutoon-line:rgba(184,139,69,.24);
+}
+body{background:var(--hutoon-cream)!important}
+.hutoon-products-section{
+  background:linear-gradient(180deg,#fffdf9 0%,#f8f1e6 100%)!important;
+  border-block:1px solid var(--hutoon-line)!important;
+  padding-block:88px!important;
+}
+.hutoon-products-head h2,.mood-quiz-section h2{letter-spacing:-.04em}
+.hutoon-products-grid{gap:22px!important}
+.hutoon-product-card{
+  overflow:hidden!important;border:1px solid var(--hutoon-line)!important;
+  border-radius:26px!important;background:rgba(255,253,249,.96)!important;
+  box-shadow:0 18px 45px rgba(22,33,58,.09)!important;
+  transition:transform .25s ease,box-shadow .25s ease!important;
+}
+.hutoon-product-card:hover{transform:translateY(-6px)!important;box-shadow:0 26px 60px rgba(22,33,58,.14)!important}
+.hutoon-product-image{background:linear-gradient(145deg,#f6eee1,#fff)!important}
+.hutoon-product-image img{aspect-ratio:1/1!important;object-fit:contain!important;padding:18px!important}
+.hutoon-product-actions{display:grid!important;grid-template-columns:1fr 48px!important;gap:10px!important}
+.hutoon-order-product{display:grid!important;place-items:center!important;border-radius:14px!important}
+.hutoon-play-audio{width:48px!important;height:48px!important;border-radius:14px!important}
+/* الخطوة الرابعة: اختيار الخدمة ثم فتح تفاصيلها */
+#creator .service-selector{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:min(820px,100%)!important;
+  margin:0 auto 20px!important;
+  gap:14px!important;
+}
+#creator .service-selector .service-choice{
+  position:relative!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:106px!important;
+  display:grid!important;
+  grid-template-columns:54px minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  column-gap:14px!important;
+  row-gap:2px!important;
+  padding:20px!important;
+  text-align:right!important;
+  background:rgba(255,253,249,.94)!important;
+  color:var(--hutoon-navy)!important;
+  border:1px solid var(--hutoon-line)!important;
+  border-radius:24px!important;
+  box-shadow:0 13px 32px rgba(22,33,58,.075)!important;
+  transform:none!important;
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease!important;
+}
+#creator .service-selector .service-choice>span{
+  grid-column:1!important;
+  grid-row:1/3!important;
+  width:52px!important;
+  height:52px!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  color:var(--hutoon-gold)!important;
+  background:#f7efe3!important;
+  border:1px solid var(--hutoon-line)!important;
+  border-radius:17px!important;
+  font-size:22px!important;
+}
+#creator .service-selector .service-choice>strong{
+  grid-column:2!important;
+  grid-row:1!important;
+  color:var(--hutoon-navy)!important;
+  font-size:18px!important;
+  line-height:1.35!important;
+}
+#creator .service-selector .service-choice>small{
+  grid-column:2!important;
+  grid-row:2!important;
+  color:#647087!important;
+  font-size:12px!important;
+  line-height:1.6!important;
+}
+#creator .service-selector .service-choice::after{
+  content:"أكمل التفاصيل  ←"!important;
+  grid-column:3!important;
+  grid-row:1/3!important;
+  padding:8px 10px!important;
+  color:#8b672f!important;
+  background:#f8f0e4!important;
+  border-radius:999px!important;
+  font-size:10px!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+}
+#creator .service-selector .service-choice:hover{
+  transform:translateY(-3px)!important;
+  border-color:rgba(184,139,69,.48)!important;
+  box-shadow:0 19px 40px rgba(22,33,58,.12)!important;
+}
+#creator .service-selector .service-choice.active{
+  background:linear-gradient(135deg,var(--hutoon-navy),#263454)!important;
+  border-color:var(--hutoon-navy)!important;
+  box-shadow:0 20px 46px rgba(22,33,58,.2)!important;
+}
+#creator .service-selector .service-choice.active>span{
+  color:var(--hutoon-navy)!important;
+  background:linear-gradient(145deg,#ead8b9,#cda968)!important;
+  border-color:rgba(255,255,255,.2)!important;
+}
+#creator .service-selector .service-choice.active>strong{
+  color:#fff!important;
+}
+#creator .service-selector .service-choice.active>small{
+  color:rgba(255,255,255,.72)!important;
+}
+#creator .service-selector .service-choice.active::after{
+  content:"التفاصيل مفتوحة  ↓"!important;
+  color:#fff!important;
+  background:rgba(255,255,255,.12)!important;
+}
+#creator .service-panel.active{
+  display:block!important;
+  animation:hutoonServiceDetailsOpen .34s ease both!important;
+  transform-origin:top center!important;
+}
+@keyframes hutoonServiceDetailsOpen{
+  from{opacity:0;transform:translateY(-12px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@media(max-width:700px){
+  #creator .service-selector{grid-template-columns:1fr!important;gap:10px!important}
+  #creator .service-selector .service-choice{
+    min-height:98px!important;
+    grid-template-columns:48px minmax(0,1fr)!important;
+    padding:16px!important;
+    border-radius:20px!important;
+  }
+  #creator .service-selector .service-choice>span{width:46px!important;height:46px!important;border-radius:15px!important}
+  #creator .service-selector .service-choice::after{
+    grid-column:1/-1!important;
+    grid-row:3!important;
+    justify-self:start!important;
+    margin-top:7px!important;
+    padding:6px 9px!important;
+  }
+}
+/* الخطوة الخامسة: سؤال واحد في كل مرة داخل تفاصيل الطلب */
+#creator .service-panel .special-order-form.hutoon-question-flow{
+  padding:0!important;
+  overflow:hidden!important;
+  background:rgba(255,253,249,.96)!important;
+  border:1px solid var(--hutoon-line)!important;
+  border-radius:28px!important;
+  box-shadow:0 22px 58px rgba(22,33,58,.1)!important;
+}
+#creator .hutoon-question-progress{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:16px!important;
+  padding:18px 22px!important;
+  color:#68748a!important;
+  background:linear-gradient(180deg,#fffdf9,#faf4ea)!important;
+  border-bottom:1px solid var(--hutoon-line)!important;
+}
+#creator .hutoon-question-progress-track{
+  height:7px!important;
+  overflow:hidden!important;
+  background:#ebe3d7!important;
+  border-radius:999px!important;
+}
+#creator .hutoon-question-progress-bar{
+  display:block!important;
+  width:0;
+  height:100%!important;
+  background:linear-gradient(90deg,var(--hutoon-gold),#d3b073)!important;
+  border-radius:inherit!important;
+  transition:width .32s ease!important;
+}
+#creator .hutoon-question-progress-text{
+  min-width:92px!important;
+  color:var(--hutoon-navy)!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+}
+#creator .hutoon-question-stage{
+  display:block!important;
+  padding:0!important;
+}
+#creator .hutoon-question-step{
+  display:none!important;
+  min-height:360px!important;
+  padding:38px clamp(20px,5vw,58px) 30px!important;
+  background:
+    radial-gradient(circle at 90% 8%,rgba(184,139,69,.08),transparent 28%),
+    linear-gradient(180deg,#fffdf9 0%,#fbf6ed 100%)!important;
+}
+#creator .hutoon-question-step.active{
+  display:flex!important;
+  flex-direction:column!important;
+  animation:hutoonQuestionIn .3s ease both!important;
+}
+@keyframes hutoonQuestionIn{
+  from{opacity:0;transform:translateX(-14px)}
+  to{opacity:1;transform:translateX(0)}
+}
+#creator .hutoon-question-head{
+  max-width:620px!important;
+  margin-bottom:26px!important;
+}
+#creator .hutoon-question-head small{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:28px!important;
+  padding:5px 11px!important;
+  color:#8b672f!important;
+  background:#f6ecdc!important;
+  border:1px solid var(--hutoon-line)!important;
+  border-radius:999px!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.04em!important;
+}
+#creator .hutoon-question-head h3{
+  margin:13px 0 6px!important;
+  color:var(--hutoon-navy)!important;
+  font-size:clamp(24px,4vw,34px)!important;
+  line-height:1.35!important;
+  letter-spacing:-.035em!important;
+}
+#creator .hutoon-question-head p{
+  margin:0!important;
+  color:#6e788a!important;
+  font-size:13px!important;
+  line-height:1.8!important;
+}
+#creator .hutoon-question-fields{
+  width:min(660px,100%)!important;
+}
+#creator .hutoon-question-fields>label{
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+}
+#creator .hutoon-question-fields>label>span:first-child{display:none!important}
+#creator .hutoon-question-fields input,
+#creator .hutoon-question-fields select,
+#creator .hutoon-question-fields textarea{
+  width:100%!important;
+  min-height:58px!important;
+  padding:15px 17px!important;
+  color:var(--hutoon-navy)!important;
+  background:#fff!important;
+  border:1px solid rgba(22,33,58,.14)!important;
+  border-radius:17px!important;
+  outline:none!important;
+  box-shadow:0 9px 24px rgba(22,33,58,.055)!important;
+  font:inherit!important;
+  font-size:15px!important;
+  transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease!important;
+}
+#creator .hutoon-question-fields textarea{min-height:132px!important;resize:vertical!important}
+#creator .hutoon-question-fields input:focus,
+#creator .hutoon-question-fields select:focus,
+#creator .hutoon-question-fields textarea:focus{
+  border-color:rgba(184,139,69,.72)!important;
+  box-shadow:0 0 0 4px rgba(184,139,69,.12),0 12px 28px rgba(22,33,58,.07)!important;
+  transform:translateY(-1px)!important;
+}
+#creator .hutoon-question-fields .privacy-note{
+  display:block!important;
+  margin-top:10px!important;
+  padding:10px 12px!important;
+  color:#6c7482!important;
+  background:#f7f1e8!important;
+  border-radius:12px!important;
+  font-size:11px!important;
+  line-height:1.7!important;
+}
+#creator .hutoon-question-nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin-top:auto!important;
+  padding-top:34px!important;
+}
+#creator .hutoon-question-next,
+#creator .hutoon-question-back{
+  min-height:50px!important;
+  padding:12px 24px!important;
+  border-radius:15px!important;
+  font:inherit!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  cursor:pointer!important;
+  transition:transform .2s ease,box-shadow .2s ease!important;
+}
+#creator .hutoon-question-next{
+  margin-inline-start:auto!important;
+  color:#fff!important;
+  background:linear-gradient(135deg,var(--hutoon-navy),#293858)!important;
+  border:1px solid var(--hutoon-navy)!important;
+  box-shadow:0 12px 25px rgba(22,33,58,.17)!important;
+}
+#creator .hutoon-question-back{
+  color:var(--hutoon-navy)!important;
+  background:#fff!important;
+  border:1px solid rgba(22,33,58,.14)!important;
+}
+#creator .hutoon-question-next:hover,
+#creator .hutoon-question-back:hover{transform:translateY(-2px)!important}
+#creator .hutoon-service-review{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin-bottom:18px!important;
+}
+#creator .hutoon-review-item{
+  min-height:74px!important;
+  padding:13px 15px!important;
+  background:#fff!important;
+  border:1px solid var(--hutoon-line)!important;
+  border-radius:16px!important;
+}
+#creator .hutoon-review-item small{
+  display:block!important;
+  margin-bottom:5px!important;
+  color:#8a7251!important;
+  font-size:10px!important;
+  font-weight:800!important;
+}
+#creator .hutoon-review-item strong{
+  display:block!important;
+  overflow-wrap:anywhere!important;
+  color:var(--hutoon-navy)!important;
+  font-size:13px!important;
+  line-height:1.6!important;
+}
+#creator .hutoon-question-final-nav{
+  display:flex!important;
+  justify-content:flex-start!important;
+  margin:0 0 16px!important;
+}
+#creator .hutoon-question-final .hutoon-order-coupon{
+  margin:0 0 16px!important;
+}
+#creator .hutoon-question-final .special-order-footer{
+  margin-top:auto!important;
+}
+@media(max-width:700px){
+  #creator .service-panel .special-order-form.hutoon-question-flow{border-radius:22px!important}
+  #creator .hutoon-question-progress{padding:14px 16px!important;gap:10px!important}
+  #creator .hutoon-question-progress-text{min-width:78px!important;font-size:10px!important}
+  #creator .hutoon-question-step{min-height:410px!important;padding:28px 16px 20px!important}
+  #creator .hutoon-question-head{margin-bottom:20px!important}
+  #creator .hutoon-question-head h3{font-size:25px!important}
+  #creator .hutoon-service-review{grid-template-columns:1fr!important}
+  #creator .hutoon-question-next,#creator .hutoon-question-back{min-height:48px!important;padding:11px 18px!important}
+  #creator .hutoon-question-final .special-order-footer{align-items:stretch!important}
+  #creator .hutoon-question-final .special-order-footer .btn{width:100%!important}
+}
+.mood-quiz-section{
+  background:
+    radial-gradient(circle at 12% 20%,rgba(255,255,255,.9),transparent 28%),
+    linear-gradient(135deg,#f5ecdf 0%,#eadbc6 100%)!important;
+  color:var(--hutoon-navy)!important;padding-block:92px!important;
+  border-bottom:1px solid var(--hutoon-line)!important;
+}
+.mood-quiz-section .section-title small{color:#8c642a!important}
+.mood-quiz-section .mood-quiz-card{
+  background:rgba(255,253,249,.9)!important;border:1px solid rgba(184,139,69,.3)!important;
+  box-shadow:0 26px 70px rgba(70,45,16,.13)!important;backdrop-filter:blur(18px)!important;
+}
+.mood-quiz-section .quiz-options button{
+  color:var(--hutoon-navy)!important;background:#fffaf2!important;border:1px solid var(--hutoon-line)!important;
+}
+.mood-quiz-section .quiz-options button.selected{
+  color:#fff!important;background:var(--hutoon-navy)!important;border-color:var(--hutoon-navy)!important;
+}
+/* الخطوة الثالثة: توحيد خلفية عطرك على مزاجك مع ألوان الموقع */
+#moodQuiz.mood-quiz-section{
+  background:
+    radial-gradient(circle at 82% 16%,rgba(184,139,69,.075),transparent 27%),
+    radial-gradient(circle at 12% 88%,rgba(22,33,58,.035),transparent 24%),
+    linear-gradient(180deg,var(--hutoon-cream) 0%,#f8f1e6 100%)!important;
+  color:var(--hutoon-navy)!important;
+  border-block:1px solid var(--hutoon-line)!important;
+}
+#moodQuiz.mood-quiz-section::before{
+  background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 38%)!important;
+}
+#moodQuiz.mood-quiz-section .mood-quiz-card{
+  background:rgba(255,253,249,.94)!important;
+  border-color:var(--hutoon-line)!important;
+  box-shadow:0 22px 55px rgba(22,33,58,.09)!important;
+}
+.hutoon-sync-banner{
+  position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:20000;
+  display:flex;align-items:center;gap:9px;max-width:calc(100% - 28px);padding:10px 15px;
+  border:1px solid var(--hutoon-line);border-radius:999px;background:rgba(255,253,249,.95);
+  color:var(--hutoon-navy);box-shadow:0 10px 28px rgba(22,33,58,.14);font-size:13px;font-weight:800;
+}
+.hutoon-sync-banner[data-state="ready"]{color:#216a52}.hutoon-sync-banner[data-state="error"]{color:#9d3535}
+.hutoon-sync-dot{width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 5px currentColor;opacity:.75}
+#hutoonHeaderLoginButton[hidden],#hutoonHeaderAccountButton[hidden]{display:none!important}
+#hutoonHeaderAccountButton{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:7px!important;
+}
+#hutoonHeaderAccountButton::before{
+  content:"◌";
+  color:var(--hutoon-gold);
+  font-size:16px;
+  line-height:1;
+}
+#authModal .auth-premium-card{position:relative!important}
+#authModal .auth-close-button{
+  position:absolute!important;
+  top:18px!important;
+  inset-inline-end:18px!important;
+  z-index:10!important;
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  min-height:46px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0 0 3px!important;
+  color:var(--hutoon-navy)!important;
+  background:#fffdf9!important;
+  border:1px solid rgba(184,139,69,.32)!important;
+  border-radius:50%!important;
+  box-shadow:0 10px 25px rgba(0,0,0,.18)!important;
+  font-family:Arial,sans-serif!important;
+  font-size:29px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  cursor:pointer!important;
+  transition:transform .2s ease,background .2s ease!important;
+}
+#authModal .auth-close-button:hover{
+  transform:scale(1.07)!important;
+  background:#f4eadb!important;
+}
+#authModal .auth-close-button:focus-visible{
+  outline:3px solid rgba(216,199,158,.55)!important;
+  outline-offset:3px!important;
+}
+@media(max-width:620px){
+  #authModal .auth-close-button{top:13px!important;inset-inline-end:13px!important}
+  #authModal .modal-head{padding-inline-end:50px!important}
+}
+/* الخطوة العاشرة: ترتيب بسيط وموحد لكل أقسام الواجهة */
+body>main>section:not(.hero):not(.brand-marquee-section){
+  padding-block:clamp(58px,7vw,82px)!important;
+  border-bottom:1px solid rgba(184,139,69,.14)!important;
+}
+body>main>section>.shell{
+  width:min(1160px,calc(100% - 32px))!important;
+  margin-inline:auto!important;
+}
+body>main>section .section-title{
+  width:min(720px,100%)!important;
+  margin:0 auto 32px!important;
+  text-align:center!important;
+}
+body>main>section .section-title>small{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:27px!important;
+  padding:5px 11px!important;
+  color:#8b672f!important;
+  background:rgba(184,139,69,.09)!important;
+  border:1px solid rgba(184,139,69,.18)!important;
+  border-radius:999px!important;
+  font-size:9px!important;
+  font-weight:900!important;
+  letter-spacing:.12em!important;
+}
+body>main>section .section-title>h2{
+  margin:12px 0 8px!important;
+  color:var(--hutoon-navy)!important;
+  font-size:clamp(28px,4vw,42px)!important;
+  line-height:1.28!important;
+  letter-spacing:-.04em!important;
+}
+body>main>section .section-title>p{
+  width:min(610px,100%)!important;
+  margin-inline:auto!important;
+  color:#6e788a!important;
+  font-size:14px!important;
+  line-height:1.85!important;
+}
+body>main>section .lux-card,
+body>main>section .hutoon-product-card,
+body>main>section .mood-quiz-card,
+body>main>section .loyalty-overview,
+body>main>section .contact-card{
+  border-radius:22px!important;
+  box-shadow:0 13px 34px rgba(22,33,58,.07)!important;
+}
+body.hutoon-pop-ready .hutoon-pop-target{
+  opacity:1!important;
+  transform:none!important;
+  will-change:opacity,transform!important;
+}
+body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
+  animation:hutoonSectionSafePop .62s cubic-bezier(.2,.85,.25,1) both!important;
+}
+@keyframes hutoonSectionSafePop{
+  from{opacity:.68;transform:translateY(22px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@media(max-width:700px){
+  body>main>section:not(.hero):not(.brand-marquee-section){padding-block:50px!important}
+  body>main>section>.shell{width:min(100% - 22px,1160px)!important}
+  body>main>section .section-title{margin-bottom:24px!important}
+  body>main>section .section-title>h2{font-size:29px!important}
+  body>main>section .section-title>p{font-size:12.5px!important;line-height:1.75!important}
+}
+@media(prefers-reduced-motion:reduce){
+  body.hutoon-pop-ready .hutoon-pop-target{
+    opacity:1!important;
+    transform:none!important;
+    transition:none!important;
+    animation:none!important;
+  }
+}
+.hutoon-field-help{display:block;margin-top:7px;color:#6d7789;font-size:12px}
+.admin-perfume-row{border-color:var(--hutoon-line)!important;background:#fffdf9!important}
+.admin-products-summary span{background:#f6eee2!important;border:1px solid var(--hutoon-line)!important;color:var(--hutoon-navy)!important}
+.hutoon-product-live{display:inline-flex;align-items:center;gap:6px;color:#27745a;font-size:11px;font-weight:800}
+.hutoon-product-live::before{content:"";width:7px;height:7px;border-radius:50%;background:#36a878}
+.hutoon-product-save-status{
+  display:none;grid-column:1/-1;padding:12px 14px;border:1px solid var(--hutoon-line);
+  border-radius:14px;background:#fffaf2;color:var(--hutoon-navy);font-size:13px;font-weight:800;
+}
+.hutoon-product-save-status.show{display:flex;align-items:center;gap:9px}
+.hutoon-product-save-status.error{color:#9d3535;border-color:rgba(157,53,53,.28);background:#fff3f1}
+.hutoon-product-save-status.success{color:#216a52;border-color:rgba(33,106,82,.25);background:#f1fbf7}
+.admin-product-save[disabled]{opacity:.7!important;cursor:wait!important}
+@media(max-width:720px){
+  .hutoon-products-section,.mood-quiz-section{padding-block:58px!important}
+  .hutoon-product-card{border-radius:20px!important}
+  .hutoon-sync-banner{top:10px;font-size:11px}
+}
+</style>
+<script id="hutoon-stable-release">
+(function(){
+  "use strict";
+
+  const ADMIN_EMAILS=new Set(["admin@hutoon.com","admin@hutoon.om"]);
+  const FALLBACK_IMAGE="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=82";
+  const CLOUD_KEY="hutoon_cloudinary_config_v1";
+  const ACCOUNT_KEYS=["hutoon_accounts_v3","hutoon_accounts_v2"];
+  const POINTS_PER_OMR=30;
+  let liveProducts=[];
+  let productUnsubscribe=null;
+  let profileUnsubscribe=null;
+  let orderUnsubscribe=null;
+  let brandUnsubscribe=null;
+  let discountUnsubscribe=null;
+  let activeAudio=null;
+  let productCollectionEmpty=false;
+  let quizState={step:0,gender:"",mood:""};
+  let verifiedAdminUid=null;
+  let adminGuardObserver=null;
+
+  const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  const enc=value=>encodeURIComponent(String(value??""));
+  const money=value=>Number(value||0)>0?Number(value).toFixed(3)+" ر.ع":"السعر عند الطلب";
+  const firebaseAuth=()=>{try{return window.firebase?.auth?.()||null}catch(_){return null}};
+  const firestore=()=>{try{return window.firebase?.firestore?.()||null}catch(_){return null}};
+  const timestamp=()=>window.firebase?.firestore?.FieldValue?.serverTimestamp?.()||new Date().toISOString();
+
+  function notify(message){
+    if(typeof window.showToast==="function")window.showToast(message);
+    else console.info(message);
+  }
+
+  function withTimeout(promise,timeoutMs,message){
+    let timer;
+    const timeout=new Promise((_,reject)=>{
+      timer=setTimeout(()=>reject(Object.assign(new Error(message),{code:"hutoon/timeout"})),timeoutMs);
+    });
+    return Promise.race([Promise.resolve(promise),timeout]).finally(()=>clearTimeout(timer));
+  }
+
+  function productSaveStatus(message,type=""){
+    const form=document.querySelector(".admin-perfume-form");if(!form)return;
+    let box=document.getElementById("hutoonProductSaveStatus");
+    if(!box){
+      box=document.createElement("div");box.id="hutoonProductSaveStatus";box.className="hutoon-product-save-status";
+      form.querySelector(".admin-perfume-actions")?.insertAdjacentElement("beforebegin",box);
+    }
+    box.className="hutoon-product-save-status show"+(type?" "+type:"");box.textContent=message;
+  }
+
+  function setSyncStatus(state,text){
+    let banner=document.getElementById("hutoonSyncBanner");
+    if(!banner){
+      banner=document.createElement("div");
+      banner.id="hutoonSyncBanner";
+      banner.className="hutoon-sync-banner";
+      banner.innerHTML='<span class="hutoon-sync-dot"></span><span></span>';
+      document.body.appendChild(banner);
+    }
+    banner.dataset.state=state;
+    banner.querySelector("span:last-child").textContent=text;
+    clearTimeout(setSyncStatus.timer);
+    setSyncStatus.timer=setTimeout(()=>banner.remove(),state==="error"?6500:2600);
+  }
+
+  function authMessage(error){
+    const code=error?.code||"";
+    const messages={
+      "auth/email-already-in-use":"هذا البريد مسجل مسبقًا — استخدم تسجيل الدخول أو نسيت كلمة المرور",
+      "auth/invalid-email":"البريد الإلكتروني غير صحيح",
+      "auth/weak-password":"كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+      "auth/invalid-credential":"البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      "auth/invalid-login-credentials":"البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      "auth/user-not-found":"الحساب غير موجود",
+      "auth/wrong-password":"كلمة المرور غير صحيحة",
+      "auth/too-many-requests":"محاولات كثيرة؛ انتظر قليلًا ثم حاول من جديد",
+      "auth/network-request-failed":"تعذر الاتصال بالخدمة؛ تحقق من الإنترنت",
+      "auth/unauthorized-domain":"نطاق الموقع غير مضاف في Firebase Authorized domains",
+      "auth/operation-not-allowed":"فعّل Email/Password في Firebase Authentication",
+      "permission-denied":"قواعد Firestore تمنع الحفظ؛ انشر ملف firestore.rules المرفق",
+      "hutoon/timeout":"تأخر اتصال المتجر. تحقق من الإنترنت وقواعد Firestore ثم حاول مجددًا"
+    };
+    return messages[code]||error?.message||"حدث خطأ غير متوقع";
+  }
+
+  function setUser(user){
+    window.state=window.state||{};
+    window.hutoonState=window.hutoonState||window.state;
+    window.state.user=user;
+    window.hutoonState.user=user;
+    if(user){
+      localStorage.setItem("hutoon_user",JSON.stringify(user));
+      localStorage.setItem("hutoon_session_persistent","true");
+    }else{
+      localStorage.removeItem("hutoon_user");
+      localStorage.removeItem("hutoon_session_persistent");
+    }
+    window.updateViews?.();
+    window.refreshProfile?.();
+    window.refreshLoyalty?.();
+    window.refreshAdmin?.();
+    syncHeaderAuth(user);
+    if(!isVerifiedAdminSession(user))document.getElementById("adminView")?.classList.remove("show");
+  }
+
+  function currentUser(){
+    if(window.state?.user)return window.state.user;
+    try{return JSON.parse(localStorage.getItem("hutoon_user")||"null")}catch(_){return null}
+  }
+
+  function isVerifiedAdminSession(user=currentUser(),authUser=firebaseAuth()?.currentUser){
+    return Boolean(user?.role==="admin"&&authUser?.uid&&verifiedAdminUid===authUser.uid);
+  }
+
+  function syncHeaderAuth(user=currentUser()){
+    const loginButton=document.getElementById("hutoonHeaderLoginButton");
+    const accountButton=document.getElementById("hutoonHeaderAccountButton");
+    const signedIn=Boolean(user);
+    const verifiedAdmin=isVerifiedAdminSession(user);
+    if(loginButton){
+      loginButton.hidden=signedIn;
+      loginButton.setAttribute("aria-hidden",String(signedIn));
+    }
+    if(accountButton){
+      accountButton.hidden=!signedIn;
+      accountButton.setAttribute("aria-hidden",String(!signedIn));
+      accountButton.textContent=verifiedAdmin?"لوحة الإدارة":"حسابي";
+      accountButton.setAttribute("aria-label",verifiedAdmin?"فتح لوحة الإدارة":"فتح حسابي");
+    }
+    const mobileLabel=document.querySelector("#mobileAccountButton span");
+    if(mobileLabel)mobileLabel.textContent=verifiedAdmin?"الإدارة":signedIn?"حسابي":"دخول";
+  }
+
+  window.openHeaderAccount=async function(){
+    const user=currentUser();
+    const authUser=firebaseAuth()?.currentUser;
+    if(!user||!authUser){
+      window.openAuth?.();
+      return;
+    }
+    if(user.role!=="admin"){
+      window.openProfile?.();
+      return;
+    }
+    try{
+      const verifiedRole=await roleFor(authUser,user);
+      if(verifiedRole!=="admin"){
+        if(verifiedAdminUid===authUser.uid)verifiedAdminUid=null;
+        const customer={...user,role:"customer"};
+        setUser(customer);
+        window.openProfile?.();
+        notify("تم فتح ملفك الشخصي");
+        return;
+      }
+      verifiedAdminUid=authUser.uid;
+      syncHeaderAuth({...user,role:"admin"});
+      document.getElementById("profilePanel")?.classList.remove("show");
+      document.getElementById("adminView")?.classList.add("show");
+      window.refreshAdmin?.();
+    }catch(error){
+      console.warn("Admin access verification",error);
+      notify("تعذر التحقق من صلاحية الإدارة الآن");
+    }
+  };
+
+  function enforceAdminAccess(){
+    const adminView=document.getElementById("adminView");
+    if(!adminView?.classList.contains("show"))return;
+    if(isVerifiedAdminSession())return;
+    adminView.classList.remove("show");
+    syncHeaderAuth(currentUser());
+  }
+
+  function setupAdminAccessGuard(){
+    const adminView=document.getElementById("adminView");
+    if(!adminView)return;
+    adminGuardObserver?.disconnect();
+    adminGuardObserver=new MutationObserver(enforceAdminAccess);
+    adminGuardObserver.observe(adminView,{attributes:true,attributeFilter:["class"]});
+    enforceAdminAccess();
+  }
+
+  function isAdmin(){return isVerifiedAdminSession()}
+
+  function oldAccounts(){
+    const found=[];
+    const add=item=>{
+      if(!item||typeof item!=="object")return;
+      if(found.some(saved=>(item.email&&saved.email===item.email)||(item.phone&&saved.phone===item.phone)))return;
+      found.push(item);
+    };
+    ACCOUNT_KEYS.forEach(key=>{try{(JSON.parse(localStorage.getItem(key)||"[]")||[]).forEach(add)}catch(_){}});
+    try{add(JSON.parse(localStorage.getItem("hutoon_account")||"null"))}catch(_){}
+    return found;
+  }
+
+  async function roleFor(firebaseUser,profile){
+    if(ADMIN_EMAILS.has(String(firebaseUser.email||"").toLowerCase()))return "admin";
+    try{
+      const admin=await firestore()?.collection("admins").doc(firebaseUser.uid).get();
+      if(admin?.exists&&admin.data()?.active!==false)return "admin";
+    }catch(error){console.warn("Admin role lookup",error)}
+    return profile?.role==="admin"?"customer":(profile?.role||"customer");
+  }
+
+  async function loadProfile(firebaseUser,extra={}){
+    const db=firestore();
+    let data={};
+    if(db){
+      const ref=db.collection("users").doc(firebaseUser.uid);
+      const snap=await ref.get();
+      if(snap.exists)data=snap.data();
+      else{
+        data={
+          uid:firebaseUser.uid,email:firebaseUser.email||extra.email||"",name:extra.name||firebaseUser.displayName||"عميل هتون",
+          phone:extra.phone||"",phoneDigits:String(extra.phone||"").replace(/\D/g,""),role:"customer",points:0,raindrops:0,
+          createdAt:timestamp(),updatedAt:timestamp()
+        };
+        await ref.set(data,{merge:true});
+      }
+    }
+    const profile={
+      uid:firebaseUser.uid,email:firebaseUser.email||data.email||extra.email||"",
+      name:data.name||extra.name||firebaseUser.displayName||firebaseUser.email?.split("@")[0]||"عميل هتون",
+      phone:data.phone||extra.phone||"",points:Number(data.points||0),raindrops:Number(data.raindrops||0)
+    };
+    profile.role=await roleFor(firebaseUser,data);
+    if(profile.role==="admin")verifiedAdminUid=firebaseUser.uid;
+    else if(verifiedAdminUid===firebaseUser.uid)verifiedAdminUid=null;
+    return profile;
+  }
+
+  function subscribeProfile(user){
+    profileUnsubscribe?.();
+    const db=firestore();
+    if(!db||!user)return;
+    profileUnsubscribe=db.collection("users").doc(user.uid).onSnapshot(async snap=>{
+      if(!snap.exists)return;
+      const data=snap.data();
+      const updated={...currentUser(),...data,uid:snap.id,email:firebaseAuth()?.currentUser?.email||data.email||""};
+      updated.role=await roleFor(firebaseAuth()?.currentUser||updated,data);
+      if(updated.role==="admin")verifiedAdminUid=updated.uid;
+      else if(verifiedAdminUid===updated.uid)verifiedAdminUid=null;
+      setUser(updated);
+    },error=>console.warn("Profile listener",error));
+  }
+
+  function normalizeOrder(doc){
+    const data=doc.data();
+    return {id:doc.id,...data,date:data.createdAt?.toDate?.()?.toLocaleString("ar-OM")||data.date||""};
+  }
+
+  function subscribeOrders(user){
+    orderUnsubscribe?.();
+    const db=firestore();
+    if(!db||!user)return;
+    let query=db.collection("orders");
+    if(user.role!=="admin")query=query.where("userId","==",user.uid);
+    orderUnsubscribe=query.onSnapshot(snapshot=>{
+      const orders=snapshot.docs.map(normalizeOrder).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+      window.state=window.state||{};window.state.orders=orders;
+      window.hutoonState=window.hutoonState||window.state;window.hutoonState.orders=orders;
+      window.refreshAdmin?.();window.refreshProfile?.();
+    },error=>console.warn("Orders listener",error));
+  }
+
+  window.hutoonFixedLogin=async function(event){
+    event.preventDefault();
+    const form=event.currentTarget;
+    const identifier=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
+    const password=document.getElementById("loginPassword")?.value||"";
+    const button=form.querySelector('button[type="submit"],button:not([type])');
+    const oldText=button?.textContent||"تسجيل الدخول";
+    if(!identifier||!password)return notify("اكتب البريد الإلكتروني وكلمة المرور");
+    if(location.protocol==="file:")return notify("افتح الموقع من رابط الاستضافة أو الخادم المحلي حتى يعمل تسجيل الدخول");
+    if(!identifier.includes("@")){
+      const legacy=oldAccounts().find(item=>String(item.phone||"").replace(/\D/g,"")===identifier.replace(/\D/g,"")&&item.password===password);
+      if(legacy?.email)document.getElementById("loginIdentifier").value=legacy.email;
+      else return notify("لأمان الحساب أدخل البريد الإلكتروني. يمكنك استعادة كلمة المرور من الزر أسفل النموذج");
+    }
+    try{
+      if(button){button.disabled=true;button.textContent="جاري الدخول..."}
+      const auth=firebaseAuth();
+      if(!auth)throw new Error("تعذر تحميل خدمة تسجيل الدخول");
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      const email=document.getElementById("loginIdentifier").value.trim().toLowerCase();
+      const credential=await auth.signInWithEmailAndPassword(email,password);
+      const profile=await loadProfile(credential.user);
+      setUser(profile);subscribeProfile(profile);subscribeOrders(profile);
+      form.reset();window.closeAuth?.();
+      if(profile.role==="admin"){
+        document.getElementById("profilePanel")?.classList.remove("show");
+        document.getElementById("adminView")?.classList.add("show");window.refreshAdmin?.();
+      }else{
+        document.getElementById("adminView")?.classList.remove("show");
+        window.openProfile?.();
+      }
+      notify(profile.role==="admin"?"مرحبًا بك في لوحة الإدارة":"تم تسجيل الدخول بنجاح");
+    }catch(error){console.error(error);notify(authMessage(error));}
+    finally{if(button){button.disabled=false;button.textContent=oldText}}
+  };
+
+  window.hutoonFixedRegister=async function(event){
+    event.preventDefault();
+    const form=event.currentTarget;
+    const name=document.getElementById("regName")?.value.trim()||"";
+    const email=document.getElementById("regEmail")?.value.trim().toLowerCase()||"";
+    const phone=document.getElementById("regPhone")?.value.trim()||"";
+    const password=document.getElementById("regPassword")?.value||"";
+    const button=form.querySelector('button[type="submit"],button:not([type])');
+    const oldText=button?.textContent||"إنشاء الحساب";
+    if(!name||!email||!phone||!password)return notify("أكمل جميع البيانات");
+    if(password.length<6)return notify("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+    if(location.protocol==="file:")return notify("افتح الموقع من رابط الاستضافة أو الخادم المحلي حتى يعمل إنشاء الحساب");
+    let createdUser=null;
+    try{
+      if(button){button.disabled=true;button.textContent="جاري إنشاء الحساب..."}
+      const auth=firebaseAuth();const db=firestore();
+      if(!auth||!db)throw new Error("تعذر تحميل خدمة الحسابات");
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      const credential=await auth.createUserWithEmailAndPassword(email,password);createdUser=credential.user;
+      await credential.user.updateProfile?.({displayName:name});
+      const profile={uid:credential.user.uid,email,name,phone,phoneDigits:phone.replace(/\D/g,""),role:"customer",points:0,raindrops:0};
+      await db.collection("users").doc(credential.user.uid).set({...profile,createdAt:timestamp(),updatedAt:timestamp()},{merge:true});
+      verifiedAdminUid=null;
+      setUser(profile);subscribeProfile(profile);subscribeOrders(profile);
+      form.reset();window.closeAuth?.();window.openProfile?.();notify("تم إنشاء الحساب وحفظ جلسة الدخول");
+    }catch(error){
+      console.error(error);
+      if(createdUser){try{await createdUser.delete()}catch(cleanupError){console.warn("Incomplete account cleanup",cleanupError)}}
+      notify(authMessage(error));
+    }
+    finally{if(button){button.disabled=false;button.textContent=oldText}}
+  };
+
+  window.resetLoginPassword=async function(){
+    const email=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
+    if(!email.includes("@"))return notify("اكتب بريدك الإلكتروني أولًا");
+    try{await firebaseAuth().sendPasswordResetEmail(email);notify("أرسلنا رابط تغيير كلمة المرور إلى بريدك")}
+    catch(error){notify(authMessage(error))}
+  };
+
+  window.logout=async function(){
+    try{await firebaseAuth()?.signOut()}catch(error){console.warn(error)}
+    verifiedAdminUid=null;
+    profileUnsubscribe?.();orderUnsubscribe?.();setUser(null);
+    window.state.orders=[];window.hutoonState.orders=[];
+    document.getElementById("adminView")?.classList.remove("show");window.closeProfile?.();notify("تم تسجيل الخروج");
+  };
+
+  function fallbackProducts(){
+    try{
+      const source=(typeof perfumeCatalog!=="undefined"&&Array.isArray(perfumeCatalog)&&perfumeCatalog.length)
+        ? perfumeCatalog
+        : (Array.isArray(moodPerfumeCatalog)?moodPerfumeCatalog:[]);
+      return source.map((item,index)=>({...item,id:String(item.id),image:item.image||window.suppliedPerfumeImages?.[item.id]||"",sortOrder:item.sortOrder??index}));
+    }catch(_){return []}
+  }
+
+  function setProducts(items){
+    liveProducts=items.map((item,index)=>({...item,id:String(item.id),sortOrder:item.sortOrder??index})).sort((a,b)=>Number(a.sortOrder??9999)-Number(b.sortOrder??9999));
+    window.perfumeCatalog=liveProducts;
+    try{perfumeCatalog=liveProducts}catch(_){}
+    window.renderHutoonProducts?.();window.renderAdminPerfumeList?.();window.renderAllPerfumeAudioCards?.();
+  }
+
+  window.hutoonMergedProducts=function(){return liveProducts.length?liveProducts:fallbackProducts()};
+
+  function subscribeProducts(){
+    productUnsubscribe?.();
+    const db=firestore();
+    if(!db){setProducts(fallbackProducts());return}
+    setSyncStatus("loading","جاري مزامنة منتجات هتون...");
+    productUnsubscribe=db.collection("perfumes").onSnapshot(snapshot=>{
+      productCollectionEmpty=snapshot.empty;
+      const items=snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
+      setProducts(items.length?items:fallbackProducts());
+      setSyncStatus("ready","المنتجات محدثة مباشرة");
+    },error=>{
+      console.error("Product sync",error);setProducts(fallbackProducts());setSyncStatus("error",authMessage(error));
+    });
+  }
+
+  function activeFilter(){return document.querySelector("#hutoonProductFilters button.active")?.dataset.filter||"الكل"}
+  function productMatches(product,filter){
+    if(filter==="الكل")return true;
+    return [product.gender,product.mood,product.season,product.use].map(String).includes(filter);
+  }
+
+  window.renderHutoonProducts=function(){
+    const grid=document.getElementById("hutoonProductsGrid");if(!grid)return;
+    const products=window.hutoonMergedProducts().filter(item=>item.available!==false&&productMatches(item,activeFilter()));
+    const count=document.getElementById("hutoonProductsCount");if(count)count.textContent=products.length+" عطر";
+    const more=document.getElementById("hutoonShowMore");if(more)more.style.display="none";
+    if(!products.length){grid.innerHTML='<div class="hutoon-products-empty">لا توجد منتجات ضمن هذا التصنيف حاليًا.</div>';return}
+    grid.innerHTML=products.map(product=>{
+      const price=Number(product.price||0),oldPrice=Number(product.oldPrice||0),discount=Number(product.discount||0);
+      const audio=product.audioUrl||window.perfumeAudioCache?.[product.id]||"";
+      return `<article class="hutoon-product-card">
+        ${product.badge?`<span class="hutoon-product-badge">${esc(product.badge)}</span>`:""}
+        ${discount>0?`<span class="hutoon-discount-badge">خصم ${discount}%</span>`:""}
+        <div class="hutoon-product-image"><img loading="lazy" src="${esc(product.image||FALLBACK_IMAGE)}" alt="${esc(product.name)}" onerror="this.src='${FALLBACK_IMAGE}'"></div>
+        <div class="hutoon-product-body"><span class="hutoon-product-live">متزامن مع المتجر</span><small class="hutoon-product-brand">${esc(product.brand||"HUTOON")}</small>
+        <h3>${esc(product.name)}</h3><div class="hutoon-product-tags"><span>${esc(product.gender==="يونيسكس"?"للجنسين":product.gender||"")}</span><span>${esc(product.use||product.mood||product.season||"")}</span></div>
+        <p class="hutoon-product-description">${esc(product.description||"عطر مختار بعناية ضمن مجموعة هتون.")}</p>
+        <div class="hutoon-product-price">${price>0?`<strong>${money(price)}</strong>${oldPrice>price?`<del>${money(oldPrice)}</del>`:""}`:'<strong class="hutoon-price-on-request">السعر عند الطلب</strong>'}</div>
+        <div class="hutoon-product-actions"><button class="hutoon-order-product" type="button" onclick="hutoonOpenProduct(decodeURIComponent('${enc(product.id)}'))">اطلب الآن</button>
+        <button class="hutoon-play-audio" type="button" ${audio?"":"disabled"} onclick="hutoonPlayAudio(decodeURIComponent('${enc(product.id)}'))" aria-label="تشغيل وصف ${esc(product.name)}">♫</button></div></div>
+      </article>`;
+    }).join("");
+  };
+
+  window.hutoonOpenProduct=function(id){window.openCatalogOrder?.(id)};
+  window.hutoonPlayAudio=function(id){
+    const product=window.hutoonMergedProducts().find(item=>String(item.id)===String(id));
+    const url=product?.audioUrl||window.perfumeAudioCache?.[id]||"";
+    if(!url)return notify("لا يوجد تسجيل صوتي لهذا العطر حاليًا");
+    if(activeAudio){activeAudio.pause();activeAudio.currentTime=0}
+    activeAudio=new Audio(url);activeAudio.play().catch(()=>notify("تعذر تشغيل الصوت؛ تحقق من رابط الملف"));
+  };
+  window.previewAdminAudio=window.hutoonPlayAudio;
+
+  function cloudConfig(){try{return JSON.parse(localStorage.getItem(CLOUD_KEY)||"{}")||{}}catch(_){return {}}}
+  function cloudStatus(message,ok=false){
+    const box=document.getElementById("cloudinaryStatus");if(!box)return;
+    box.classList.toggle("ok",ok);box.classList.toggle("bad",!ok);
+    const text=box.querySelector("strong");if(text)text.textContent=message;
+  }
+  function restoreCloudConfig(){
+    const config=cloudConfig();fill("cloudinaryCloudName",config.cloudName||"");fill("cloudinaryUploadPreset",config.uploadPreset||"");
+    cloudStatus(config.cloudName&&config.uploadPreset?"إعداد Cloudinary محفوظ وجاهز للرفع":"أكمل Cloud Name وUnsigned Upload Preset لتفعيل الرفع",Boolean(config.cloudName&&config.uploadPreset));
+  }
+  window.saveCloudinarySettings=function(){
+    const cloudName=document.getElementById("cloudinaryCloudName")?.value.trim()||"";
+    const uploadPreset=document.getElementById("cloudinaryUploadPreset")?.value.trim()||"";
+    if(!cloudName||!uploadPreset){cloudStatus("أكمل الحقلين أولًا",false);return notify("أكمل إعداد Cloudinary أولًا")}
+    localStorage.setItem(CLOUD_KEY,JSON.stringify({cloudName,uploadPreset}));
+    cloudStatus("تم حفظ الإعداد — الصور والصوت جاهزان للرفع",true);notify("تم حفظ إعداد Cloudinary");
+  };
+  window.testCloudinarySettings=function(){
+    const config=cloudConfig();
+    if(!config.cloudName||!config.uploadPreset){cloudStatus("الإعداد غير مكتمل",false);return notify("احفظ Cloud Name وUpload Preset أولًا")}
+    cloudStatus("الإعداد مكتمل — سيتم فحصه فعليًا عند أول رفع",true);notify("إعداد Cloudinary مكتمل");
+  };
+  function uploadProgress(id,percent,label){
+    const box=document.getElementById(id);if(!box)return;box.classList.remove("hidden");
+    const bar=box.querySelector("span");const text=box.querySelector("b");if(bar)bar.style.width=Math.round(percent)+"%";if(text)text.textContent=label||Math.round(percent)+"%";
+  }
+  async function uploadMedia(file,folder,progressId){
+    if(!file?.size)return "";
+    const cloud=cloudConfig();
+    if(cloud.cloudName&&cloud.uploadPreset){
+      const form=new FormData();form.append("file",file);form.append("upload_preset",cloud.uploadPreset);form.append("folder",folder);
+      return new Promise((resolve,reject)=>{
+        const xhr=new XMLHttpRequest();xhr.open("POST",`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloud.cloudName)}/auto/upload`);xhr.timeout=45000;
+        xhr.upload.onprogress=e=>{if(e.lengthComputable)uploadProgress(progressId,e.loaded/e.total*100)};
+        xhr.onerror=()=>reject(new Error("تعذر الاتصال بـ Cloudinary؛ تحقق من الإنترنت والإعدادات"));xhr.ontimeout=()=>reject(new Error("توقف رفع الملف بعد 45 ثانية؛ جرّب ملفًا أصغر"));
+        xhr.onload=()=>{let data={};try{data=JSON.parse(xhr.responseText||"{}")}catch(_){};if(xhr.status>=200&&xhr.status<300&&data.secure_url)resolve(data.secure_url);else reject(new Error(data?.error?.message||"فشل رفع الملف"))};xhr.send(form);
+      });
+    }
+    throw new Error("أكمل إعداد Cloudinary من لوحة الإدارة: Cloud Name وUnsigned Upload Preset");
+  }
+
+  function productById(id){return window.hutoonMergedProducts().find(item=>String(item.id)===String(id))}
+  function fill(id,value){const el=document.getElementById(id);if(el)el.value=value??""}
+  function fillProductForm(product={}){
+    fill("perfumeEditId",product.id||"");fill("adminPerfumeName",product.name||"");fill("perfumeBrand",product.brand||"");
+    fill("perfumeGender",product.gender||"");fill("perfumeSeason",product.season||"");fill("perfumeUse",product.use||product.mood||"");
+    fill("perfumeOud",String(Boolean(product.oud)));fill("perfumePrice",product.price||"");
+    fill("perfumePrice2ml",product.sizePrices?.["2 مل"]||product.price2ml||"");fill("perfumePrice5ml",product.sizePrices?.["5 مل"]||product.price5ml||"");
+    fill("perfumePrice10ml",product.sizePrices?.["10 مل"]||product.price10ml||"");fill("perfumeOldPrice",product.oldPrice||"");
+    fill("perfumeDiscount",product.discount||0);fill("perfumeBadge",product.badge||"");fill("perfumeImage",product.image||"");
+    fill("perfumeAudioUrl",product.audioUrl||"");fill("perfumeDescription",product.description||"");fill("perfumeAvailable",String(product.available!==false));
+    const image=document.getElementById("perfumeImagePreview");if(image)image.innerHTML=product.image?`<img src="${esc(product.image)}" alt="${esc(product.name)}">`:"<span>اختر صورة المنتج</span>";
+    const audio=document.getElementById("perfumeAudioPreview");if(audio)audio.innerHTML=product.audioUrl?`<audio controls preload="metadata" src="${esc(product.audioUrl)}"></audio>`:"<span>لا يوجد صوت مرفوع لهذا العطر</span>";
+  }
+
+  window.openProductEditor=function(){
+    window.resetPerfumeForm?.();
+    const eyebrow=document.getElementById("adminProductEditorEyebrow"),title=document.getElementById("adminProductEditorTitle");
+    if(eyebrow)eyebrow.textContent="NEW PRODUCT";if(title)title.textContent="إضافة منتج جديد";
+    document.getElementById("adminProductEditorBackdrop")?.classList.add("show");document.body.style.overflow="hidden";
+    setTimeout(()=>document.getElementById("adminPerfumeName")?.focus(),80);
+  };
+  window.closeProductEditor=function(){
+    document.getElementById("adminProductEditorBackdrop")?.classList.remove("show");document.body.style.overflow="";
+    const form=document.getElementById("hutoonProductForm");if(form)delete form.dataset.saving;
+  };
+
+  window.resetPerfumeForm=function(){
+    document.querySelector(".admin-perfume-form")?.reset();fillProductForm({});fill("perfumeDiscount",0);fill("perfumeAvailable","true");
+    ["perfumeImageFile","perfumeAudioFile"].forEach(id=>{const el=document.getElementById(id);if(el)el.value=""});
+    productSaveStatus("جاهز لحفظ المنتج");
+  };
+  window.editPerfume=function(id){
+    const product=productById(id);if(!product)return notify("تعذر العثور على المنتج");
+    fillProductForm(product);document.getElementById("adminProductEditorEyebrow").textContent="EDIT PRODUCT";document.getElementById("adminProductEditorTitle").textContent="تعديل المنتج";
+    document.getElementById("adminProductEditorBackdrop")?.classList.add("show");document.body.style.overflow="hidden";
+  };
+
+  async function saveProductRecord(id,payload){
+    if(!isAdmin())throw new Error("هذه العملية للإدارة فقط");
+    const db=firestore();if(!db||!firebaseAuth()?.currentUser)throw new Error("سجّل دخول الأدمن واتصل بـ Firebase قبل النشر");
+    if(navigator.onLine===false)throw new Error("لا يوجد اتصال بالإنترنت؛ أعد الاتصال ثم احفظ المنتج");
+    const ref=id?db.collection("perfumes").doc(String(id)):db.collection("perfumes").doc();
+    // ثبّت رقم المنتج قبل الاتصال حتى لا تتكرر الإضافة إذا انقطع الرد وأعاد الأدمن المحاولة.
+    if(!id)fill("perfumeEditId",ref.id);
+    await withTimeout(
+      ref.set({...payload,updatedAt:timestamp(),...(!id?{createdAt:timestamp()}: {})},{merge:true}),
+      18000,
+      "لم يرد Firestore خلال 18 ثانية. تأكد من نشر القواعد وأن حساب الأدمن صحيح"
+    );
+    return ref.id;
+  }
+
+  function validateProductForm(){
+    const fields=[
+      ["adminPerfumeName","اكتب اسم المنتج"],
+      ["perfumeBrand","اختر البراند"],
+      ["perfumeGender","اختر نوع العطر"],
+      ["perfumeSeason","اختر الموسم"],
+      ["perfumeUse","اختر الاستخدام"],
+      ["perfumeOud","حدد هل يحتوي العطر على العود"]
+    ];
+    for(const [id,message] of fields){
+      const field=document.getElementById(id);
+      if(!String(field?.value||"").trim()){
+        field?.focus({preventScroll:true});field?.scrollIntoView({behavior:"smooth",block:"center"});
+        productSaveStatus(message,"error");notify(message);return false;
+      }
+    }
+    return true;
+  }
+
+  window.hutoonStableProductSubmit=function(event){
+    event?.preventDefault?.();event?.stopImmediatePropagation?.();
+    const form=document.getElementById("hutoonProductForm")||document.querySelector(".admin-perfume-form");
+    if(!form){alert("تعذر العثور على نموذج المنتج. ارفع النسخة الجديدة كاملة ثم حدّث الصفحة.");return false}
+    if(!validateProductForm())return false;
+    Promise.resolve(window.savePerfumeWithCloudinary({
+      preventDefault(){},currentTarget:form,target:form,submitter:document.getElementById("hutoonProductSaveButton")
+    })).catch(error=>{
+      console.error("Stable product submit",error);
+      const message=authMessage(error);productSaveStatus(message,"error");notify(message);
+      alert("تعذر حفظ المنتج: "+message);
+    });
+    return false;
+  };
+
+  window.savePerfumeWithCloudinary=async function(event){
+    event?.preventDefault?.();
+    const form=event.currentTarget;const submit=document.getElementById("hutoonProductSaveButton")||form.querySelector('button[type="submit"]');const oldText=submit?.textContent||"حفظ المنتج ونشره";
+    if(form.dataset.saving==="true")return notify("الحفظ جارٍ بالفعل");
+    try{
+      if(!isAdmin())throw new Error("سجّل دخول الأدمن أولًا");
+      form.dataset.saving="true";
+      if(submit){submit.disabled=true;submit.textContent="جاري التحقق..."}
+      productSaveStatus("جاري التحقق من بيانات المنتج...");
+      const id=document.getElementById("perfumeEditId")?.value.trim()||"";const existing=productById(id)||{};
+      const imageFile=document.getElementById("perfumeImageFile")?.files?.[0];const audioFile=document.getElementById("perfumeAudioFile")?.files?.[0];
+      if(imageFile&&(!imageFile.type.startsWith("image/")||imageFile.size>8*1024*1024))throw new Error("الصورة يجب أن تكون JPG/PNG/WEBP وأقل من 8MB");
+      if(audioFile&&(!audioFile.type.startsWith("audio/")||audioFile.size>20*1024*1024))throw new Error("الصوت يجب أن يكون ملفًا صوتيًا وأقل من 20MB");
+      let image=document.getElementById("perfumeImage")?.value||existing.image||"";let audioUrl=document.getElementById("perfumeAudioUrl")?.value||existing.audioUrl||"";
+      const name=document.getElementById("adminPerfumeName")?.value.trim()||"";if(!name)throw new Error("اكتب اسم المنتج");
+      if(imageFile){
+        if(submit)submit.textContent="جاري رفع الصورة...";productSaveStatus("جاري رفع صورة المنتج إلى Cloudinary...");
+        image=await uploadMedia(imageFile,"hutoon/products/images","perfumeImageProgress");
+      }
+      if(audioFile){
+        if(submit)submit.textContent="جاري رفع الصوت...";productSaveStatus("جاري رفع ملف الصوت إلى Cloudinary...");
+        audioUrl=await uploadMedia(audioFile,"hutoon/products/audio","perfumeAudioProgress");
+      }
+      const payload={name,brand:document.getElementById("perfumeBrand")?.value||"HUTOON",gender:document.getElementById("perfumeGender")?.value||"يونيسكس",
+        season:document.getElementById("perfumeSeason")?.value||"",use:document.getElementById("perfumeUse")?.value||"",oud:document.getElementById("perfumeOud")?.value==="true",
+        image,audioUrl,description:document.getElementById("perfumeDescription")?.value.trim()||"",price:Number(document.getElementById("perfumePrice")?.value||0),
+        sizePrices:{"2 مل":Number(document.getElementById("perfumePrice2ml")?.value||0),"5 مل":Number(document.getElementById("perfumePrice5ml")?.value||0),"10 مل":Number(document.getElementById("perfumePrice10ml")?.value||0)},
+        oldPrice:Number(document.getElementById("perfumeOldPrice")?.value||0),discount:Number(document.getElementById("perfumeDiscount")?.value||0),
+        badge:document.getElementById("perfumeBadge")?.value.trim()||"",available:document.getElementById("perfumeAvailable")?.value!=="false"};
+      if(submit)submit.textContent="جاري نشر المنتج...";productSaveStatus("تم رفع الملفات، جاري نشر المنتج في المتجر...");
+      const savedId=await saveProductRecord(id,payload);
+      const optimistic={...existing,...payload,id:savedId};
+      const next=window.hutoonMergedProducts().filter(item=>String(item.id)!==String(savedId));next.unshift(optimistic);setProducts(next);
+      productSaveStatus(id?"تم تحديث المنتج بنجاح":"تمت إضافة المنتج بنجاح","success");
+      notify(id?"تم تحديث المنتج وظهر للزبائن":"تمت إضافة المنتج ونشره للزبائن");
+      setTimeout(()=>window.closeProductEditor?.(),650);
+    }catch(error){
+      console.error(error);const message=authMessage(error);productSaveStatus(message,"error");notify(message);
+      setTimeout(()=>alert("تعذر حفظ المنتج: "+message),60);
+    }
+    finally{delete form.dataset.saving;if(submit){submit.disabled=false;submit.textContent=oldText}}
+  };
+
+  window.quickSaveProductPrice=async function(id){
+    try{await saveProductRecord(id,{price:Number(document.getElementById("quick-price-"+id)?.value||0),oldPrice:Number(document.getElementById("quick-old-"+id)?.value||0),discount:Number(document.getElementById("quick-discount-"+id)?.value||0)});notify("تم تحديث السعر مباشرة")}
+    catch(error){notify(authMessage(error))}
+  };
+  window.deletePerfume=async function(id){
+    if(!isAdmin())return notify("هذه العملية للإدارة فقط");if(!confirm("هل تريد حذف هذا المنتج؟"))return;
+    try{await firestore().collection("perfumes").doc(String(id)).delete();notify("تم حذف المنتج")}
+    catch(error){notify(authMessage(error))}
+  };
+  window.removeCurrentPerfumeImage=function(){fill("perfumeImage","");document.getElementById("perfumeImagePreview").innerHTML="<span>سيتم حذف الصورة عند الحفظ</span>"};
+  window.removeCurrentPerfumeAudio=function(){fill("perfumeAudioUrl","");document.getElementById("perfumeAudioPreview").innerHTML="<span>سيتم حذف الصوت عند الحفظ</span>"};
+
+  async function replaceSingleMedia(id,type,file){
+    if(!file)return;const product=productById(id);if(!product)return;
+    const isImage=type==="image";const url=await uploadMedia(file,isImage?"hutoon/products/images":"hutoon/products/audio",isImage?"perfumeImageProgress":"perfumeAudioProgress");
+    await saveProductRecord(id,isImage?{image:url}:{audioUrl:url});notify(isImage?"تم تحديث الصورة":"تم تحديث الصوت");
+  }
+  window.chooseProductImage=function(id){const input=document.createElement("input");input.type="file";input.accept="image/*";input.onchange=()=>replaceSingleMedia(id,"image",input.files?.[0]).catch(error=>notify(authMessage(error)));input.click()};
+  window.chooseProductAudio=function(id){const input=document.createElement("input");input.type="file";input.accept="audio/*";input.onchange=()=>replaceSingleMedia(id,"audio",input.files?.[0]).catch(error=>notify(authMessage(error)));input.click()};
+  window.removeProductImage=async id=>{try{await saveProductRecord(id,{image:""});notify("تم حذف الصورة") }catch(error){notify(authMessage(error))}};
+  window.removeProductAudio=async id=>{try{await saveProductRecord(id,{audioUrl:""});notify("تم حذف الصوت") }catch(error){notify(authMessage(error))}};
+
+  // توحيد قسم الصوت القديم أيضًا: Cloudinary للملف وFirestore للرابط فقط.
+  window.uploadPerfumeAudio=async function(key,title){
+    if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    const input=document.getElementById("audioFile-"+key),file=input?.files?.[0];
+    const status=document.getElementById("audioStatus-"+key);
+    if(!file)return notify("اختر ملفًا صوتيًا أولًا");
+    if(!file.type.startsWith("audio/")||file.size>20*1024*1024)return notify("اختر ملفًا صوتيًا أقل من 20 MB");
+    try{
+      if(status)status.textContent="جاري الرفع إلى Cloudinary...";
+      const url=await uploadMedia(file,"hutoon/products/audio","perfumeAudioProgress");
+      const db=firestore();
+      await Promise.all([
+        db.collection("perfumes").doc(String(key)).set({audioUrl:url,updatedAt:timestamp()},{merge:true}),
+        db.collection("perfumeAudio").doc(String(key)).set({key,title,url,fileName:file.name,updatedAt:timestamp()},{merge:true})
+      ]);
+      if(window.perfumeAudioCache)window.perfumeAudioCache[key]=url;
+      if(input)input.value="";
+      if(status)status.textContent="تم رفع الصوت إلى Cloudinary";
+      window.renderAllPerfumeAudioCards?.();notify("تم حفظ صوت "+title);
+    }catch(error){if(status)status.textContent="فشل رفع الصوت";notify(authMessage(error))}
+  };
+  window.deletePerfumeAudio=async function(key,title){
+    if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    if(!confirm("هل تريد حذف صوت "+title+" من المنتج؟"))return;
+    try{
+      const db=firestore();
+      await Promise.all([
+        db.collection("perfumes").doc(String(key)).set({audioUrl:"",updatedAt:timestamp()},{merge:true}),
+        db.collection("perfumeAudio").doc(String(key)).delete()
+      ]);
+      if(window.perfumeAudioCache)delete window.perfumeAudioCache[key];
+      window.renderAllPerfumeAudioCards?.();notify("تم حذف رابط الصوت من المنتج");
+    }catch(error){notify(authMessage(error))}
+  };
+
+  window.renderAdminPerfumeList=function(){
+    const list=document.getElementById("adminPerfumeList");if(!list)return;
+    const query=(document.getElementById("adminProductSearch")?.value||"").trim().toLowerCase();const gender=document.getElementById("adminProductGenderFilter")?.value||"";
+    const availability=document.getElementById("adminProductAvailabilityFilter")?.value||"";
+    const products=window.hutoonMergedProducts().filter(product=>{
+      const available=product.available!==false;return (!query||`${product.name||""} ${product.brand||""}`.toLowerCase().includes(query))&&(!gender||product.gender===gender)&&(!availability||(availability==="available"?available:!available));
+    });
+    const summary=document.getElementById("adminProductsSummary");if(summary)summary.innerHTML=`<span>${products.length} منتج</span><span>${products.filter(x=>x.available!==false).length} متوفر</span><span>${products.filter(x=>x.image).length} بصورة</span><span>${products.filter(x=>x.audioUrl).length} بصوت</span>`;
+    if(!products.length){list.innerHTML='<div class="no-results"><strong>لا توجد منتجات</strong><p>أضف منتجًا جديدًا ليظهر هنا وفي المتجر.</p></div>';return}
+    list.innerHTML=products.map(product=>`<article class="admin-perfume-row">
+      <img src="${esc(product.image||FALLBACK_IMAGE)}" alt="${esc(product.name)}"><div class="admin-perfume-row-info"><strong>${esc(product.name)}</strong>
+      <small>${esc(product.brand||"-")} • ${esc(product.gender||"-")} • ${product.available!==false?"متوفر":"غير متوفر"}</small>
+      <div class="media-pill-row"><span class="media-pill ${product.image?"ok":""}">${product.image?"✓ صورة":"بدون صورة"}</span><span class="media-pill ${product.audioUrl?"ok":""}">${product.audioUrl?"✓ صوت":"بدون صوت"}</span></div>
+      <div class="admin-price-editor"><input id="quick-price-${esc(product.id)}" type="number" min="0" step="0.001" value="${Number(product.price||0)}"><input id="quick-old-${esc(product.id)}" type="number" min="0" step="0.001" value="${Number(product.oldPrice||0)}"><input id="quick-discount-${esc(product.id)}" type="number" min="0" max="100" value="${Number(product.discount||0)}"><button class="price-save-btn" onclick="quickSaveProductPrice(decodeURIComponent('${enc(product.id)}'))">حفظ السعر</button></div></div>
+      <div class="admin-perfume-row-actions"><button onclick="editPerfume(decodeURIComponent('${enc(product.id)}'))">تعديل المنتج</button><button class="media-action-btn" onclick="chooseProductImage(decodeURIComponent('${enc(product.id)}'))">تغيير الصورة</button><button class="media-action-btn" onclick="chooseProductAudio(decodeURIComponent('${enc(product.id)}'))">تغيير الصوت</button><button class="media-remove-btn" onclick="deletePerfume(decodeURIComponent('${enc(product.id)}'))">حذف</button></div></article>`).join("");
+  };
+  window.filterAdminProducts=window.renderAdminPerfumeList;
+
+  function brandsFallback(){
+    try{return JSON.parse(localStorage.getItem("hutoon_admin_brands_v1")||"[]")}catch(_){return []}
+  }
+  function renderBrands(items){
+    window.hutoonLiveBrands=items;
+    const active=items.filter(item=>item.active!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+    const markup=active.map(item=>`<div class="brand-wordmark"><strong>${esc(item.nameEn)}</strong><small>${esc(item.nameAr)}</small></div>`).join("");
+    document.querySelectorAll(".brand-marquee-group").forEach(group=>group.innerHTML=markup);
+    const list=document.getElementById("adminBrandList");if(list)list.innerHTML=items.map(item=>`<article class="admin-brand-row"><strong>${esc(item.nameEn)}</strong><small>${esc(item.nameAr)}</small><span>${Number(item.order||1)}</span><span class="admin-brand-status ${item.active===false?"off":""}">${item.active===false?"مخفي":"ظاهر"}</span><div class="admin-brand-row-actions"><button class="edit" onclick="editAdminBrand('${enc(item.id)}')">تعديل</button><button class="delete" onclick="deleteAdminBrand('${enc(item.id)}')">حذف</button></div></article>`).join("");
+  }
+  function subscribeBrands(){
+    brandUnsubscribe?.();const db=firestore();if(!db)return renderBrands(brandsFallback());
+    brandUnsubscribe=db.collection("brands").onSnapshot(snapshot=>renderBrands(snapshot.empty?brandsFallback():snapshot.docs.map(doc=>({id:doc.id,...doc.data()}))),error=>console.warn(error));
+  }
+  window.saveAdminBrand=async function(event){
+    event.preventDefault();if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    const id=document.getElementById("brandEditId").value||firestore().collection("brands").doc().id;
+    const item={nameEn:document.getElementById("brandNameEn").value.trim().toUpperCase(),nameAr:document.getElementById("brandNameAr").value.trim(),order:Number(document.getElementById("brandOrder").value||1),active:document.getElementById("brandActive").value!=="false",updatedAt:timestamp()};
+    try{await firestore().collection("brands").doc(id).set(item,{merge:true});window.resetAdminBrandForm?.();notify("تم حفظ البراند ونشره") }catch(error){notify(authMessage(error))}
+  };
+  window.editAdminBrand=function(encoded){const id=decodeURIComponent(encoded);const items=window.hutoonLiveBrands||brandsFallback();const item=items.find(x=>String(x.id)===id);if(!item)return;fill("brandEditId",id);fill("brandNameEn",item.nameEn);fill("brandNameAr",item.nameAr);fill("brandOrder",item.order);fill("brandActive",String(item.active!==false))};
+  window.deleteAdminBrand=async function(encoded){if(!isAdmin()||!confirm("حذف هذا البراند؟"))return;try{await firestore().collection("brands").doc(decodeURIComponent(encoded)).delete();notify("تم حذف البراند") }catch(error){notify(authMessage(error))}};
+
+  function subscribeDiscounts(){
+    discountUnsubscribe?.();const db=firestore();if(!db)return;
+    discountUnsubscribe=db.collection("discounts").onSnapshot(snapshot=>{window.hutoonLiveDiscounts=snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));window.renderAdminDiscounts?.();window.renderHutoonCoupons?.()},error=>console.warn(error));
+  }
+  window.getHutoonPublicDiscounts=function(){return (window.hutoonLiveDiscounts||[]).filter(item=>item.active!==false&&(!item.expiry||new Date(item.expiry+"T23:59:59")>=new Date())&&Number(item.used||0)<Number(item.limit||Infinity))};
+  window.renderAdminDiscounts=function(){
+    const items=window.hutoonLiveDiscounts||[];const list=document.getElementById("adminDiscountList");if(!list)return;
+    const total=document.getElementById("discountTotalCount"),active=document.getElementById("discountActiveCount"),usage=document.getElementById("discountUsageCount");
+    if(total)total.textContent=String(items.length);if(active)active.textContent=String(items.filter(item=>item.active!==false).length);if(usage)usage.textContent=String(items.reduce((sum,item)=>sum+Number(item.used||0),0));
+    list.innerHTML=items.length?items.map(item=>`<article class="admin-discount-row"><div><span class="admin-discount-code">${esc(item.code)}</span><small>${esc(item.description||"بدون وصف")}</small></div><div><strong>${item.type==="percent"?Number(item.value||0)+"%":money(item.value)}</strong><small>قيمة الخصم</small></div><div><strong>${money(item.minOrder)}</strong><small>الحد الأدنى</small></div><div><strong>${Number(item.used||0)} / ${Number(item.limit||100)}</strong><small>الاستخدام</small></div><div><span class="admin-discount-status ${item.active!==false?"active":"inactive"}">${item.active!==false?"فعال":"متوقف"}</span><small>${esc(item.expiry||"بدون تاريخ")}</small></div><div class="admin-discount-row-actions"><button class="edit" onclick="editAdminDiscount('${enc(item.id)}')">تعديل</button><button class="toggle" onclick="toggleAdminDiscount('${enc(item.id)}')">${item.active!==false?"إيقاف":"تفعيل"}</button><button class="delete" onclick="deleteAdminDiscount('${enc(item.id)}')">حذف</button></div></article>`).join(""):'<div class="hutoon-wallet-empty">لا توجد أكواد خصم حتى الآن.</div>';
+  };
+  window.saveAdminDiscount=async function(event){
+    event.preventDefault();if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    const id=document.getElementById("discountEditId").value||firestore().collection("discounts").doc().id;
+    const item={code:document.getElementById("discountCode").value.trim().toUpperCase().replace(/\s+/g,""),type:document.getElementById("discountType").value,value:Number(document.getElementById("discountValue").value||0),minOrder:Number(document.getElementById("discountMinOrder").value||0),expiry:document.getElementById("discountExpiry").value||"",limit:Number(document.getElementById("discountLimit").value||100),active:document.getElementById("discountActive").value!=="false",description:document.getElementById("discountDescription").value.trim(),updatedAt:timestamp()};
+    if(!item.code||item.value<=0)return notify("تحقق من الكود وقيمة الخصم");
+    try{await firestore().collection("discounts").doc(id).set(item,{merge:true});window.resetAdminDiscountForm?.();notify("تم حفظ كود الخصم ونشره") }catch(error){notify(authMessage(error))}
+  };
+  window.editAdminDiscount=function(encoded){
+    const id=decodeURIComponent(encoded),item=(window.hutoonLiveDiscounts||[]).find(value=>String(value.id)===id);if(!item)return;
+    fill("discountEditId",id);fill("discountCode",item.code);fill("discountType",item.type);fill("discountValue",item.value);fill("discountMinOrder",item.minOrder||0);fill("discountExpiry",item.expiry||"");fill("discountLimit",item.limit||100);fill("discountActive",String(item.active!==false));fill("discountDescription",item.description||"");
+  };
+  window.toggleAdminDiscount=async function(encoded){const id=decodeURIComponent(encoded),item=(window.hutoonLiveDiscounts||[]).find(value=>String(value.id)===id);if(!item)return;try{await firestore().collection("discounts").doc(id).set({active:item.active===false,updatedAt:timestamp()},{merge:true})}catch(error){notify(authMessage(error))}};
+  window.deleteAdminDiscount=async function(encoded){if(!isAdmin()||!confirm("هل تريد حذف كود الخصم؟"))return;try{await firestore().collection("discounts").doc(decodeURIComponent(encoded)).delete();notify("تم حذف الكود") }catch(error){notify(authMessage(error))}};
+
+  window.refreshLoyalty=function(){
+    const user=currentUser();const points=Number(user?.points||0),drops=Number(user?.raindrops||0);
+    ["loyaltyPoints","profileLoyaltyPoints"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=String(points)});
+    const label=document.getElementById("raindropCountLabel");if(label)label.textContent=`${Math.min(drops,5)} / 5`;
+    document.querySelectorAll("#raindropStamps span").forEach((stamp,index)=>stamp.classList.toggle("active",index<drops));
+    [["cart10",1000],["item50",5000],["freePerfume",10000]].forEach(([id,cost])=>{const el=document.getElementById("rewardStatus-"+id);if(el)el.textContent=!user?"سجل الدخول لمعرفة أهليتك":points>=cost?"العرض متاح للاستبدال الآن":`يتبقى ${cost-points} نقطة`});
+  };
+  window.redeemReward=async function(code,cost,title){
+    const user=currentUser();if(!user){window.openAuth?.();return notify("سجّل الدخول أولًا")}
+    const required=Number(cost);if(Number(user.points||0)<required)return notify(`تحتاج إلى ${required-Number(user.points||0)} نقطة إضافية`);
+    if(!confirm(`تأكيد استبدال ${required} نقطة مقابل ${title}؟`))return;
+    try{
+      const db=firestore(),userRef=db.collection("users").doc(user.uid),redemption=db.collection("redemptions").doc();
+      await db.runTransaction(async transaction=>{const snap=await transaction.get(userRef);const points=Number(snap.data()?.points||0);if(points<required)throw new Error("رصيد النقاط غير كافٍ");transaction.update(userRef,{points:points-required,updatedAt:timestamp()});transaction.set(redemption,{userId:user.uid,rewardCode:code,reward:title,cost:required,status:"بانتظار الاعتماد",createdAt:timestamp()})});
+      notify("تم تسجيل طلب الاستبدال وخصم النقاط");
+    }catch(error){notify(authMessage(error))}
+  };
+  window.confirmOrderAndAwardPoints=async function(orderId){
+    if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    const amount=Number(prompt("أدخل قيمة الطلب النهائية بالريال العماني:",""));if(!Number.isFinite(amount)||amount<=0)return notify("أدخل قيمة صحيحة");
+    try{
+      const db=firestore(),orderRef=db.collection("orders").doc(String(orderId));
+      await db.runTransaction(async transaction=>{const orderSnap=await transaction.get(orderRef);if(!orderSnap.exists)throw new Error("الطلب غير موجود");const order=orderSnap.data();if(Number(order.pointsAwarded||0)>0)throw new Error("تم احتساب نقاط الطلب مسبقًا");if(!order.userId)throw new Error("الطلب غير مرتبط بحساب عميل");const userRef=db.collection("users").doc(order.userId),userSnap=await transaction.get(userRef);if(!userSnap.exists)throw new Error("حساب العميل غير موجود");const points=Math.round(amount*POINTS_PER_OMR);transaction.update(userRef,{points:Number(userSnap.data().points||0)+points,raindrops:Number(userSnap.data().raindrops||0)+(amount>=5?1:0),updatedAt:timestamp()});transaction.update(orderRef,{status:"مؤكد",total:amount,pointsAwarded:points,updatedAt:timestamp()})});
+      notify("تم تأكيد الطلب وإضافة نقاط الولاء");
+    }catch(error){notify(authMessage(error))}
+  };
+
+  window.finishOrder=async function(order){
+    const user=currentUser();const authUser=firebaseAuth()?.currentUser;
+    if(!user||!authUser){window.openAuth?.();throw new Error("سجّل الدخول لإتمام الطلب")}
+    const quantity=Math.max(1,Number(order.qty||1)),unitPrice=Number(order.unitPrice||order.price||0);
+    const payload={...order,userId:authUser.uid,customer:user.name||"عميل هتون",customerEmail:user.email||authUser.email||"",phone:user.phone||"",qty:quantity,unitPrice,total:unitPrice*quantity,status:"جديد",createdAt:timestamp(),updatedAt:timestamp()};
+    const ref=await firestore().collection("orders").add(payload);notify("تم حفظ الطلب في حسابك ولوحة الإدارة");
+    const item=payload.perfume||payload.details||payload.serviceType||"طلب من هتون";
+    const message=["السلام عليكم ورحمة الله وبركاته 🌷","","طلب جديد من موقع HUTOON","رقم الطلب: "+ref.id,"العميل: "+payload.customer,"الهاتف: "+(payload.phone||"-"),"المنتج: "+item,payload.size?"الحجم: "+payload.size:"","الكمية: "+quantity,unitPrice>0?"الإجمالي: "+money(unitPrice*quantity):""].filter(Boolean).join("\n");
+    window.location.assign("https://wa.me/96877353930?text="+encodeURIComponent(message));return {id:ref.id,...payload};
+  };
+
+  window.chooseQuiz=function(key,value,button){
+    quizState[key]=value;button.parentElement.querySelectorAll("button").forEach(item=>item.classList.remove("selected"));button.classList.add("selected");
+    setTimeout(()=>{quizState.step++;document.querySelectorAll("#moodQuiz .quiz-step").forEach((step,index)=>step.classList.toggle("active",index===quizState.step));const progress=document.getElementById("quizProgress");if(progress)progress.style.width=Math.min(100,(quizState.step+1)/2*100)+"%";if(quizState.step>=2)renderQuizResults()},180);
+  };
+  function renderQuizResults(){
+    document.querySelectorAll("#moodQuiz .quiz-step").forEach(step=>step.classList.remove("active"));document.getElementById("quizResults")?.classList.add("active");
+    let results=window.hutoonMergedProducts().filter(item=>item.available!==false).filter(item=>(item.use||item.mood||item.season)===quizState.mood).filter(item=>quizState.gender==="يونيسكس"?item.gender==="يونيسكس":item.gender===quizState.gender||item.gender==="يونيسكس");
+    if(!results.length)results=window.hutoonMergedProducts().filter(item=>item.available!==false&&(item.use||item.mood||item.season)===quizState.mood);
+    const summary=document.getElementById("quizResultSummary");if(summary)summary.textContent=`اختيارك: ${quizState.gender} • ${quizState.mood}`;
+    const container=document.getElementById("sampleResults");if(!container)return;
+    container.innerHTML=results.length?results.slice(0,6).map(item=>`<article class="perfume-result-card"><img src="${esc(item.image||FALLBACK_IMAGE)}" alt="${esc(item.name)}"><small>${esc(item.brand||"HUTOON")}</small><h3>${esc(item.name)}</h3><p>${esc(item.description||"اختيار يناسب مزاجك")}</p><button class="btn btn-primary" onclick="hutoonOpenProduct(decodeURIComponent('${enc(item.id)}'))">اختيار العطر</button></article>`).join(""):'<div class="no-results">لا توجد عطور متوفرة ضمن هذا الاختيار حاليًا.</div>';
+  }
+  window.restartQuiz=function(){quizState={step:0,gender:"",mood:""};document.getElementById("quizResults")?.classList.remove("active");document.querySelectorAll("#moodQuiz .quiz-step").forEach((step,index)=>step.classList.toggle("active",index===0));document.querySelectorAll("#moodQuiz .quiz-options button").forEach(button=>button.classList.remove("selected"));const progress=document.getElementById("quizProgress");if(progress)progress.style.width="50%"};
+
+  async function restoreFirebaseSession(){
+    const auth=firebaseAuth();if(!auth)return;
+    try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)}catch(error){console.warn(error)}
+    auth.onAuthStateChanged(async firebaseUser=>{
+      if(!firebaseUser){verifiedAdminUid=null;if(!currentUser()?.local)setUser(null);return}
+      try{const profile=await loadProfile(firebaseUser);setUser(profile);subscribeProfile(profile);subscribeOrders(profile);if(profile.role==="admin")migrateLocalAdminData()}
+      catch(error){console.error(error);notify(authMessage(error))}
+    });
+  }
+
+  async function migrateLocalAdminData(){
+    if(localStorage.getItem("hutoon_firestore_admin_migrated_v1")==="true"||!isAdmin())return;
+    const db=firestore();if(!db)return;
+    try{
+      const brands=brandsFallback();const discounts=JSON.parse(localStorage.getItem("hutoon_admin_discount_codes")||"[]");const batch=db.batch();
+      if(productCollectionEmpty)fallbackProducts().forEach(item=>batch.set(db.collection("perfumes").doc(String(item.id)),{...item,createdAt:timestamp(),updatedAt:timestamp()},{merge:true}));
+      brands.forEach(item=>batch.set(db.collection("brands").doc(String(item.id||db.collection("brands").doc().id)),{...item,updatedAt:timestamp()},{merge:true}));
+      discounts.forEach(item=>batch.set(db.collection("discounts").doc(String(item.id||db.collection("discounts").doc().id)),{...item,updatedAt:timestamp()},{merge:true}));
+      if(productCollectionEmpty||brands.length||discounts.length)await batch.commit();localStorage.setItem("hutoon_firestore_admin_migrated_v1","true");
+    }catch(error){console.warn("Local data migration",error)}
+  }
+
+  window.selectService=function(type,button){
+    const panelIds={distribution:"distributionServicePanel",gift:"giftServicePanel"};
+    const panel=document.getElementById(panelIds[type]);
+    if(!panel||!button)return;
+    const shouldClose=button.classList.contains("active")&&panel.classList.contains("active");
+    document.querySelectorAll("#creator .service-choice").forEach(item=>{
+      item.classList.remove("active");item.setAttribute("aria-expanded","false");
+    });
+    document.querySelectorAll("#creator .service-panel").forEach(item=>item.classList.remove("active"));
+    if(shouldClose)return;
+    button.classList.add("active");button.setAttribute("aria-expanded","true");panel.classList.add("active");
+    window.setTimeout(()=>panel.scrollIntoView({behavior:"smooth",block:"start"}),120);
+  };
+
+  function setupServiceQuestionFlow(formId,type){
+    const form=document.getElementById(formId);
+    if(!form||form.dataset.questionFlow==="ready")return;
+    const grid=form.querySelector(".form-grid");
+    const coupon=form.querySelector(".hutoon-order-coupon");
+    const footer=form.querySelector(".special-order-footer");
+    const labels=grid?Array.from(grid.children).filter(item=>item.tagName==="LABEL"):[];
+    if(!grid||!coupon||!footer||!labels.length)return;
+
+    form.dataset.questionFlow="ready";
+    form.classList.add("hutoon-question-flow");
+    form.noValidate=true;
+    form.removeAttribute("onsubmit");
+    const questionCount=labels.length;
+    const totalSteps=questionCount+1;
+    let currentStep=0;
+
+    const progress=document.createElement("div");
+    progress.className="hutoon-question-progress";
+    progress.setAttribute("aria-label","تقدم تعبئة الطلب");
+    const progressTrack=document.createElement("div");
+    progressTrack.className="hutoon-question-progress-track";
+    const progressBar=document.createElement("span");
+    progressBar.className="hutoon-question-progress-bar";
+    progressTrack.appendChild(progressBar);
+    const progressText=document.createElement("span");
+    progressText.className="hutoon-question-progress-text";
+    progress.append(progressTrack,progressText);
+    form.insertBefore(progress,grid);
+
+    while(grid.firstChild)grid.removeChild(grid.firstChild);
+    grid.classList.add("hutoon-question-stage");
+    const steps=[];
+
+    function questionTitle(label){
+      return label.querySelector(":scope > span")?.textContent.trim()||"تفاصيل الطلب";
+    }
+    function makeButton(text,className){
+      const button=document.createElement("button");
+      button.type="button";
+      button.className=className;
+      button.textContent=text;
+      return button;
+    }
+    function fieldValue(field){
+      if(!field)return"لم يُحدد";
+      if(field.tagName==="SELECT")return field.selectedOptions[0]?.textContent.trim()||"لم يُحدد";
+      return String(field.value||"").trim()||"لم يُحدد";
+    }
+    function validateQuestion(index){
+      const label=labels[index];
+      if(!label)return true;
+      const field=label.querySelector("input,select,textarea");
+      if(!field||!field.required)return true;
+      if(field.checkValidity())return true;
+      notify("أكمل «"+questionTitle(label)+"» للمتابعة");
+      window.setTimeout(()=>field.focus({preventScroll:true}),40);
+      return false;
+    }
+    function updateReview(){
+      review.replaceChildren();
+      labels.forEach(label=>{
+        const item=document.createElement("div");
+        item.className="hutoon-review-item";
+        const title=document.createElement("small");
+        title.textContent=questionTitle(label);
+        const value=document.createElement("strong");
+        value.textContent=fieldValue(label.querySelector("input,select,textarea"));
+        item.append(title,value);
+        review.appendChild(item);
+      });
+    }
+    function showStep(index,shouldScroll=true){
+      currentStep=Math.max(0,Math.min(index,totalSteps-1));
+      steps.forEach((step,stepIndex)=>{
+        const active=stepIndex===currentStep;
+        step.classList.toggle("active",active);
+        step.setAttribute("aria-hidden",String(!active));
+      });
+      const isReview=currentStep===questionCount;
+      progressText.textContent=isReview?"المراجعة الأخيرة":"السؤال "+(currentStep+1)+" من "+questionCount;
+      progressBar.style.width=((currentStep+1)/totalSteps*100)+"%";
+      if(isReview)updateReview();
+      if(shouldScroll){
+        const top=form.getBoundingClientRect().top+window.scrollY-105;
+        window.scrollTo({top:Math.max(0,top),behavior:"smooth"});
+      }
+    }
+
+    labels.forEach((label,index)=>{
+      const step=document.createElement("section");
+      step.className="hutoon-question-step";
+      step.setAttribute("aria-hidden","true");
+      const head=document.createElement("div");
+      head.className="hutoon-question-head";
+      const counter=document.createElement("small");
+      counter.textContent="تفاصيل الطلب • "+(index+1).toLocaleString("ar-OM");
+      const title=document.createElement("h3");
+      title.textContent=questionTitle(label);
+      const hint=document.createElement("p");
+      hint.textContent=index===0?"لنأخذ التفاصيل خطوة بخطوة وبشكل بسيط.":"أكمل هذا السؤال ثم انتقل إلى التالي.";
+      head.append(counter,title,hint);
+      const fields=document.createElement("div");
+      fields.className="hutoon-question-fields";
+      fields.appendChild(label);
+      const nav=document.createElement("div");
+      nav.className="hutoon-question-nav";
+      if(index>0){
+        const back=makeButton("السابق","hutoon-question-back");
+        back.addEventListener("click",()=>showStep(index-1));
+        nav.appendChild(back);
+      }
+      const next=makeButton(index===questionCount-1?"مراجعة الطلب ←":"التالي ←","hutoon-question-next");
+      next.addEventListener("click",()=>{if(validateQuestion(index))showStep(index+1)});
+      nav.appendChild(next);
+      step.append(head,fields,nav);
+      grid.appendChild(step);
+      steps.push(step);
+    });
+
+    const finalStep=document.createElement("section");
+    finalStep.className="hutoon-question-step hutoon-question-final";
+    finalStep.setAttribute("aria-hidden","true");
+    const finalHead=document.createElement("div");
+    finalHead.className="hutoon-question-head";
+    const finalCounter=document.createElement("small");
+    finalCounter.textContent="الخطوة الأخيرة";
+    const finalTitle=document.createElement("h3");
+    finalTitle.textContent="راجع تفاصيل طلبك";
+    const finalHint=document.createElement("p");
+    finalHint.textContent="تأكد من الإجابات، اختر كوبونك إن وجد، ثم أرسل الطلب.";
+    finalHead.append(finalCounter,finalTitle,finalHint);
+    const review=document.createElement("div");
+    review.className="hutoon-service-review";
+    const finalNav=document.createElement("div");
+    finalNav.className="hutoon-question-final-nav";
+    const finalBack=makeButton("تعديل الإجابات","hutoon-question-back");
+    finalBack.addEventListener("click",()=>showStep(questionCount-1));
+    finalNav.appendChild(finalBack);
+    finalStep.append(finalHead,review,finalNav,coupon,footer);
+    grid.appendChild(finalStep);
+    steps.push(finalStep);
+
+    form.onsubmit=event=>{
+      event.preventDefault();
+      if(currentStep<questionCount){
+        if(validateQuestion(currentStep))showStep(currentStep+1);
+        return false;
+      }
+      for(let index=0;index<questionCount;index++){
+        if(!validateQuestion(index)){showStep(index);return false}
+      }
+      if(typeof window.submitSpecialOrder!=="function"){
+        notify("تعذر إرسال الطلب الآن، أعد تحميل الصفحة وحاول مجددًا");
+        return false;
+      }
+      window.submitSpecialOrder(event,type);
+      return false;
+    };
+    form.addEventListener("reset",()=>window.setTimeout(()=>showStep(0,false),0));
+    showStep(0,false);
+  }
+
+  window.closeAuth=function(){
+    const modal=document.getElementById("authModal");
+    if(!modal)return;
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden","true");
+    document.getElementById("hutoonHeaderLoginButton")?.focus({preventScroll:true});
+  };
+
+  function setupAuthCloseControls(){
+    const modal=document.getElementById("authModal");
+    const closeButton=document.getElementById("hutoonAuthCloseButton");
+    if(!modal||modal.dataset.closeControls==="ready")return;
+    modal.dataset.closeControls="ready";
+    modal.setAttribute("role","dialog");
+    modal.setAttribute("aria-modal","true");
+    modal.setAttribute("aria-hidden",String(!modal.classList.contains("show")));
+    closeButton?.setAttribute("title","إغلاق");
+    modal.addEventListener("click",event=>{if(event.target===modal)window.closeAuth()});
+    document.addEventListener("keydown",event=>{
+      if(event.key==="Escape"&&modal.classList.contains("show"))window.closeAuth();
+    });
+  }
+
+  function setupSectionPop(){
+    const sections=Array.from(document.querySelectorAll("body > main > section:not(.hero)"))
+      .filter(section=>!section.closest("#adminView"));
+    if(!sections.length)return;
+    sections.forEach(section=>{
+      section.classList.add("hutoon-section-pop");
+      const targets=section.classList.contains("brand-marquee-section")
+        ?Array.from(section.children)
+        :[section.querySelector(":scope > .shell")||section.firstElementChild].filter(Boolean);
+      targets.forEach((target,index)=>{
+        target.classList.add("hutoon-pop-target");
+        const delay=Math.min(index*70,180)+"ms";
+        target.style.transitionDelay=delay;
+        target.style.animationDelay=delay;
+      });
+    });
+    document.body.classList.add("hutoon-pop-ready");
+    if(!("IntersectionObserver" in window)||window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      sections.forEach(section=>section.classList.add("is-visible"));
+      return;
+    }
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting)return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    },{threshold:.12,rootMargin:"0px 0px -8% 0px"});
+    window.requestAnimationFrame(()=>sections.forEach(section=>observer.observe(section)));
+    window.setTimeout(()=>sections.forEach(section=>section.classList.add("is-visible")),1400);
+  }
+
+  function prepareLayout(){
+    const products=document.getElementById("perfumesCatalog"),mood=document.getElementById("moodQuiz");if(products&&mood)products.insertAdjacentElement("afterend",mood);
+    syncHeaderAuth(currentUser());
+    setupAdminAccessGuard();
+    setupAuthCloseControls();
+    setupSectionPop();
+    const password=document.getElementById("regPassword");if(password&&!password.nextElementSibling?.classList.contains("hutoon-field-help")){const help=document.createElement("small");help.className="hutoon-field-help";help.textContent="استخدم 6 أحرف على الأقل، وسيبقى حسابك مسجلًا على هذا الجهاز.";password.insertAdjacentElement("afterend",help)}
+    document.getElementById("loginIdentifier")?.setAttribute("placeholder","البريد الإلكتروني");
+    const productForm=document.getElementById("hutoonProductForm");
+    if(productForm){
+      delete productForm.dataset.saving;
+      productForm.noValidate=true;
+      productForm.onsubmit=window.hutoonStableProductSubmit;
+    }
+    const saveButton=document.getElementById("hutoonProductSaveButton");
+    if(saveButton){
+      saveButton.type="button";
+      saveButton.onclick=event=>window.hutoonStableProductSubmit(event);
+    }
+    document.querySelectorAll("#creator .service-choice").forEach(item=>{
+      item.classList.remove("active");item.setAttribute("aria-expanded","false");
+    });
+    document.querySelectorAll("#creator .service-panel").forEach(item=>item.classList.remove("active"));
+    setupServiceQuestionFlow("distributionOrderForm","distribution");
+    setupServiceQuestionFlow("giftOrderForm","gift");
+  }
+
+  function start(){
+    prepareLayout();restoreCloudConfig();subscribeProducts();subscribeBrands();subscribeDiscounts();restoreFirebaseSession();window.renderHutoonProducts();window.refreshLoyalty();
+    document.getElementById("hutoonProductFilters")?.addEventListener("click",event=>{const button=event.target.closest("button");if(!button)return;document.querySelectorAll("#hutoonProductFilters button").forEach(item=>item.classList.remove("active"));button.classList.add("active");setTimeout(window.renderHutoonProducts,0)},true);
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
 </script>
 </body>

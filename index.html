@@ -9592,6 +9592,18 @@ body{
         }));
       }
 
+      function normalizeRemotePerfume(item){
+        const images=Array.isArray(item?.images)?item.images.filter(Boolean):[];
+        const image=String(item?.image||item?.imageUrl||images[0]||"");
+        return {
+          ...item,
+          image,
+          imageUrl:image,
+          images:image?[image,...images.filter(url=>url!==image)]:images,
+          audioUrl:String(item?.audioUrl||"")
+        };
+      }
+
       function subscribePerfumes(){
         db.collection("perfumes").orderBy("createdAt","desc").onSnapshot(async snapshot=>{
           if(snapshot.empty){
@@ -9614,7 +9626,7 @@ body{
             return;
           }
 
-          const saved=snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
+          const saved=snapshot.docs.map(doc=>normalizeRemotePerfume({id:doc.id,...doc.data()}));
           window.hutoonRemoteCatalogReady=true;
           perfumeCatalog=saved.map(item=>item.deleted?{...item,available:false}:item);
           perfumeCatalog.forEach(item=>{
@@ -13318,12 +13330,54 @@ document.addEventListener('DOMContentLoaded', function () {
     if(bar)bar.style.width="0";
   }
 
-  function cloudinaryUpload(file,folder,progressId){
+  function readImageAsDataUrl(file){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>resolve(String(reader.result||""));
+      reader.onerror=()=>reject(new Error("تعذر قراءة الصورة"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function compressProductImage(file){
+    if(!file?.type?.startsWith("image/"))throw new Error("الملف المحدد ليس صورة");
+    const source=await readImageAsDataUrl(file);
+    return await new Promise((resolve,reject)=>{
+      const image=new Image();
+      image.onload=()=>{
+        try{
+          const maxSide=1200;
+          const naturalWidth=image.naturalWidth||image.width;
+          const naturalHeight=image.naturalHeight||image.height;
+          const scale=Math.min(1,maxSide/Math.max(naturalWidth,naturalHeight));
+          const width=Math.max(1,Math.round(naturalWidth*scale));
+          const height=Math.max(1,Math.round(naturalHeight*scale));
+          const canvas=document.createElement("canvas");
+          canvas.width=width;canvas.height=height;
+          const context=canvas.getContext("2d");
+          context.fillStyle="#ffffff";
+          context.fillRect(0,0,width,height);
+          context.drawImage(image,0,0,width,height);
+          canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("تعذر تجهيز الصورة")),"image/jpeg",0.78);
+        }catch(error){reject(error)}
+      };
+      image.onerror=()=>reject(new Error("تعذر قراءة الصورة"));
+      image.src=source;
+    });
+  }
+
+  async function cloudinaryUpload(file,folder,progressId){
     if(!(file instanceof File)||!file.size)throw new Error("لم يتم اختيار ملف صالح");
     const c=ensureCloudinaryConfig();
     const endpoint=`https://api.cloudinary.com/v1_1/${encodeURIComponent(c.cloudName)}/auto/upload`;
+    const isImage=file.type.startsWith("image/");
+    let preparedFile=file;
+    if(isImage){
+      showProgress(progressId,4,"جاري تجهيز الصورة...");
+      preparedFile=await compressProductImage(file);
+    }
     const form=new FormData();
-    form.append("file",file);
+    form.append("file",preparedFile,isImage?`hutoon-${Date.now()}.jpg`:file.name);
     form.append("upload_preset",c.uploadPreset);
     form.append("folder",folder);
 
@@ -13426,13 +13480,26 @@ document.addEventListener('DOMContentLoaded', function () {
     return window.firebase?.firestore?.FieldValue?.serverTimestamp?.()||new Date().toISOString();
   }
 
+  function normalizeSharedProductPayload(payload){
+    const normalized={...payload};
+    if(Object.prototype.hasOwnProperty.call(normalized,"image")){
+      normalized.image=String(normalized.image||"");
+      normalized.imageUrl=normalized.image;
+      normalized.images=normalized.image?[normalized.image]:[];
+    }
+    if(Object.prototype.hasOwnProperty.call(normalized,"audioUrl")){
+      normalized.audioUrl=String(normalized.audioUrl||"");
+    }
+    return normalized;
+  }
+
   async function persistProduct(id,payload){
     if(location.protocol!=="file:"){
       const db=sharedDb();
       if(!db)throw new Error("تعذر الاتصال بقاعدة المنتجات. أعد تحميل الصفحة وحاول مرة أخرى");
       try{
         const sharedPayload={
-          ...payload,
+          ...normalizeSharedProductPayload(payload),
           deleted:false,
           updatedAt:sharedTimestamp()
         };

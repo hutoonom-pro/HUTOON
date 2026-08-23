@@ -9686,6 +9686,208 @@ main > section { position: relative; }
   #adminView .storage-provider-head { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
 
+/* ==========================================================================
+   17. Checkout coupon + order totals
+   The customer needs to see the money change the moment the code lands, or
+   they cannot tell whether it worked.
+   ========================================================================== */
+
+.coupon-box {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  background: rgba(184, 147, 78, 0.07);
+  border: 1px dashed rgba(184, 147, 78, 0.40);
+}
+.coupon-box > label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--lg-ink);
+}
+.coupon-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.coupon-row input {
+  min-height: 44px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.coupon-row input:disabled {
+  background: rgba(62, 125, 99, 0.10) !important;
+  color: #2c5f4b !important;
+  border-color: rgba(62, 125, 99, 0.3) !important;
+}
+.coupon-row .btn { min-height: 44px; padding: 0 20px; white-space: nowrap; }
+
+.coupon-feedback:empty { display: none; }
+.coupon-feedback {
+  margin-top: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: var(--r-xs);
+}
+.coupon-feedback.ok   { background: rgba(62, 125, 99, 0.12); color: #2c5f4b; }
+.coupon-feedback.bad  { background: rgba(180, 73, 74, 0.11); color: #8f3839; }
+.coupon-feedback.warn { background: rgba(184, 147, 78, 0.15); color: #7a6027; }
+
+.order-totals {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(22, 37, 63, 0.08);
+  display: grid;
+  gap: 8px;
+}
+.order-totals > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13.5px;
+  color: var(--lg-muted);
+}
+.order-totals strong { color: var(--lg-ink); font-variant-numeric: tabular-nums; }
+.order-totals .discount-line,
+.order-totals .discount-line strong { color: #2c5f4b; }
+.order-totals .grand {
+  padding-top: 9px;
+  border-top: 1px solid rgba(22, 37, 63, 0.10);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--lg-ink);
+}
+.order-totals .grand strong { font-size: 19px; letter-spacing: -0.02em; }
+
+/* ==========================================================================
+   18. Discount admin
+   ========================================================================== */
+
+#adminView .discount-code-field .code-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+#adminView .discount-code-field input {
+  direction: ltr;
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  font-size: 15px;
+  background: rgba(184, 147, 78, 0.10) !important;
+  border-color: rgba(184, 147, 78, 0.35) !important;
+}
+#adminView .discount-code-field small {
+  display: block;
+  margin-top: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--lg-muted);
+}
+
+#adminView .admin-discount-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(22, 37, 63, 0.07);
+}
+#adminView .admin-discount-row > div { min-width: 0; }
+#adminView .admin-discount-row small { display: block; font-size: 11px; color: var(--lg-muted); margin-top: 3px; }
+#adminView .admin-discount-row strong { font-size: 14.5px; color: var(--lg-ink); }
+
+#adminView .discount-code-cell { display: flex; align-items: center; gap: 8px; }
+#adminView .admin-discount-code {
+  direction: ltr;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  font-size: 14.5px;
+  color: var(--lg-ink);
+}
+#adminView .copy-code {
+  padding: 5px 11px;
+  border: 1px solid rgba(184, 147, 78, 0.4);
+  border-radius: 999px;
+  background: rgba(184, 147, 78, 0.12);
+  color: #7a6027;
+  font-size: 11.5px;
+  font-weight: 800;
+  transition: background-color var(--dur-quick) var(--ease-out), transform var(--dur-press) var(--ease-out);
+}
+#adminView .copy-code:hover { background: rgba(184, 147, 78, 0.24); }
+#adminView .copy-code:active { transform: scale(0.94); }
+
+#adminView .admin-discount-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 800;
+}
+#adminView .admin-discount-status.active   { background: rgba(62, 125, 99, 0.14); color: #2c5f4b; }
+#adminView .admin-discount-status.used     { background: rgba(22, 37, 63, 0.10); color: var(--lg-muted); }
+#adminView .admin-discount-status.expired  { background: rgba(180, 73, 74, 0.12); color: #8f3839; }
+#adminView .admin-discount-status.inactive { background: rgba(184, 147, 78, 0.16); color: #7a6027; }
+
+#adminView .admin-discount-row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+#adminView .admin-discount-row-actions button {
+  padding: 7px 13px;
+  border: 1px solid rgba(22, 37, 63, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--lg-ink);
+  font-size: 12px;
+  font-weight: 700;
+  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-quick) var(--ease-out);
+}
+#adminView .admin-discount-row-actions button:active { transform: scale(0.95); }
+#adminView .admin-discount-row-actions .delete {
+  background: rgba(180, 73, 74, 0.10);
+  color: #8f3839;
+  border-color: rgba(180, 73, 74, 0.24);
+}
+
+/* ==========================================================================
+   19. Notifications
+   ========================================================================== */
+
+#adminView .admin-notification-item,
+.admin-notification-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-notification-item .notification-body { min-width: 0; }
+.notification-read-btn {
+  flex: 0 0 auto;
+  padding: 6px 13px;
+  border: 1px solid rgba(62, 125, 99, 0.3);
+  border-radius: 999px;
+  background: rgba(62, 125, 99, 0.12);
+  color: #2c5f4b;
+  font-size: 11.5px;
+  font-weight: 800;
+  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-quick) var(--ease-out);
+}
+.notification-read-btn:hover { background: rgba(62, 125, 99, 0.22); }
+.notification-read-btn:active { transform: scale(0.94); }
+
+/* A zero badge is noise; hide it rather than showing a permanent "0". */
+#adminNotificationBadge[data-count="0"] { display: none; }
+
+@media (max-width: 780px) {
+  #adminView .admin-discount-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  #adminView .discount-code-cell,
+  #adminView .admin-discount-row-actions { grid-column: 1 / -1; }
+  #adminView .admin-discount-row-actions button { flex: 1; }
+}
+
 </style>
 </head>
 <body>
@@ -10190,6 +10392,21 @@ main > section { position: relative; }
   <strong id="catalogOrderSummary">عبوة كاملة · الكمية 1</strong>
 </div>
 
+<div class="coupon-box">
+  <label for="orderCouponCode">هل لديك كود خصم؟</label>
+  <div class="coupon-row">
+    <input id="orderCouponCode" maxlength="24" placeholder="اكتب الكود هنا" autocomplete="off" spellcheck="false"/>
+    <button class="btn btn-outline" type="button" id="orderCouponApply" onclick="applyOrderCoupon()">تطبيق</button>
+  </div>
+  <div class="coupon-feedback" id="orderCouponFeedback"></div>
+</div>
+
+<div class="order-totals" id="orderTotals">
+  <div><span>المجموع</span><strong id="orderSubtotal">—</strong></div>
+  <div class="discount-line hidden" id="orderDiscountLine"><span>الخصم <b id="orderDiscountLabel"></b></span><strong id="orderDiscountValue">—</strong></div>
+  <div class="grand"><span>الإجمالي</span><strong id="orderGrandTotal">—</strong></div>
+</div>
+
 <button class="btn btn-primary catalog-order-submit" onclick="completeCatalogOrder()" type="button">
       حفظ الطلب وإنشاء الفاتورة
     </button>
@@ -10388,42 +10605,20 @@ main > section { position: relative; }
 <input id="discountEditId" type="hidden"/>
 <div class="admin-discount-grid">
 <label>
-                كود الخصم
-                <input id="discountCode" maxlength="24" placeholder="مثال: HUTOON20" required=""/>
+نسبة الخصم %
+<input id="discountValue" min="1" max="100" placeholder="20" required="" step="1" type="number"/>
 </label>
 <label>
-                نوع الخصم
-                <select id="discountType" required="">
-<option value="percent">نسبة مئوية</option>
-<option value="fixed">مبلغ ثابت (ر.ع)</option>
-</select>
+تاريخ الانتهاء
+<input id="discountExpiry" required="" type="date"/>
 </label>
-<label>
-                قيمة الخصم
-                <input id="discountValue" min="0.1" placeholder="20" required="" step="0.1" type="number"/>
-</label>
-<label>
-                الحد الأدنى للطلب
-                <input id="discountMinOrder" min="0" step="0.1" type="number" value="0"/>
-</label>
-<label>
-                تاريخ الانتهاء
-                <input id="discountExpiry" type="date"/>
-</label>
-<label>
-                حد الاستخدام
-                <input id="discountLimit" min="1" step="1" type="number" value="100"/>
-</label>
-<label>
-                الحالة
-                <select id="discountActive">
-<option value="true">فعال</option>
-<option value="false">متوقف</option>
-</select>
-</label>
-<label class="wide">
-                وصف العرض
-                <input id="discountDescription" maxlength="120" placeholder="مثال: خصم خاص على جميع الطلبات"/>
+<label class="wide discount-code-field">
+كود الخصم
+<div class="code-row">
+<input id="discountCode" maxlength="24" readonly placeholder="سيتم توليده تلقائيًا"/>
+<button class="btn btn-outline" type="button" onclick="regenerateDiscountCode()" title="توليد كود جديد">تغيير</button>
+</div>
+<small>يُولَّد تلقائيًا ولا يتكرر. انسخه وأرسله للعميل بعد الحفظ.</small>
 </label>
 </div>
 <div class="admin-discount-actions">
@@ -12856,91 +13051,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }).join("");
   };
 
-  window.saveAdminDiscount = function(event){
-    event.preventDefault();
-
-    const id=document.getElementById("discountEditId").value;
-    const code=cleanCode(document.getElementById("discountCode").value);
-    const type=document.getElementById("discountType").value;
-    const value=Number(document.getElementById("discountValue").value);
-    const minOrder=Number(document.getElementById("discountMinOrder").value || 0);
-    const expiry=document.getElementById("discountExpiry").value;
-    const limit=Number(document.getElementById("discountLimit").value || 100);
-    const active=document.getElementById("discountActive").value==="true";
-    const description=document.getElementById("discountDescription").value.trim();
-
-    if(!code || !Number.isFinite(value) || value<=0){
-      if(typeof showToast==="function") showToast("تحقق من الكود وقيمة الخصم");
-      return;
-    }
-
-    if(type==="percent" && value>100){
-      if(typeof showToast==="function") showToast("نسبة الخصم لا يمكن أن تتجاوز 100%");
-      return;
-    }
-
-    const items=readAdminDiscounts();
-    const duplicate=items.find(x=>x.code===code && x.id!==id);
-    if(duplicate){
-      if(typeof showToast==="function") showToast("هذا الكود موجود مسبقًا");
-      return;
-    }
-
-    if(id){
-      const item=items.find(x=>x.id===id);
-      if(item) Object.assign(item,{code,type,value,minOrder,expiry,limit,active,description,updatedAt:new Date().toISOString()});
-    }else{
-      items.unshift({
-        id:"DC-"+Date.now(),
-        code,type,value,minOrder,expiry,limit,active,description,
-        used:0,
-        createdAt:new Date().toISOString()
-      });
-    }
-
-    writeAdminDiscounts(items);
-    resetAdminDiscountForm();
-    if(typeof showToast==="function") showToast(id?"تم تحديث كود الخصم":"تم إنشاء كود الخصم");
-  };
-
-  window.editAdminDiscount=function(id){
-    const item=readAdminDiscounts().find(x=>x.id===id);
-    if(!item) return;
-    document.getElementById("discountEditId").value=item.id;
-    document.getElementById("discountCode").value=item.code;
-    document.getElementById("discountType").value=item.type;
-    document.getElementById("discountValue").value=item.value;
-    document.getElementById("discountMinOrder").value=item.minOrder||0;
-    document.getElementById("discountExpiry").value=item.expiry||"";
-    document.getElementById("discountLimit").value=item.limit||100;
-    document.getElementById("discountActive").value=String(Boolean(item.active));
-    document.getElementById("discountDescription").value=item.description||"";
-    document.getElementById("discountAdminSection").scrollIntoView({behavior:"smooth",block:"start"});
-  };
-
-  window.resetAdminDiscountForm=function(){
-    const form=document.getElementById("adminDiscountForm");
-    if(form) form.reset();
-    const id=document.getElementById("discountEditId");
-    if(id) id.value="";
-    const limit=document.getElementById("discountLimit");
-    if(limit) limit.value=100;
-  };
-
-  window.toggleAdminDiscount=function(id){
-    const items=readAdminDiscounts();
-    const item=items.find(x=>x.id===id);
-    if(!item) return;
-    item.active=!item.active;
-    item.updatedAt=new Date().toISOString();
-    writeAdminDiscounts(items);
-  };
-
-  window.deleteAdminDiscount=function(id){
-    if(!confirm("هل تريد حذف كود الخصم؟")) return;
-    writeAdminDiscounts(readAdminDiscounts().filter(x=>x.id!==id));
-    if(typeof showToast==="function") showToast("تم حذف الكود");
-  };
+  // The localStorage-era discount CRUD lived here. It read form fields that
+  // no longer exist (type / minimum / limit / description) and would throw on
+  // null, so it is gone; the Firestore versions later in the file are the
+  // only definitions now.
 
   window.useHutoonPublicDiscount=function(id){
     const items=readAdminDiscounts();
@@ -13343,9 +13457,19 @@ document.addEventListener('DOMContentLoaded', function () {
     if(!list)return;
     list.innerHTML=items.length?items.map(item=>`
       <article class="admin-notification-item ${item.read?"":"unread"}">
-        <strong>${escapeHtml(item.title)}</strong>
-        <small>${escapeHtml(item.message)}<br>${new Date(item.createdAt).toLocaleString("ar-OM")}</small>
+        <div class="notification-body">
+          <strong>${escapeHtml(item.title)}</strong>
+          <small>${escapeHtml(item.message)}<br>${new Date(item.createdAt).toLocaleString("ar-OM")}</small>
+        </div>
+        ${item.read?"":`<button class="notification-read-btn" type="button" onclick="markAdminNotificationRead('${encodeURIComponent(item.id)}')" title="تحديد كمقروء">تم</button>`}
       </article>`).join(""):'<div class="admin-notification-empty">لا توجد إشعارات جديدة.</div>';
+  };
+
+  // Marking one at a time, so a busy day's notifications can be worked
+  // through without losing track of what is still outstanding.
+  window.markAdminNotificationRead=function(encoded){
+    const id=decodeURIComponent(encoded);
+    writeNotifications(readNotifications().map(x=>String(x.id)===id?{...x,read:true}:x));
   };
   window.openAdminNotifications=function(){
     document.getElementById("adminNotificationDrawer")?.classList.add("show");
@@ -13491,7 +13615,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function money(value){
     const n=Number(value||0);
-    return n>0?n.toFixed(3).replace(/\.000$/,"")+" ر.ع":"السعر عند الطلب";
+    return n>0?n.toFixed(3)+" ر.ع":"السعر عند الطلب";
   }
   function readStoredUser(){
     try{
@@ -13595,7 +13719,10 @@ document.addEventListener('DOMContentLoaded', function () {
   function invoiceHtml(order){
     const unit=Number(order.unitPrice||order.price||0);
     const qty=Math.max(1,Number(order.qty||1));
-    const total=unit>0?unit*qty:0;
+    const subtotal=Number(order.subtotal||0)||(unit>0?unit*qty:0);
+    const discountAmount=Number(order.discountAmount||0);
+    const discountPercent=Number(order.discountPercent||0);
+    const total=Number(order.total||0)||Math.max(0,subtotal-discountAmount);
     const itemName=order.perfume||order.productName||order.details||order.serviceType||"طلب هتون";
     const brand=order.brand||"HUTOON";
     const notes=order.notes||order.details||"لا توجد ملاحظات إضافية";
@@ -13664,6 +13791,14 @@ document.addEventListener('DOMContentLoaded', function () {
           <span>حالة الطلب</span>
           <b>${order.status||"جديد"}</b>
         </div>
+        ${discountAmount>0?`<div class="hutoon-invoice-total hutoon-invoice-sub">
+          <small>المجموع قبل الخصم</small>
+          <strong>${money(subtotal)}</strong>
+        </div>
+        <div class="hutoon-invoice-total hutoon-invoice-discount">
+          <small>الخصم ${discountPercent}%${order.discountCode?` · ${order.discountCode}`:""}</small>
+          <strong>- ${money(discountAmount)}</strong>
+        </div>`:""}
         <div class="hutoon-invoice-total">
           <small>الإجمالي</small>
           <strong>${total>0?money(total):"يُحدد بعد التأكيد"}</strong>
@@ -13723,6 +13858,9 @@ document.addEventListener('DOMContentLoaded', function () {
       "الطلب: "+item,
       order.size ? "الحجم: "+order.size : "",
       "الكمية: "+(order.qty||1),
+      Number(order.subtotal||0)>0 ? "المجموع: "+money(order.subtotal) : "",
+      order.discountCode ? `الخصم: ${order.discountPercent}% (${order.discountCode}) − ${money(order.discountAmount)}` : "",
+      Number(order.total||0)>0 ? "الإجمالي: "+money(order.total) : "",
       invoiceUrl ? "رابط الفاتورة: "+invoiceUrl : "",
       "",
       "يرجى إرسال الفاتورة في هذه المحادثة لتأكيد الطلب."
@@ -13867,6 +14005,110 @@ document.addEventListener('DOMContentLoaded', function () {
     summary.textContent=catalogOrderMode==="sample"
       ? `${label} · ${size} · الكمية ${catalogQty}`
       : `${label} · الكمية ${catalogQty}`;
+    window.hutoonRenderOrderTotals?.();
+  };
+
+  // ---- Coupon at checkout -------------------------------------------------
+  // The code is validated against the live Firestore list and held here until
+  // the order is submitted, so the totals the customer sees are the totals
+  // that get written to the order, the invoice and the WhatsApp message.
+
+  let appliedCoupon=null;
+
+  function couponFeedback(message,state){
+    const box=document.getElementById("orderCouponFeedback");
+    if(!box)return;
+    box.textContent=message||"";
+    box.className="coupon-feedback"+(state?" "+state:"");
+  }
+
+  function orderUnitPrice(){
+    if(!selectedCatalogProduct)return 0;
+    if(catalogOrderMode==="sample"){
+      const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
+      const map={"2 مل":"price2ml","5 مل":"price5ml","10 مل":"price10ml"};
+      return Number(selectedCatalogProduct[map[size]]||0);
+    }
+    return Number(selectedCatalogProduct.price||0);
+  }
+
+  // One place computes the money, so the modal, the order record and the
+  // invoice can never disagree.
+  function orderTotals(){
+    const unit=orderUnitPrice();
+    const subtotal=unit*Number(catalogQty||1);
+    const percent=appliedCoupon?Number(appliedCoupon.value||0):0;
+    const discount=Math.round(subtotal*percent)/100;
+    return {unit,subtotal,percent,discount,total:Math.max(0,subtotal-discount)};
+  }
+  window.hutoonOrderTotals=orderTotals;
+
+  function renderOrderTotals(){
+    const t=orderTotals();
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+    const priced=t.subtotal>0;
+    set("orderSubtotal",priced?money(t.subtotal):"السعر عند الطلب");
+    set("orderGrandTotal",priced?money(t.total):"يُحدد بعد التأكيد");
+
+    const line=document.getElementById("orderDiscountLine");
+    if(line){
+      const show=Boolean(appliedCoupon)&&priced;
+      line.classList.toggle("hidden",!show);
+      if(show){
+        set("orderDiscountLabel",`${t.percent}%`);
+        set("orderDiscountValue","- "+money(t.discount));
+      }
+    }
+  }
+  window.hutoonRenderOrderTotals=renderOrderTotals;
+
+  window.applyOrderCoupon=function(){
+    const input=document.getElementById("orderCouponCode");
+    const button=document.getElementById("orderCouponApply");
+    const raw=String(input?.value||"").trim().toUpperCase();
+
+    // Pressing "تطبيق" with a coupon already on clears it, so the button is
+    // also the way back out.
+    if(appliedCoupon){
+      appliedCoupon=null;
+      if(input){input.value="";input.disabled=false}
+      if(button)button.textContent="تطبيق";
+      couponFeedback("");
+      renderOrderTotals();
+      return;
+    }
+
+    if(!raw)return couponFeedback("اكتب كود الخصم أولًا","bad");
+
+    const all=window.hutoonLiveDiscounts||[];
+    const match=all.find(item=>String(item.code||"").toUpperCase()===raw);
+
+    if(!match)return couponFeedback("الكود غير صحيح","bad");
+
+    const state=window.hutoonDiscountState?.(match)||{key:"active"};
+    if(state.key==="expired")return couponFeedback("انتهت صلاحية هذا الكود","bad");
+    if(state.key==="used")return couponFeedback("تم استخدام هذا الكود من قبل","bad");
+    if(state.key==="inactive")return couponFeedback("هذا الكود غير مفعّل","bad");
+
+    if(orderTotals().subtotal<=0){
+      return couponFeedback("سعر هذا المنتج يُحدد بعد التأكيد، سيُطبّق الخصم عند التسعير","warn");
+    }
+
+    appliedCoupon=match;
+    if(input)input.disabled=true;
+    if(button)button.textContent="إلغاء";
+    couponFeedback(`تم تطبيق خصم ${Number(match.value||0)}%`,"ok");
+    renderOrderTotals();
+  };
+
+  window.hutoonAppliedCoupon=()=>appliedCoupon;
+  window.hutoonClearCoupon=function(){
+    appliedCoupon=null;
+    const input=document.getElementById("orderCouponCode");
+    const button=document.getElementById("orderCouponApply");
+    if(input){input.value="";input.disabled=false}
+    if(button)button.textContent="تطبيق";
+    couponFeedback("");
   };
 
   window.openCatalogOrder=function(id){
@@ -13890,13 +14132,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const sizeInput=document.getElementById("catalogOrderSize");
     if(sizeInput)sizeInput.value="";
     document.querySelectorAll(".catalog-size-card").forEach(card=>card.classList.remove("active"));
+    window.hutoonClearCoupon?.();
     updateCatalogOrderSummary();
+    renderOrderTotals();
 
     document.getElementById("catalogOrderModal")?.classList.add("show");
   };
 
   window.closeCatalogOrder=function(){
     document.getElementById("catalogOrderModal")?.classList.remove("show");
+    window.hutoonClearCoupon?.();
   };
 
   window.changeCatalogQuantity=function(diff){
@@ -13904,6 +14149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const quantity=document.getElementById("catalogOrderQuantity");
     if(quantity)quantity.textContent=String(catalogQty);
     updateCatalogOrderSummary();
+    renderOrderTotals();
   };
 
   window.completeCatalogOrder=async function(){
@@ -13923,19 +14169,36 @@ document.addEventListener('DOMContentLoaded', function () {
       : "";
 
     try{
+      const totals=orderTotals();
+      const coupon=appliedCoupon;
+
       await finishOrder({
         serviceType:isSample?"طلب عينة منتج":"طلب منتج",
         perfume:selectedCatalogProduct.name,
         brand:selectedCatalogProduct.brand||"",
         size:selectedSize,
         qty:catalogQty,
-        unitPrice:isSample?0:Number(selectedCatalogProduct.price||0),
+        unitPrice:totals.unit,
+        subtotal:totals.subtotal,
+        discountCode:coupon?coupon.code:"",
+        discountPercent:coupon?Number(coupon.value||0):0,
+        discountAmount:totals.discount,
+        total:totals.total,
         notes:[
           isSample?"نوع الطلب: عينة":"نوع الطلب: عبوة كاملة",
           selectedCatalogProduct.description||""
         ].filter(Boolean).join(" | "),
         image:selectedCatalogProduct.image||""
       });
+      if(coupon?.id){
+        // Marked used only after the order is safely stored — a failed order
+        // must not consume the customer's code.
+        try{
+          await firestore()?.collection("discounts").doc(coupon.id).set({
+            used:1,usedAt:timestamp(),usedBy:currentUser()?.email||"",active:false
+          },{merge:true});
+        }catch(error){console.warn("Coupon burn failed:",error)}
+      }
       closeCatalogOrder();
     }catch(error){
       console.error(error);
@@ -15610,17 +15873,66 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     });
   }
 
-  function uploadMedia(file,folder,progressId){
-    if(!file?.size)return Promise.resolve("");
+  // Phone cameras produce 4-6 MB files. Sending those raw is the main cause of
+  // an upload that appears to hang, so shrink to something a product card can
+  // actually use before a single byte goes over the wire.
+  const IMAGE_MAX_EDGE=1600;
+  const IMAGE_QUALITY=0.82;
+
+  function compressImage(file){
+    return new Promise(resolve=>{
+      // Only raster photos benefit. SVG and GIF would be destroyed by a canvas
+      // round-trip, so they pass through untouched.
+      if(!/^image\/(jpeg|png|webp)$/i.test(file.type||"")) return resolve(file);
+      if(file.size<180*1024) return resolve(file);
+
+      const url=URL.createObjectURL(file);
+      const img=new Image();
+      img.onload=()=>{
+        URL.revokeObjectURL(url);
+        const scale=Math.min(1,IMAGE_MAX_EDGE/Math.max(img.width,img.height));
+        const w=Math.round(img.width*scale);
+        const h=Math.round(img.height*scale);
+        const canvas=document.createElement("canvas");
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext("2d");
+        ctx.imageSmoothingQuality="high";
+        // PNGs are often logos with transparency; flatten onto white so the
+        // JPEG encoder does not turn the alpha into black.
+        if(/png/i.test(file.type)){
+          ctx.fillStyle="#ffffff";
+          ctx.fillRect(0,0,w,h);
+        }
+        ctx.drawImage(img,0,0,w,h);
+        canvas.toBlob(blob=>{
+          // Keep whichever is smaller — re-encoding can inflate a well
+          // compressed original.
+          if(!blob||blob.size>=file.size) return resolve(file);
+          resolve(new File([blob],file.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"}));
+        },"image/jpeg",IMAGE_QUALITY);
+      };
+      img.onerror=()=>{URL.revokeObjectURL(url);resolve(file)};
+      img.src=url;
+    });
+  }
+  window.hutoonCompressImage=compressImage;
+
+  async function uploadMedia(file,folder,progressId){
+    if(!file?.size)return "";
 
     if(location.protocol==="file:"){
-      return Promise.reject(new Error("الرفع لا يعمل من file:// — شغّل الموقع عبر رابط http أو https."));
+      throw new Error("الرفع لا يعمل من file:// — شغّل الموقع عبر رابط http أو https.");
+    }
+
+    if(String(file.type||"").startsWith("image")){
+      uploadProgress(progressId,3,"جاري ضغط الصورة...");
+      file=await compressImage(file);
     }
 
     const kind=String(file.type||"").startsWith("audio")?"audio":"image";
     const limit=MEDIA_LIMITS[kind];
     if(file.size>limit){
-      return Promise.reject(new Error(`حجم الملف ${(file.size/1048576).toFixed(1)} م.ب ويتجاوز الحد المسموح (${limit/1048576} م.ب).`));
+      throw new Error(`حجم الملف ${(file.size/1048576).toFixed(1)} م.ب ويتجاوز الحد المسموح (${limit/1048576} م.ب).`);
     }
 
     // Cloudinary first when it is configured: it is the free path and needs no
@@ -15631,7 +15943,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     }
 
     if(!window.firebase?.storage){
-      return Promise.reject(new Error("لم يتم إعداد أي خدمة تخزين. أدخل بيانات Cloudinary من لوحة الإدارة."));
+      throw new Error("لم يتم إعداد أي خدمة تخزين. أدخل بيانات Cloudinary من لوحة الإدارة.");
     }
 
     // Default retry windows are 2 minutes. If the bucket does not exist the
@@ -15934,26 +16246,165 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     discountUnsubscribe?.();const db=firestore();if(!db)return;
     discountUnsubscribe=db.collection("discounts").onSnapshot(snapshot=>{window.hutoonLiveDiscounts=snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));window.renderAdminDiscounts?.();window.renderHutoonCoupons?.()},error=>console.warn(error));
   }
-  window.getHutoonPublicDiscounts=function(){return (window.hutoonLiveDiscounts||[]).filter(item=>item.active!==false&&(!item.expiry||new Date(item.expiry+"T23:59:59")>=new Date())&&Number(item.used||0)<Number(item.limit||Infinity))};
+  // ---- Discount codes ----------------------------------------------------
+  // A code is a percentage plus an expiry date. Everything else the old form
+  // asked for (type, minimum, usage cap, description) was never used at
+  // checkout, so it is gone and the code itself is generated rather than typed.
+
+  const DISCOUNT_ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no I/O/0/1
+
+  function newDiscountCode(){
+    const existing=new Set((window.hutoonLiveDiscounts||[]).map(d=>String(d.code||"").toUpperCase()));
+    for(let attempt=0;attempt<40;attempt++){
+      let body="";
+      for(let i=0;i<6;i++)body+=DISCOUNT_ALPHABET[Math.floor(Math.random()*DISCOUNT_ALPHABET.length)];
+      const code="HT"+body;
+      if(!existing.has(code))return code;
+    }
+    // Collisions are effectively impossible at this scale, but never hand back
+    // a duplicate: fall back to something guaranteed unique.
+    return "HT"+Date.now().toString(36).toUpperCase().slice(-6);
+  }
+
+  window.regenerateDiscountCode=function(){
+    fill("discountCode",newDiscountCode());
+  };
+
+  // فعال / منتهي / مستخدم — the three states the admin asked to see.
+  function discountState(item){
+    if(item.active===false)return {key:"inactive",label:"متوقف"};
+    if(item.usedAt||Number(item.used||0)>0)return {key:"used",label:"مستخدم"};
+    if(item.expiry&&new Date(item.expiry+"T23:59:59")<new Date())return {key:"expired",label:"منتهي"};
+    return {key:"active",label:"فعال"};
+  }
+  window.hutoonDiscountState=discountState;
+
+  // A code the customer may still redeem.
+  window.getHutoonPublicDiscounts=function(){
+    return (window.hutoonLiveDiscounts||[]).filter(item=>discountState(item).key==="active");
+  };
+
   window.renderAdminDiscounts=function(){
-    const items=window.hutoonLiveDiscounts||[];const list=document.getElementById("adminDiscountList");if(!list)return;
-    const total=document.getElementById("discountTotalCount"),active=document.getElementById("discountActiveCount"),usage=document.getElementById("discountUsageCount");
-    if(total)total.textContent=String(items.length);if(active)active.textContent=String(items.filter(item=>item.active!==false).length);if(usage)usage.textContent=String(items.reduce((sum,item)=>sum+Number(item.used||0),0));
-    list.innerHTML=items.length?items.map(item=>`<article class="admin-discount-row"><div><span class="admin-discount-code">${esc(item.code)}</span><small>${esc(item.description||"بدون وصف")}</small></div><div><strong>${item.type==="percent"?Number(item.value||0)+"%":money(item.value)}</strong><small>قيمة الخصم</small></div><div><strong>${money(item.minOrder)}</strong><small>الحد الأدنى</small></div><div><strong>${Number(item.used||0)} / ${Number(item.limit||100)}</strong><small>الاستخدام</small></div><div><span class="admin-discount-status ${item.active!==false?"active":"inactive"}">${item.active!==false?"فعال":"متوقف"}</span><small>${esc(item.expiry||"بدون تاريخ")}</small></div><div class="admin-discount-row-actions"><button class="edit" onclick="editAdminDiscount('${enc(item.id)}')">تعديل</button><button class="toggle" onclick="toggleAdminDiscount('${enc(item.id)}')">${item.active!==false?"إيقاف":"تفعيل"}</button><button class="delete" onclick="deleteAdminDiscount('${enc(item.id)}')">حذف</button></div></article>`).join(""):'<div class="hutoon-wallet-empty">لا توجد أكواد خصم حتى الآن.</div>';
+    const items=window.hutoonLiveDiscounts||[];
+    const list=document.getElementById("adminDiscountList");
+    if(!list)return;
+
+    const total=document.getElementById("discountTotalCount");
+    const active=document.getElementById("discountActiveCount");
+    const usage=document.getElementById("discountUsageCount");
+    if(total)total.textContent=String(items.length);
+    if(active)active.textContent=String(items.filter(i=>discountState(i).key==="active").length);
+    if(usage)usage.textContent=String(items.filter(i=>discountState(i).key==="used").length);
+
+    if(!items.length){
+      list.innerHTML='<div class="hutoon-wallet-empty">لا توجد أكواد خصم حتى الآن.</div>';
+      return;
+    }
+
+    list.innerHTML=items.map(item=>{
+      const state=discountState(item);
+      return `<article class="admin-discount-row">
+        <div class="discount-code-cell">
+          <span class="admin-discount-code">${esc(item.code)}</span>
+          <button class="copy-code" type="button" onclick="copyDiscountCode('${enc(item.code)}')" title="نسخ الكود">نسخ</button>
+        </div>
+        <div><strong>${Number(item.value||0)}%</strong><small>نسبة الخصم</small></div>
+        <div><strong>${esc(item.expiry||"—")}</strong><small>ينتهي في</small></div>
+        <div><span class="admin-discount-status ${state.key}">${state.label}</span>${item.usedBy?`<small>${esc(item.usedBy)}</small>`:""}</div>
+        <div class="admin-discount-row-actions">
+          <button class="edit" onclick="editAdminDiscount('${enc(item.id)}')">تعديل</button>
+          <button class="toggle" onclick="toggleAdminDiscount('${enc(item.id)}')">${item.active!==false?"إيقاف":"تفعيل"}</button>
+          <button class="delete" onclick="deleteAdminDiscount('${enc(item.id)}')">حذف</button>
+        </div>
+      </article>`;
+    }).join("");
   };
+
+  window.copyDiscountCode=async function(encoded){
+    const code=decodeURIComponent(encoded);
+    try{
+      await navigator.clipboard.writeText(code);
+      notify(`تم نسخ الكود ${code}`);
+    }catch(_){
+      // clipboard API needs https and permission; fall back to a selection.
+      const field=document.createElement("input");
+      field.value=code;
+      document.body.appendChild(field);
+      field.select();
+      try{document.execCommand("copy");notify(`تم نسخ الكود ${code}`)}
+      catch(__){notify(`الكود: ${code}`)}
+      field.remove();
+    }
+  };
+
   window.saveAdminDiscount=async function(event){
-    event.preventDefault();if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    event.preventDefault();
+    if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+
+    const form=event.currentTarget;
+    const submit=form.querySelector('button[type="submit"]');
+    const value=Number(document.getElementById("discountValue").value||0);
+    const expiry=document.getElementById("discountExpiry").value||"";
+    let code=String(document.getElementById("discountCode").value||"").trim().toUpperCase();
+
+    if(!Number.isFinite(value)||value<=0||value>100)return notify("نسبة الخصم يجب أن تكون بين 1 و100");
+    if(!expiry)return notify("حدد تاريخ انتهاء الكود");
+    if(new Date(expiry+"T23:59:59")<new Date())return notify("تاريخ الانتهاء يجب أن يكون في المستقبل");
+    if(!code)code=newDiscountCode();
+
     const id=document.getElementById("discountEditId").value||firestore().collection("discounts").doc().id;
-    const item={code:document.getElementById("discountCode").value.trim().toUpperCase().replace(/\s+/g,""),type:document.getElementById("discountType").value,value:Number(document.getElementById("discountValue").value||0),minOrder:Number(document.getElementById("discountMinOrder").value||0),expiry:document.getElementById("discountExpiry").value||"",limit:Number(document.getElementById("discountLimit").value||100),active:document.getElementById("discountActive").value!=="false",description:document.getElementById("discountDescription").value.trim(),updatedAt:timestamp()};
-    if(!item.code||item.value<=0)return notify("تحقق من الكود وقيمة الخصم");
-    try{await firestore().collection("discounts").doc(id).set(item,{merge:true});window.resetAdminDiscountForm?.();notify("تم حفظ كود الخصم ونشره") }catch(error){notify(authMessage(error))}
+    const item={code,value,expiry,type:"percent",active:true,updatedAt:timestamp()};
+
+    if(submit){submit.disabled=true;submit.textContent="جاري الحفظ...";}
+    try{
+      await firestore().collection("discounts").doc(id).set(item,{merge:true});
+      window.resetAdminDiscountForm?.();
+      notify(`تم حفظ الكود ${code}`);
+    }catch(error){
+      notify(authMessage(error));
+    }finally{
+      if(submit){submit.disabled=false;submit.textContent="حفظ الكود";}
+    }
   };
+
   window.editAdminDiscount=function(encoded){
-    const id=decodeURIComponent(encoded),item=(window.hutoonLiveDiscounts||[]).find(value=>String(value.id)===id);if(!item)return;
-    fill("discountEditId",id);fill("discountCode",item.code);fill("discountType",item.type);fill("discountValue",item.value);fill("discountMinOrder",item.minOrder||0);fill("discountExpiry",item.expiry||"");fill("discountLimit",item.limit||100);fill("discountActive",String(item.active!==false));fill("discountDescription",item.description||"");
+    const id=decodeURIComponent(encoded);
+    const item=(window.hutoonLiveDiscounts||[]).find(value=>String(value.id)===id);
+    if(!item)return;
+    fill("discountEditId",id);
+    fill("discountCode",item.code||"");
+    fill("discountValue",item.value||"");
+    fill("discountExpiry",item.expiry||"");
+    document.getElementById("discountAdminSection")?.scrollIntoView({behavior:"smooth",block:"start"});
   };
-  window.toggleAdminDiscount=async function(encoded){const id=decodeURIComponent(encoded),item=(window.hutoonLiveDiscounts||[]).find(value=>String(value.id)===id);if(!item)return;try{await firestore().collection("discounts").doc(id).set({active:item.active===false,updatedAt:timestamp()},{merge:true})}catch(error){notify(authMessage(error))}};
-  window.deleteAdminDiscount=async function(encoded){if(!isAdmin()||!confirm("هل تريد حذف كود الخصم؟"))return;try{await firestore().collection("discounts").doc(decodeURIComponent(encoded)).delete();notify("تم حذف الكود") }catch(error){notify(authMessage(error))}};
+
+  window.toggleAdminDiscount=async function(encoded){
+    if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    const id=decodeURIComponent(encoded);
+    const item=(window.hutoonLiveDiscounts||[]).find(value=>String(value.id)===id);
+    if(!item)return;
+    try{
+      await firestore().collection("discounts").doc(id).set({active:item.active===false,updatedAt:timestamp()},{merge:true});
+      notify(item.active===false?"تم تفعيل الكود":"تم إيقاف الكود");
+    }catch(error){notify(authMessage(error))}
+  };
+
+  window.deleteAdminDiscount=async function(encoded){
+    if(!isAdmin())return notify("هذه العملية للإدارة فقط");
+    if(!confirm("هل تريد حذف كود الخصم؟"))return;
+    try{
+      await firestore().collection("discounts").doc(decodeURIComponent(encoded)).delete();
+      notify("تم حذف الكود");
+    }catch(error){notify(authMessage(error))}
+  };
+
+  window.resetAdminDiscountForm=function(){
+    fill("discountEditId","");
+    fill("discountValue","");
+    fill("discountExpiry","");
+    // A fresh form should already hold the code it is about to save.
+    fill("discountCode",newDiscountCode());
+  };
 
   window.refreshLoyalty=function(){
     const user=currentUser();const points=Number(user?.points||0),drops=Number(user?.raindrops||0);

@@ -9888,6 +9888,310 @@ main > section { position: relative; }
   #adminView .admin-discount-row-actions button { flex: 1; }
 }
 
+/* ==========================================================================
+   20. Product editor
+   Fifteen fields in one flat run gave no sense of progress or grouping. The
+   same fields now read as six short steps, each answering one question.
+   ========================================================================== */
+
+#adminView .admin-product-editor {
+  --pf-gap: 16px;
+}
+
+#adminView .admin-perfume-form {
+  display: grid;
+  gap: 14px;
+}
+
+/* --- Group --------------------------------------------------------------- */
+#adminView .pf-group {
+  padding: 18px;
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(22, 37, 63, 0.08);
+}
+
+#adminView .pf-group-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(22, 37, 63, 0.08);
+}
+#adminView .pf-group-head h4 {
+  margin: 0;
+  font-size: 15.5px;
+  letter-spacing: -0.012em;
+  color: var(--lg-ink);
+}
+#adminView .pf-group-head p {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--lg-muted);
+}
+
+/* The number is the only thing that tells the admin how far along they are. */
+#adminView .pf-step {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(150deg, rgba(216, 189, 133, 0.95), rgba(184, 147, 78, 0.9));
+  color: #14223a;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+#adminView .pf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--pf-gap);
+}
+#adminView .pf-grid .wide { grid-column: 1 / -1; }
+
+/* --- Live price ----------------------------------------------------------
+   The admin types a price and a discount percent; the number the customer
+   will actually see should not have to be worked out in their head. */
+#adminView .pf-price-result {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: var(--pf-gap);
+  padding: 13px 16px;
+  border-radius: var(--r-sm);
+  background: rgba(22, 37, 63, 0.05);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lg-muted);
+}
+#adminView .pf-price-result strong {
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  color: var(--lg-ink);
+  font-variant-numeric: tabular-nums;
+}
+#adminView .pf-price-result.has-discount {
+  background: rgba(62, 125, 99, 0.10);
+  color: #2c5f4b;
+}
+#adminView .pf-price-result.has-discount strong { color: #24523f; }
+
+/* --- Sample sizes -------------------------------------------------------- */
+#adminView .pf-sizes {
+  margin-top: var(--pf-gap);
+  padding: 14px;
+  border-radius: var(--r-sm);
+  background: rgba(184, 147, 78, 0.07);
+  border: 1px solid rgba(184, 147, 78, 0.22);
+}
+#adminView .pf-sizes-head { margin-bottom: 11px; }
+#adminView .pf-sizes-head strong { display: block; font-size: 13.5px; color: var(--lg-ink); }
+#adminView .pf-sizes-head small { font-size: 12px; color: var(--lg-muted); }
+
+#adminView .pf-size-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+#adminView .pf-size-grid label {
+  display: grid;
+  gap: 6px;
+  justify-items: stretch;
+}
+#adminView .pf-size-tag {
+  justify-self: start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(184, 147, 78, 0.18);
+  color: #7a6027;
+  font-size: 11px;
+  font-weight: 800;
+}
+#adminView .pf-size-grid input { text-align: center; font-variant-numeric: tabular-nums; }
+
+/* --- Upload zone ---------------------------------------------------------
+   The browser's default file input renders an English "Choose File / No file
+   chosen" in the middle of an Arabic form. Hide it and drive it from the
+   label instead. */
+#adminView .pf-dropzone {
+  display: block;
+  cursor: pointer;
+  padding: 26px 18px;
+  border-radius: var(--r-md);
+  border: 2px dashed rgba(184, 147, 78, 0.45);
+  background: rgba(184, 147, 78, 0.06);
+  text-align: center;
+  transition: background-color var(--dur-quick) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out),
+              transform var(--dur-press) var(--ease-out);
+}
+#adminView .pf-dropzone:hover {
+  background: rgba(184, 147, 78, 0.12);
+  border-color: rgba(184, 147, 78, 0.7);
+}
+#adminView .pf-dropzone:active { transform: scale(0.995); }
+#adminView .pf-dropzone.is-dragover {
+  background: rgba(62, 125, 99, 0.12);
+  border-color: rgba(62, 125, 99, 0.6);
+}
+/* Keep it reachable by keyboard even though it is visually gone. */
+#adminView .pf-dropzone input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+#adminView .pf-dropzone:focus-within {
+  outline: 2px solid rgba(184, 147, 78, 0.9);
+  outline-offset: 3px;
+}
+#adminView .pf-dropzone-inner { display: grid; gap: 5px; justify-items: center; }
+#adminView .pf-dropzone-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: rgba(184, 147, 78, 0.20);
+  color: #7a6027;
+  font-size: 17px;
+}
+#adminView .pf-dropzone strong { font-size: 14px; color: var(--lg-ink); }
+#adminView .pf-dropzone small { font-size: 12px; color: var(--lg-muted); }
+#adminView .pf-dropzone.has-file .pf-dropzone-icon {
+  background: rgba(62, 125, 99, 0.18);
+  color: #2c5f4b;
+}
+
+#adminView .image-url-field {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+#adminView .image-url-field span { font-size: 12px; font-weight: 700; color: var(--lg-muted); }
+#adminView .image-url-field input { direction: ltr; text-align: left; }
+
+/* --- Previews ------------------------------------------------------------ */
+#adminView .admin-image-preview {
+  margin-top: 12px;
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(168deg, #ffffff, #f8f4ec);
+  border: 1px solid rgba(22, 37, 63, 0.08);
+  color: var(--lg-muted);
+  font-size: 12.5px;
+  overflow: hidden;
+}
+#adminView .admin-image-preview img {
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: var(--r-xs);
+}
+#adminView .admin-audio-preview {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(22, 37, 63, 0.08);
+  color: var(--lg-muted);
+  font-size: 12.5px;
+}
+#adminView .admin-audio-preview audio { width: 100%; }
+
+#adminView .media-upload-progress {
+  position: relative;
+  margin-top: 10px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(22, 37, 63, 0.08);
+  overflow: hidden;
+}
+#adminView .media-upload-progress > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(184, 147, 78, 0.95), rgba(216, 189, 133, 0.95));
+  transition: width 220ms var(--ease-out);
+}
+#adminView .media-upload-progress > b {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--lg-ink);
+}
+
+/* A remove button for media that is not there yet is just a dead control. */
+#adminView .remove-media-btn {
+  margin-top: 10px;
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid rgba(180, 73, 74, 0.26);
+  border-radius: 999px;
+  background: rgba(180, 73, 74, 0.09);
+  color: #8f3839;
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: background-color var(--dur-quick) var(--ease-out), transform var(--dur-press) var(--ease-out);
+}
+#adminView .remove-media-btn:hover { background: rgba(180, 73, 74, 0.17); }
+#adminView .remove-media-btn:active { transform: scale(0.98); }
+#adminView .remove-media-btn[hidden] { display: none !important; }
+
+/* --- Sticky footer -------------------------------------------------------
+   The save button must stay reachable without scrolling a six-step form. */
+#adminView .hutoon-product-save-status {
+  padding: 11px 15px;
+  border-radius: var(--r-sm);
+  background: rgba(22, 37, 63, 0.05);
+  color: var(--lg-muted);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+#adminView .hutoon-product-save-status.is-error { background: rgba(180, 73, 74, 0.11); color: #8f3839; }
+#adminView .hutoon-product-save-status.is-ok { background: rgba(62, 125, 99, 0.12); color: #2c5f4b; }
+
+#adminView .admin-perfume-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 14px 0 2px;
+  margin-top: 4px;
+  background: linear-gradient(to top, var(--glass-thick-bg) 62%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
+}
+#adminView .admin-product-save { min-height: 50px; font-size: 15px; }
+#adminView .admin-perfume-actions .btn-outline { min-height: 50px; padding: 0 24px; }
+#adminView .admin-product-save:disabled { opacity: 0.6; cursor: progress; }
+
+@media (max-width: 620px) {
+  #adminView .pf-group { padding: 14px; }
+  #adminView .pf-grid { grid-template-columns: 1fr; }
+  #adminView .pf-size-grid { grid-template-columns: 1fr; }
+  #adminView .pf-dropzone { padding: 20px 14px; }
+  #adminView .admin-perfume-actions { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -10757,14 +11061,17 @@ main > section { position: relative; }
 
 <form class="admin-perfume-form" id="hutoonProductForm" novalidate onsubmit="return hutoonStableProductSubmit(event)">
 <input id="perfumeEditId" type="hidden"/>
-<div class="admin-perfume-grid">
-<label>
-                اسم العطر
-                <input id="adminPerfumeName" placeholder="مثال: Interlude Man" required=""/>
-</label>
-<label>
-                البراند
-                <select id="perfumeBrand" required="">
+
+<section class="pf-group">
+  <div class="pf-group-head"><span class="pf-step">1</span><div><h4>الأساسيات</h4><p>اسم العطر وهويته في المتجر.</p></div></div>
+  <div class="pf-grid">
+    <label class="wide">
+      اسم العطر
+      <input id="adminPerfumeName" placeholder="مثال: Interlude Man" required=""/>
+    </label>
+    <label>
+      البراند
+      <select id="perfumeBrand" required="">
 <option value="">اختر البراند</option>
 <option>Amouage</option>
 <option>Omani Luxury</option>
@@ -10781,102 +11088,124 @@ main > section { position: relative; }
 <option>Etat Libre d’Orange</option><option>Marc-Antoine Barrois</option>
 <option>Cranford</option><option>HUTOON Selection</option>
 </select>
-</label>
-<label>
-                النوع
-                <select id="perfumeGender" required="">
+    </label>
+    <label>
+      النوع
+      <select id="perfumeGender" required="">
 <option value="">اختر النوع</option>
 <option>رجالي</option>
 <option>نسائي</option>
 <option>يونيسكس</option>
 </select>
-</label>
-<label>
-                الموسم
-                <select id="perfumeSeason" required="">
+    </label>
+  </div>
+</section>
+
+<section class="pf-group">
+  <div class="pf-group-head"><span class="pf-step">2</span><div><h4>التصنيف</h4><p>يُستخدم في فلاتر المتجر وفي اختبار «عطرك على مزاجك».</p></div></div>
+  <div class="pf-grid">
+    <label>
+      الموسم
+      <select id="perfumeSeason" required="">
 <option value="">اختر الموسم</option>
 <option>صيفي</option>
 <option>شتوي</option>
 </select>
-</label>
-<label>
-                الاستخدام
-                <select id="perfumeUse" required="">
+    </label>
+    <label>
+      الاستخدام
+      <select id="perfumeUse" required="">
 <option value="">اختر الاستخدام</option>
 <option>رسمي</option>
 <option>يومي</option>
 <option>فاكهي</option><option>منعش</option><option>طلعات</option>
 </select>
-</label>
-<label>
-                يحتوي على العود؟
-                <select id="perfumeOud" required="">
+    </label>
+    <label>
+      يحتوي على العود؟
+      <select id="perfumeOud" required="">
 <option value="">اختر</option>
 <option value="true">نعم</option>
 <option value="false">لا</option>
 </select>
-</label>
-<label>
-                سعر العبوة الكاملة (ر.ع)
-                <input id="perfumePrice" min="0" placeholder="مثال: 12.500" step="0.001" type="number"/>
-</label>
-<div class="wide admin-size-prices">
-  <div class="admin-size-prices-head">
-    <strong>أسعار الأحجام والعينات</strong>
-    <small>حددي سعرًا مستقلًا لكل حجم، وسيظهر تلقائيًا للعميل والفاتورة.</small>
-  </div>
-  <div class="admin-size-price-grid">
-    <label>سعر 2 مل (ر.ع)
-      <input id="perfumePrice2ml" min="0" placeholder="مثال: 2.000" step="0.001" type="number"/>
-    </label>
-    <label>سعر 5 مل (ر.ع)
-      <input id="perfumePrice5ml" min="0" placeholder="مثال: 4.500" step="0.001" type="number"/>
-    </label>
-    <label>سعر 10 مل (ر.ع)
-      <input id="perfumePrice10ml" min="0" placeholder="مثال: 8.000" step="0.001" type="number"/>
     </label>
   </div>
-</div>
-<label>
-                السعر قبل الخصم (ر.ع)
-                <input id="perfumeOldPrice" min="0" placeholder="اختياري" step="0.001" type="number"/>
-</label>
-<label>
-                نسبة الخصم %
-                <input id="perfumeDiscount" max="100" min="0" step="1" type="number" value="0"/>
-</label>
-<label>
-                شارة المنتج
-                <input id="perfumeBadge" maxlength="30" placeholder="جديد / الأكثر مبيعًا"/>
-</label>
-<label class="wide admin-image-upload-field">
-  صورة العطر من الجهاز
-  <input accept="image/png,image/jpeg,image/webp" id="perfumeImageFile" type="file"/>
-<div class="image-url-field">
-  <span>أو الصق رابط صورة</span>
-  <input id="perfumeImage" type="url" inputmode="url" placeholder="https://..." oninput="hutoonPreviewImageUrl()"/>
-</div>
-<div class="admin-image-preview" id="perfumeImagePreview">
-<span>اختر صورة JPG أو PNG أو WEBP</span>
-</div>
-<div class="media-upload-progress hidden" id="perfumeImageProgress">
-  <span></span><b>0%</b>
-</div>
-<button class="remove-media-btn" id="removePerfumeImageBtn" onclick="removeCurrentPerfumeImage()" type="button">
-  حذف الصورة الحالية من المنتج
-</button>
-<small>اختر ملفًا ليُرفع إلى Firebase Storage عند الحفظ، أو الصق رابط صورة جاهزًا.</small>
-</label>
-<label class="wide">
-                وصف العطر
-                <textarea id="perfumeDescription" placeholder="اكتب وصفًا مختصرًا وفخمًا للعطر" rows="3"></textarea>
-</label>
+</section>
 
-<label class="wide storage-audio-field">
-  ملف صوت العطر
-  <input accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac" id="perfumeAudioFile" type="file"/>
+<section class="pf-group">
+  <div class="pf-group-head"><span class="pf-step">3</span><div><h4>الأسعار</h4><p>سعر العبوة الكاملة، وسعر مستقل لكل حجم عينة.</p></div></div>
+  <div class="pf-grid">
+    <label>
+      سعر العبوة الكاملة (ر.ع)
+      <input id="perfumePrice" min="0" placeholder="مثال: 12.500" step="0.001" type="number" oninput="hutoonUpdatePriceHint()"/>
+    </label>
+    <label>
+      السعر قبل الخصم (ر.ع)
+      <input id="perfumeOldPrice" min="0" placeholder="اختياري" step="0.001" type="number"/>
+    </label>
+    <label>
+      نسبة الخصم %
+      <input id="perfumeDiscount" max="100" min="0" step="1" type="number" value="0" oninput="hutoonUpdatePriceHint()"/>
+    </label>
+  </div>
+
+  <div class="pf-price-result" id="perfumePriceResult">
+    <span>السعر النهائي بعد الخصم</span>
+    <strong id="perfumeFinalPrice">—</strong>
+  </div>
+
+  <div class="pf-sizes">
+    <div class="pf-sizes-head"><strong>أسعار العينات</strong><small>يظهر كل سعر للعميل عند اختيار الحجم.</small></div>
+    <div class="pf-size-grid">
+      <label><span class="pf-size-tag">2 مل</span><input id="perfumePrice2ml" min="0" placeholder="2.000" step="0.001" type="number"/></label>
+      <label><span class="pf-size-tag">5 مل</span><input id="perfumePrice5ml" min="0" placeholder="4.500" step="0.001" type="number"/></label>
+      <label><span class="pf-size-tag">10 مل</span><input id="perfumePrice10ml" min="0" placeholder="8.000" step="0.001" type="number"/></label>
+    </div>
+  </div>
+</section>
+
+<section class="pf-group">
+  <div class="pf-group-head"><span class="pf-step">4</span><div><h4>الصورة</h4><p>ارفع صورة من جهازك، أو الصق رابطًا جاهزًا.</p></div></div>
+
+  <label class="pf-dropzone" id="perfumeDropzone" for="perfumeImageFile">
+    <input accept="image/png,image/jpeg,image/webp" id="perfumeImageFile" type="file"/>
+    <div class="pf-dropzone-inner">
+      <span class="pf-dropzone-icon" aria-hidden="true">⬆</span>
+      <strong>اسحب الصورة هنا أو اضغط للاختيار</strong>
+      <small>JPG أو PNG أو WEBP — تُضغط تلقائيًا قبل الرفع</small>
+    </div>
+  </label>
+
+  <div class="image-url-field">
+    <span>أو الصق رابط صورة</span>
+    <input id="perfumeImage" type="url" inputmode="url" placeholder="https://..." oninput="hutoonPreviewImageUrl()"/>
+  </div>
+
+  <div class="admin-image-preview" id="perfumeImagePreview">
+    <span>لم تُختر صورة بعد</span>
+  </div>
+  <div class="media-upload-progress hidden" id="perfumeImageProgress">
+    <span></span><b>0%</b>
+  </div>
+  <button class="remove-media-btn" id="removePerfumeImageBtn" onclick="removeCurrentPerfumeImage()" type="button">
+    حذف الصورة الحالية من المنتج
+  </button>
+</section>
+
+<section class="pf-group">
+  <div class="pf-group-head"><span class="pf-step">5</span><div><h4>الصوت</h4><p>مقطع قصير يصف العطر، يُشغّله العميل من بطاقة المنتج.</p></div></div>
+
+  <label class="pf-dropzone pf-dropzone-audio" for="perfumeAudioFile">
+    <input accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac" id="perfumeAudioFile" type="file"/>
+    <div class="pf-dropzone-inner">
+      <span class="pf-dropzone-icon" aria-hidden="true">♫</span>
+      <strong>اختر ملف الصوت</strong>
+      <small>MP3 أو WAV أو OGG أو M4A — حتى 20 م.ب</small>
+    </div>
+  </label>
   <input id="perfumeAudioUrl" type="hidden"/>
   <input id="perfumeAudioPublicId" type="hidden"/>
+
   <div class="admin-audio-preview" id="perfumeAudioPreview">
     <span>لا يوجد صوت مرفوع لهذا العطر</span>
   </div>
@@ -10886,17 +11215,29 @@ main > section { position: relative; }
   <button class="remove-media-btn" id="removePerfumeAudioBtn" onclick="removeCurrentPerfumeAudio()" type="button">
     حذف الصوت الحالي من المنتج
   </button>
-  <small>الصيغ المقبولة: MP3 وWAV وOGG وM4A/AAC — الحد الأقصى 20 MB.</small>
-</label>
+</section>
 
-<label>
-                متوفر؟
-                <select id="perfumeAvailable">
+<section class="pf-group">
+  <div class="pf-group-head"><span class="pf-step">6</span><div><h4>العرض في المتجر</h4><p>ما يراه العميل على بطاقة المنتج.</p></div></div>
+  <div class="pf-grid">
+    <label class="wide">
+      وصف العطر
+      <textarea id="perfumeDescription" placeholder="اكتب وصفًا مختصرًا وفخمًا للعطر" rows="3"></textarea>
+    </label>
+    <label>
+      شارة المنتج
+      <input id="perfumeBadge" maxlength="30" placeholder="جديد / الأكثر مبيعًا"/>
+    </label>
+    <label>
+      متوفر؟
+      <select id="perfumeAvailable">
 <option value="true">نعم</option>
 <option value="false">لا</option>
 </select>
-</label>
-</div>
+    </label>
+  </div>
+</section>
+
 <div aria-live="assertive" class="hutoon-product-save-status show" id="hutoonProductSaveStatus" role="status">جاهز لحفظ المنتج</div>
 <div class="admin-perfume-actions">
 <button class="btn btn-primary admin-product-save" id="hutoonProductSaveButton" type="submit">حفظ المنتج ونشره</button>
@@ -16895,6 +17236,115 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     },
     { passive: true }
   );
+
+
+  /* ---- Product editor niceties -------------------------------------------
+     Live final price, drag-and-drop uploads, and hiding controls that have
+     nothing to act on.
+     --------------------------------------------------------------------- */
+
+  // Shows what the customer will actually pay, so the admin never has to work
+  // out price minus percent themselves.
+  window.hutoonUpdatePriceHint=function(){
+    const price=Number(document.getElementById("perfumePrice")?.value||0);
+    const percent=Number(document.getElementById("perfumeDiscount")?.value||0);
+    const box=document.getElementById("perfumePriceResult");
+    const out=document.getElementById("perfumeFinalPrice");
+    if(!box||!out)return;
+
+    if(!(price>0)){
+      out.textContent="—";
+      box.classList.remove("has-discount");
+      return;
+    }
+    const capped=Math.min(100,Math.max(0,percent));
+    const final=price-(price*capped/100);
+    out.textContent=final.toFixed(3)+" ر.ع";
+    box.classList.toggle("has-discount",capped>0);
+  };
+
+  // A "remove image" button with no image is a dead control.
+  function syncMediaButtons(){
+    const img=document.getElementById("removePerfumeImageBtn");
+    const aud=document.getElementById("removePerfumeAudioBtn");
+    if(img)img.hidden=!document.getElementById("perfumeImage")?.value;
+    if(aud)aud.hidden=!document.getElementById("perfumeAudioUrl")?.value;
+  }
+  window.hutoonSyncMediaButtons=syncMediaButtons;
+
+  function markDropzone(zone,file){
+    if(!zone)return;
+    zone.classList.toggle("has-file",Boolean(file));
+    const title=zone.querySelector("strong");
+    const note=zone.querySelector("small");
+    if(file){
+      if(title)title.textContent=file.name.length>42?file.name.slice(0,39)+"…":file.name;
+      if(note)note.textContent=(file.size/1048576).toFixed(2)+" م.ب — اضغط للتغيير";
+    }else if(title&&note){
+      const audio=zone.classList.contains("pf-dropzone-audio");
+      title.textContent=audio?"اختر ملف الصوت":"اسحب الصورة هنا أو اضغط للاختيار";
+      note.textContent=audio
+        ?"MP3 أو WAV أو OGG أو M4A — حتى 20 م.ب"
+        :"JPG أو PNG أو WEBP — تُضغط تلقائيًا قبل الرفع";
+    }
+  }
+
+  function wireDropzone(zoneId,inputId){
+    const input=document.getElementById(inputId);
+    const zone=input?.closest(".pf-dropzone");
+    if(!input||!zone||zone.dataset.wired)return;
+    zone.dataset.wired="1";
+
+    input.addEventListener("change",()=>{
+      markDropzone(zone,input.files?.[0]);
+      syncMediaButtons();
+    });
+
+    ["dragenter","dragover"].forEach(type=>{
+      zone.addEventListener(type,e=>{e.preventDefault();zone.classList.add("is-dragover")});
+    });
+    ["dragleave","drop"].forEach(type=>{
+      zone.addEventListener(type,e=>{e.preventDefault();zone.classList.remove("is-dragover")});
+    });
+    zone.addEventListener("drop",e=>{
+      const file=e.dataTransfer?.files?.[0];
+      if(!file)return;
+      // Reject the wrong kind here rather than failing later at upload.
+      const wantsAudio=zone.classList.contains("pf-dropzone-audio");
+      const isAudio=String(file.type||"").startsWith("audio");
+      if(wantsAudio!==isAudio){
+        notify(wantsAudio?"هذا ليس ملف صوت":"هذا ليس ملف صورة");
+        return;
+      }
+      const dt=new DataTransfer();
+      dt.items.add(file);
+      input.files=dt.files;
+      input.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+
+  function initProductEditor(){
+    wireDropzone("perfumeDropzone","perfumeImageFile");
+    wireDropzone("perfumeDropzone","perfumeAudioFile");
+    window.hutoonUpdatePriceHint();
+    syncMediaButtons();
+  }
+
+  document.addEventListener("DOMContentLoaded",initProductEditor);
+  initProductEditor();
+
+  // The editor is reused for both "new" and "edit", so refresh the derived
+  // bits every time it opens rather than only once at load.
+  const openEditor=window.openProductEditor;
+  window.openProductEditor=function(...args){
+    const result=typeof openEditor==="function"?openEditor.apply(this,args):undefined;
+    setTimeout(()=>{
+      initProductEditor();
+      markDropzone(document.getElementById("perfumeImageFile")?.closest(".pf-dropzone"),null);
+      markDropzone(document.getElementById("perfumeAudioFile")?.closest(".pf-dropzone"),null);
+    },0);
+    return result;
+  };
 
   /* ---------------------------------------------------------------------
      4. Reveal on scroll

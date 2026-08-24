@@ -10192,6 +10192,365 @@ main > section { position: relative; }
   #adminView .admin-perfume-actions { grid-template-columns: 1fr; }
 }
 
+/* An unconfigured upload backend blocks the main job of this page, so the
+   card stops looking like optional settings. */
+#adminView .admin-storage-panel.needs-setup {
+  border-color: rgba(180, 73, 74, 0.42) !important;
+  box-shadow: 0 0 0 3px rgba(180, 73, 74, 0.12), var(--lift-2) !important;
+}
+#adminView .admin-storage-panel.needs-setup .admin-audio-title > span {
+  background: linear-gradient(150deg, rgba(180, 73, 74, 0.85), rgba(143, 56, 57, 0.8));
+  color: #fff;
+}
+
+/* ==========================================================================
+   21. سلة المشتريات
+   لوحة زجاجية تنزلق من الحافة اليمنى. الرأس والتذييل ثابتان والأصناف تمرّ
+   بينهما، فيبقى الإجمالي وزر الإتمام مرئيين مهما طالت القائمة.
+   ========================================================================== */
+
+.hutoon-cart-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: var(--glass-thin-bg);
+  -webkit-backdrop-filter: var(--glass-thin-blur);
+          backdrop-filter: var(--glass-thin-blur);
+  color: var(--lg-ink);
+  font-size: 17px;
+  box-shadow: var(--lift-1);
+  transition: transform var(--dur-press) var(--ease-out),
+              box-shadow var(--dur-quick) var(--ease-out),
+              background-color var(--dur-quick) var(--ease-out);
+}
+.hutoon-cart-button:hover { background: rgba(255, 255, 255, 0.85); box-shadow: var(--lift-2); }
+.hutoon-cart-button:active { transform: scale(0.92); }
+
+.hutoon-cart-button b {
+  position: absolute;
+  top: -5px;
+  inset-inline-start: -5px;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 6px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(150deg, #d8bd85, #b8934e);
+  color: #14223a;
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(184, 147, 78, 0.45);
+}
+/* شارة بصفر ليست معلومة. */
+.hutoon-cart-button b[data-count="0"] { display: none; }
+
+@keyframes cart-bump {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+.hutoon-cart-button.is-bump { animation: cart-bump 340ms var(--ease-settle); }
+
+/* --- الستارة --------------------------------------------------------------- */
+.cart-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  background: rgba(12, 22, 38, 0.40);
+  -webkit-backdrop-filter: blur(4px) saturate(120%);
+          backdrop-filter: blur(4px) saturate(120%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-quick) var(--ease-out),
+              visibility 0s linear var(--dur-quick);
+}
+.cart-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-quick) var(--ease-out), visibility 0s;
+}
+
+/* --- اللوحة ---------------------------------------------------------------- */
+.cart-panel {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  z-index: 2500;
+  width: min(420px, 100vw);
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--glass-thick-bg);
+  -webkit-backdrop-filter: var(--glass-thick-blur);
+          backdrop-filter: var(--glass-thick-blur);
+  border-radius: 0 var(--r-xl) var(--r-xl) 0;
+  box-shadow: var(--lift-4);
+  /* مثبّتة على الحافة اليمنى، فإخفاؤها يكون بدفعها يمينًا خارج الشاشة. */
+  transform: translateX(104%);
+  visibility: hidden;
+  transition: transform var(--dur-settle) var(--ease-settle);
+}
+.cart-panel.show { transform: none; visibility: visible; }
+
+.cart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(22, 37, 63, 0.09);
+}
+.cart-head small {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--lg-gold);
+}
+.cart-head h3 {
+  margin: 6px 0 0;
+  font-size: 19px;
+  letter-spacing: -0.015em;
+  color: var(--lg-ink);
+}
+
+/* --- الأصناف --------------------------------------------------------------- */
+.cart-items {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px 16px;
+  display: grid;
+  gap: 9px;
+  align-content: start;
+}
+
+.cart-line {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(22, 37, 63, 0.07);
+  transition: box-shadow var(--dur-quick) var(--ease-out);
+}
+.cart-line:hover { box-shadow: var(--lift-1); }
+
+.cart-line-media {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-xs);
+  background: linear-gradient(168deg, #ffffff, #f6f1e8);
+  border: 1px solid rgba(22, 37, 63, 0.05);
+  overflow: hidden;
+  color: var(--lg-gold);
+  font-weight: 800;
+  font-size: 15px;
+}
+.cart-line-media img { width: 100%; height: 100%; object-fit: contain; }
+
+.cart-line-body { min-width: 0; display: grid; gap: 2px; align-content: start; }
+.cart-line-body small {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  color: var(--lg-gold);
+  text-transform: uppercase;
+}
+.cart-line-body strong {
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--lg-ink);
+  overflow-wrap: anywhere;
+}
+.cart-line-variant {
+  justify-self: start;
+  margin-top: 3px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(22, 37, 63, 0.06);
+  color: var(--lg-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+/* الكمية والسعر في سطر واحد: القرار والنتيجة متجاوران. */
+.cart-line-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 9px;
+}
+.cart-qty {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+  border-radius: 999px;
+  background: rgba(22, 37, 63, 0.07);
+}
+.cart-qty button {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--lg-ink);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(16, 30, 52, 0.08);
+  transition: transform var(--dur-press) var(--ease-out);
+}
+.cart-qty button:active { transform: scale(0.86); }
+.cart-qty b {
+  min-width: 26px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--lg-ink);
+}
+
+.cart-line-end { display: flex; align-items: center; gap: 6px; }
+.cart-line-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--lg-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* الحذف إجراء ثانوي: أيقونة هادئة تظهر بلون التحذير عند اللمس فقط. */
+.cart-remove {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--lg-muted);
+  font-size: 12px;
+  transition: background-color var(--dur-quick) var(--ease-out),
+              color var(--dur-quick) var(--ease-out),
+              transform var(--dur-press) var(--ease-out);
+}
+.cart-remove:hover { background: rgba(180, 73, 74, 0.12); color: #8f3839; }
+.cart-remove:active { transform: scale(0.88); }
+
+.cart-empty {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--lg-muted);
+}
+.cart-empty-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: rgba(184, 147, 78, 0.12);
+  font-size: 24px;
+}
+.cart-empty strong { font-size: 16px; color: var(--lg-ink); }
+.cart-empty p { margin: 0; font-size: 13px; line-height: 1.65; max-width: 28ch; }
+
+/* --- التذييل --------------------------------------------------------------- */
+.cart-foot {
+  padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(22, 37, 63, 0.09);
+  background: rgba(255, 255, 255, 0.55);
+  display: grid;
+  gap: 10px;
+}
+.cart-foot .coupon-box { margin-top: 0; padding: 12px 14px; }
+.cart-foot .coupon-box.hidden { display: none; }
+.cart-foot .order-totals { margin-top: 0; padding: 12px 14px; }
+.cart-checkout { min-height: 52px; font-size: 15.5px; }
+.cart-checkout:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+/* --- زر الإضافة في بطاقة المنتج -------------------------------------------- */
+.hutoon-product-actions { grid-template-columns: 1fr auto auto !important; }
+.hutoon-add-cart {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(184, 147, 78, 0.4) !important;
+  border-radius: 999px !important;
+  background: rgba(184, 147, 78, 0.12) !important;
+  color: #7a6027;
+  font-size: 16px;
+  box-shadow: var(--lift-1);
+  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-quick) var(--ease-out);
+}
+.hutoon-add-cart:hover { background: rgba(184, 147, 78, 0.26) !important; }
+.hutoon-add-cart:active { transform: scale(0.9); }
+
+/* --- زرّا نافذة الطلب ------------------------------------------------------- */
+.catalog-order-buttons {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 9px;
+  margin-top: 14px;
+}
+.catalog-order-buttons .btn { min-height: 50px; }
+.catalog-add-cart { white-space: nowrap; padding: 0 18px; }
+
+/* --- جدول أصناف الفاتورة ---------------------------------------------------- */
+.hutoon-invoice-items {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0 4px;
+  font-size: 13px;
+}
+.hutoon-invoice-items th {
+  background: #1e2e4f;
+  color: #fff;
+  padding: 9px 10px;
+  font-size: 12px;
+  text-align: center;
+}
+.hutoon-invoice-items td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #e8dcc4;
+  text-align: center;
+  color: #1c2b45;
+}
+.hutoon-invoice-items td:first-child { text-align: right; }
+.hutoon-invoice-items small { color: #6b7789; font-size: 11px; }
+
+@media (max-width: 620px) {
+  .cart-panel { width: 100vw; border-radius: 0; }
+  .cart-line { grid-template-columns: 52px minmax(0, 1fr); }
+  .cart-line-media { width: 52px; height: 52px; }
+  .catalog-order-buttons { grid-template-columns: 1fr; }
+  .hutoon-cart-button { width: 40px; height: 40px; font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-panel { transition: opacity 160ms ease; }
+  .hutoon-cart-button.is-bump { animation: none; }
+}
+
 </style>
 </head>
 <body>
@@ -10229,6 +10588,10 @@ main > section { position: relative; }
 <div class="nav-actions">
 <button class="icon-btn menu-toggle" onclick="toggleMenu()">☰</button>
 <button aria-label="فتح حسابي" class="btn btn-outline" hidden="" id="hutoonHeaderAccountButton" onclick="openHeaderAccount()">حسابي</button>
+<button class="hutoon-cart-button" id="hutoonCartButton" onclick="hutoonOpenCart()" type="button" aria-label="فتح السلة">
+<span aria-hidden="true">🛍</span>
+<b id="cartCountBadge" data-count="0">0</b>
+</button>
 <button class="btn btn-primary" id="hutoonHeaderLoginButton" onclick="openAuth()">تسجيل الدخول</button>
 </div>
 </nav>
@@ -10638,6 +11001,39 @@ main > section { position: relative; }
 <p class="sample-login-note">يلزم تسجيل الدخول قبل إرسال الطلب عبر واتساب.</p>
 </div>
 </div>
+<!-- السلة -->
+<div class="cart-backdrop" id="cartBackdrop" onclick="hutoonCloseCart()"></div>
+<aside class="cart-panel" id="cartPanel" aria-label="سلة المشتريات">
+  <div class="cart-head">
+    <div>
+      <small>YOUR BAG</small>
+      <h3>سلة المشتريات</h3>
+    </div>
+    <button class="close-btn" type="button" onclick="hutoonCloseCart()" aria-label="إغلاق السلة">×</button>
+  </div>
+
+  <div class="cart-items" id="cartItems"></div>
+
+  <div class="cart-foot">
+    <div class="coupon-box hidden" id="cartCouponBox">
+      <label for="cartCouponCode">هل لديك كود خصم؟</label>
+      <div class="coupon-row">
+        <input id="cartCouponCode" maxlength="24" placeholder="اكتب الكود هنا" autocomplete="off" spellcheck="false"/>
+        <button class="btn btn-outline" type="button" id="cartCouponApply" onclick="hutoonApplyCartCoupon()">تطبيق</button>
+      </div>
+      <div class="coupon-feedback" id="cartCouponFeedback"></div>
+    </div>
+
+    <div class="order-totals">
+      <div><span>المجموع</span><strong id="cartSubtotal">—</strong></div>
+      <div class="discount-line hidden" id="cartDiscountLine"><span>الخصم <b id="cartDiscountLabel"></b></span><strong id="cartDiscountValue">—</strong></div>
+      <div class="grand"><span>الإجمالي</span><strong id="cartGrandTotal">—</strong></div>
+    </div>
+
+    <button class="btn btn-primary cart-checkout" id="cartCheckoutBtn" type="button" onclick="hutoonCheckoutCart()" disabled>إتمام الطلب</button>
+  </div>
+</aside>
+
 <div class="modal" id="catalogOrderModal">
 <div class="modal-card catalog-order-card">
 <div class="modal-head">
@@ -10711,9 +11107,12 @@ main > section { position: relative; }
   <div class="grand"><span>الإجمالي</span><strong id="orderGrandTotal">—</strong></div>
 </div>
 
+<div class="catalog-order-buttons">
+<button class="btn btn-outline catalog-add-cart" onclick="hutoonAddCurrentToCart()" type="button">أضف إلى السلة</button>
 <button class="btn btn-primary catalog-order-submit" onclick="completeCatalogOrder()" type="button">
       حفظ الطلب وإنشاء الفاتورة
     </button>
+</div>
 <small class="catalog-order-note">سيُحفظ الطلب في لوحة الإدارة، ثم تُجهز فاتورة PDF ورسالة واتساب.</small>
 </div>
 </div>
@@ -11962,13 +12361,13 @@ main > section { position: relative; }
 <script>
     (() => {
       const firebaseConfig = {
-        apiKey: "AIzaSyBaRkE4OiwlaQnroXM_j1rYwWi_ss42k5w",
-        authDomain: "hutoon-f1838.firebaseapp.com",
-        projectId: "hutoon-f1838",
-        storageBucket: "hutoon-f1838.firebasestorage.app",
-        messagingSenderId: "1014656449770",
-        appId: "1:1014656449770:web:ddbc418e0273fdb85feb93",
-        measurementId: "G-YMP569L7PT"
+        apiKey: "AIzaSyCqeGfBR26m8WiWKB_7K_e-X0gIvXlY23w",
+        authDomain: "hutoon-9440e.firebaseapp.com",
+        projectId: "hutoon-9440e",
+        storageBucket: "hutoon-9440e.firebasestorage.app",
+        messagingSenderId: "931762012604",
+        appId: "1:931762012604:web:beab207d4f25a4d39d2bb9",
+        measurementId: "G-02ZQ4TYGDP"
       };
 
       const ADMIN_EMAIL = "admin@hutoon.com";
@@ -14110,7 +14509,17 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
 
       <div class="hutoon-invoice-section-title">تفاصيل الطلب</div>
-      <div class="hutoon-invoice-product-card">
+      ${Array.isArray(order.items)&&order.items.length>1
+      ? `<table class="hutoon-invoice-items">
+          <thead><tr><th>المنتج</th><th>الحجم</th><th>الكمية</th><th>السعر</th></tr></thead>
+          <tbody>${order.items.map(it=>`<tr>
+            <td><b>${esc(it.name)}</b><br><small>${esc(it.brand||"")}</small></td>
+            <td>${esc(it.size||"-")}</td>
+            <td>${Number(it.qty||1)}</td>
+            <td>${Number(it.lineTotal||0)>0?money(it.lineTotal):"عند الطلب"}</td>
+          </tr>`).join("")}</tbody>
+        </table>`
+      : `<div class="hutoon-invoice-product-card">
         <div class="hutoon-invoice-product-image">${imageMarkup}</div>
         <div class="hutoon-invoice-product-copy">
           <small>${brand}</small>
@@ -14122,7 +14531,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div><small>نوع الطلب</small><strong>${order.serviceType||"طلب"}</strong></div>
           </div>
         </div>
-      </div>
+      </div>`}
 
       <div class="hutoon-invoice-section-title">الملاحظات</div>
       <div class="hutoon-invoice-notes">${notes}</div>
@@ -14185,6 +14594,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }catch(error){
       console.warn("Invoice upload failed",error);
       return "";
+    }
+  }
+
+  function downloadInvoiceBlob(blob,fileName){
+    if(!blob)return false;
+    try{
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=fileName;
+      link.style.display="none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      // إبقاء الرابط حيًا لحظة حتى يلتقطه المتصفح قبل تحريره.
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+      return true;
+    }catch(error){
+      console.warn("Invoice download failed:",error);
+      return false;
     }
   }
 
@@ -14274,9 +14703,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },{merge:true});
       }
 
-      if(window.hutoonDownloadInvoice){
-        await window.hutoonDownloadInvoice(saved.id,`HUTOON-${saved.id}.pdf`,invoiceUrl);
-      }
+      // تنزيل الفاتورة على جهاز العميل ليرفقها في واتساب.
+      // كانت تعتمد على دالة حُذفت ضمن كود ميت، فلم يكن ينزل شيء.
+      downloadInvoiceBlob(invoiceBlob,`HUTOON-${saved.id}.pdf`);
     }catch(error){
       console.error("Invoice preparation failed:",error);
       showToast("تم حفظ الطلب، لكن تعذر إنشاء الفاتورة. جرّب تنزيلها من حسابك لاحقًا.");
@@ -14290,8 +14719,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const message=whatsappText(saved,invoiceUrl);
     const whatsappUrl=`https://api.whatsapp.com/send?phone=${storeNumber}&text=${encodeURIComponent(message)}`;
 
-    showToast("تم حفظ الطلب وتجهيز الرسالة، جاري فتح واتساب المتجر...");
-    window.location.assign(whatsappUrl);
+    // الانتقال المباشر كان يقطع تنزيل الفاتورة. تُفتح المحادثة في تبويب
+    // جديد بعد مهلة قصيرة، ليكتمل التنزيل ويبقى العميل في الموقع.
+    showToast("تم حفظ الطلب وتنزيل الفاتورة، جاري فتح واتساب المتجر...");
+    setTimeout(()=>{
+      const opened=window.open(whatsappUrl,"_blank","noopener");
+      // منع النوافذ المنبثقة يعني عدم فتح شيء — عندها ننتقل في نفس التبويب.
+      if(!opened)window.location.assign(whatsappUrl);
+    },1200);
     return saved;
   }
   // Catalog products.
@@ -14450,6 +14885,317 @@ document.addEventListener('DOMContentLoaded', function () {
     if(input){input.value="";input.disabled=false}
     if(button)button.textContent="تطبيق";
     couponFeedback("");
+  };
+
+
+  /* ======================================================================
+     سلة المشتريات
+     كانت الطلبات تُرسل منتجًا واحدًا في كل مرة. السلة تجمع عدة منتجات في
+     طلب واحد، وتُحفظ محليًا حتى لا تضيع عند تحديث الصفحة.
+     ====================================================================== */
+
+  const CART_KEY="hutoon_cart_v1";
+  let cart=[];
+
+  // اسم المنتج يأتي من لوحة الإدارة، فيُهرَّب قبل إدراجه في HTML.
+  // النسخة العامة esc معرّفة في طبقة أخرى ولا تصل إلى هذا النطاق.
+  function cartEsc(value){
+    return String(value??"").replace(/[&<>"']/g,c=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+  }
+
+  function cartRead(){
+    try{const v=JSON.parse(localStorage.getItem(CART_KEY)||"[]");return Array.isArray(v)?v:[]}
+    catch(_){return []}
+  }
+  function cartWrite(){
+    try{localStorage.setItem(CART_KEY,JSON.stringify(cart))}catch(_){}
+    renderCart();
+    updateCartBadge();
+  }
+  cart=cartRead();
+
+  // المفتاح يميّز نفس العطر بحجمين مختلفين كسطرين منفصلين.
+  function cartKey(item){
+    return `${item.id}::${item.mode}::${item.size||""}`;
+  }
+
+  function cartCount(){
+    return cart.reduce((sum,item)=>sum+Number(item.qty||0),0);
+  }
+
+  function cartSubtotal(){
+    return cart.reduce((sum,item)=>sum+Number(item.unitPrice||0)*Number(item.qty||0),0);
+  }
+
+  function cartTotals(){
+    const subtotal=cartSubtotal();
+    const percent=cartCoupon?Number(cartCoupon.value||0):0;
+    const discount=Math.round(subtotal*percent)/100;
+    return {subtotal,percent,discount,total:Math.max(0,subtotal-discount)};
+  }
+  window.hutoonCartTotals=cartTotals;
+
+  /* ---- الإضافة والتعديل ------------------------------------------------ */
+
+  window.hutoonAddToCart=function(product,mode,size,qty){
+    if(!product)return;
+    const unitPrice=mode==="sample"
+      ? Number(product[{"2 مل":"price2ml","5 مل":"price5ml","10 مل":"price10ml"}[size]]||0)
+      : Number(product.price||0);
+
+    const line={
+      id:String(product.id),
+      name:product.name||"عطر",
+      brand:product.brand||"HUTOON",
+      image:product.image||"",
+      mode:mode||"full",
+      size:mode==="sample"?(size||"2 مل"):"",
+      qty:Math.max(1,Number(qty||1)),
+      unitPrice
+    };
+
+    const existing=cart.find(x=>cartKey(x)===cartKey(line));
+    if(existing)existing.qty=Math.min(50,existing.qty+line.qty);
+    else cart.push(line);
+
+    cartWrite();
+    showToast(`تمت إضافة ${line.name} إلى السلة`);
+    bumpCartButton();
+  };
+
+  window.hutoonCartQty=function(encodedKey,diff){
+    const key=decodeURIComponent(encodedKey);
+    const item=cart.find(x=>cartKey(x)===key);
+    if(!item)return;
+    item.qty=Math.max(1,Math.min(50,item.qty+Number(diff||0)));
+    cartWrite();
+  };
+
+  window.hutoonCartRemove=function(encodedKey){
+    const key=decodeURIComponent(encodedKey);
+    cart=cart.filter(x=>cartKey(x)!==key);
+    // كود الخصم مرتبط بسلة لها قيمة؛ إفراغها يلغيه.
+    if(!cart.length)cartCoupon=null;
+    cartWrite();
+  };
+
+  window.hutoonCartClear=function(){
+    cart=[];
+    cartCoupon=null;
+    cartWrite();
+  };
+
+  /* ---- كود الخصم داخل السلة -------------------------------------------- */
+
+  let cartCoupon=null;
+
+  function cartCouponFeedback(message,state){
+    const box=document.getElementById("cartCouponFeedback");
+    if(!box)return;
+    box.textContent=message||"";
+    box.className="coupon-feedback"+(state?" "+state:"");
+  }
+
+  window.hutoonApplyCartCoupon=function(){
+    const input=document.getElementById("cartCouponCode");
+    const button=document.getElementById("cartCouponApply");
+    const raw=String(input?.value||"").trim().toUpperCase();
+
+    if(cartCoupon){
+      cartCoupon=null;
+      if(input){input.value="";input.disabled=false}
+      if(button)button.textContent="تطبيق";
+      cartCouponFeedback("");
+      renderCart();
+      return;
+    }
+
+    if(!raw)return cartCouponFeedback("اكتب كود الخصم أولًا","bad");
+    if(!cart.length)return cartCouponFeedback("السلة فارغة","bad");
+
+    const match=(window.hutoonLiveDiscounts||[])
+      .find(item=>String(item.code||"").toUpperCase()===raw);
+
+    if(!match)return cartCouponFeedback("الكود غير صحيح","bad");
+
+    const state=window.hutoonDiscountState?.(match)||{key:"active"};
+    if(state.key==="expired")return cartCouponFeedback("انتهت صلاحية هذا الكود","bad");
+    if(state.key==="used")return cartCouponFeedback("تم استخدام هذا الكود من قبل","bad");
+    if(state.key==="inactive")return cartCouponFeedback("هذا الكود غير مفعّل","bad");
+    if(cartSubtotal()<=0)return cartCouponFeedback("أسعار هذه المنتجات تُحدد بعد التأكيد","warn");
+
+    cartCoupon=match;
+    if(input)input.disabled=true;
+    if(button)button.textContent="إلغاء";
+    cartCouponFeedback(`تم تطبيق خصم ${Number(match.value||0)}%`,"ok");
+    renderCart();
+  };
+
+  /* ---- العرض ------------------------------------------------------------ */
+
+  function updateCartBadge(){
+    const badge=document.getElementById("cartCountBadge");
+    const count=cartCount();
+    if(badge){
+      badge.textContent=String(count);
+      badge.dataset.count=String(count);
+    }
+  }
+
+  function bumpCartButton(){
+    const btn=document.getElementById("hutoonCartButton");
+    if(!btn||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    btn.classList.remove("is-bump");
+    void btn.offsetWidth; // إعادة تشغيل الحركة
+    btn.classList.add("is-bump");
+  }
+
+  function renderCart(){
+    const list=document.getElementById("cartItems");
+    if(!list)return;
+
+    if(!cart.length){
+      list.innerHTML='<div class="cart-empty"><div class="cart-empty-icon" aria-hidden="true">🛍</div><strong>سلتك فارغة</strong><p>أضف عطورك المفضلة ثم أكمل الطلب دفعة واحدة.</p></div>';
+    }else{
+      list.innerHTML=cart.map(item=>{
+        const key=encodeURIComponent(cartKey(item));
+        const line=Number(item.unitPrice||0)*Number(item.qty||0);
+        return `<article class="cart-line">
+          <div class="cart-line-media">${item.image?`<img src="${cartEsc(item.image)}" alt="${cartEsc(item.name)}" loading="lazy">`:'<span>H</span>'}</div>
+          <div class="cart-line-body">
+            <small>${cartEsc(item.brand)}</small>
+            <strong>${cartEsc(item.name)}</strong>
+            <span class="cart-line-variant">${item.mode==="sample"?cartEsc(item.size||"عينة"):"عبوة كاملة"}</span>
+            <div class="cart-line-controls">
+              <div class="cart-qty">
+                <button type="button" onclick="hutoonCartQty('${key}',-1)" aria-label="إنقاص الكمية">−</button>
+                <b>${item.qty}</b>
+                <button type="button" onclick="hutoonCartQty('${key}',1)" aria-label="زيادة الكمية">+</button>
+              </div>
+              <div class="cart-line-end">
+                <span class="cart-line-price">${line>0?money(line):"عند الطلب"}</span>
+                <button class="cart-remove" type="button" onclick="hutoonCartRemove('${key}')" aria-label="حذف ${cartEsc(item.name)} من السلة" title="حذف">✕</button>
+              </div>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    const t=cartTotals();
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+    const priced=t.subtotal>0;
+    set("cartSubtotal",priced?money(t.subtotal):"يُحدد بعد التأكيد");
+    set("cartGrandTotal",priced?money(t.total):"يُحدد بعد التأكيد");
+
+    const dl=document.getElementById("cartDiscountLine");
+    if(dl){
+      const show=Boolean(cartCoupon)&&priced;
+      dl.classList.toggle("hidden",!show);
+      if(show){
+        set("cartDiscountLabel",`${t.percent}%`);
+        set("cartDiscountValue","- "+money(t.discount));
+      }
+    }
+
+    const checkout=document.getElementById("cartCheckoutBtn");
+    if(checkout)checkout.disabled=!cart.length;
+    const couponBox=document.getElementById("cartCouponBox");
+    if(couponBox)couponBox.classList.toggle("hidden",!cart.length);
+  }
+
+  window.hutoonOpenCart=function(){
+    renderCart();
+    document.getElementById("cartPanel")?.classList.add("show");
+    document.getElementById("cartBackdrop")?.classList.add("show");
+  };
+  window.hutoonCloseCart=function(){
+    document.getElementById("cartPanel")?.classList.remove("show");
+    document.getElementById("cartBackdrop")?.classList.remove("show");
+  };
+
+  /* ---- إتمام الطلب ------------------------------------------------------ */
+
+  window.hutoonCheckoutCart=async function(){
+    if(!cart.length)return showToast("السلة فارغة");
+    if(!requireLogin())return;
+
+    const button=document.getElementById("cartCheckoutBtn");
+    const oldText=button?.textContent;
+    if(button){button.disabled=true;button.textContent="جاري تجهيز الطلب..."}
+
+    const t=cartTotals();
+    const coupon=cartCoupon;
+    const items=cart.map(item=>({
+      id:item.id,name:item.name,brand:item.brand,image:item.image,
+      size:item.mode==="sample"?item.size:"عبوة كاملة",
+      qty:item.qty,unitPrice:item.unitPrice,
+      lineTotal:Number(item.unitPrice||0)*Number(item.qty||0)
+    }));
+
+    try{
+      await finishOrder({
+        serviceType:"طلب من السلة",
+        // تُترك الحقول المفردة مملوءة بالسطر الأول حتى تبقى الشاشات
+        // والتقارير القديمة التي تقرأ منتجًا واحدًا صحيحة.
+        perfume:items.length===1?items[0].name:`${items[0].name} + ${items.length-1} منتج آخر`,
+        brand:items[0].brand||"",
+        size:items.length===1?items[0].size:"",
+        qty:items.reduce((s,i)=>s+i.qty,0),
+        unitPrice:items.length===1?items[0].unitPrice:0,
+        image:items[0].image||"",
+        items,
+        itemCount:items.length,
+        subtotal:t.subtotal,
+        discountCode:coupon?coupon.code:"",
+        discountPercent:coupon?Number(coupon.value||0):0,
+        discountAmount:t.discount,
+        total:t.total,
+        notes:items.map(i=>`${i.name} · ${i.size} × ${i.qty}`).join(" | ")
+      });
+
+      if(coupon?.id){
+        try{
+          await firebase.firestore().collection("discounts").doc(coupon.id).set({
+            used:1,usedAt:firebase.firestore.FieldValue.serverTimestamp(),usedBy:currentUser()?.email||"",active:false
+          },{merge:true});
+        }catch(error){console.warn("Coupon burn failed:",error)}
+      }
+
+      // تُفرَّغ السلة بعد نجاح الطلب فقط.
+      window.hutoonCartClear();
+      window.hutoonCloseCart();
+    }catch(error){
+      console.error(error);
+      showToast(error.message||"تعذر إرسال الطلب");
+    }finally{
+      if(button){button.disabled=false;button.textContent=oldText||"إتمام الطلب"}
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded",()=>{renderCart();updateCartBadge()});
+  renderCart();
+  updateCartBadge();
+
+  /* ---- الربط مع بطاقات المنتجات ونافذة الطلب --------------------------- */
+
+  // إضافة سريعة من بطاقة المنتج: عبوة كاملة بكمية واحدة.
+  window.hutoonQuickAdd=function(id){
+    const product=(typeof hutoonMergedProducts==="function"?hutoonMergedProducts():[])
+      .find(p=>String(p.id)===String(id));
+    if(!product)return showToast("تعذر العثور على المنتج");
+    window.hutoonAddToCart(product,"full","",1);
+  };
+
+  // إضافة من نافذة الطلب بالخيارات التي اختارها العميل فعلًا.
+  window.hutoonAddCurrentToCart=function(){
+    if(!selectedCatalogProduct)return showToast("اختر منتجًا أولًا");
+    const isSample=catalogOrderMode==="sample";
+    const size=isSample?(document.getElementById("catalogOrderSize")?.value||"2 مل"):"";
+    window.hutoonAddToCart(selectedCatalogProduct,catalogOrderMode,size,catalogQty);
+    window.closeCatalogOrder?.();
   };
 
   window.openCatalogOrder=function(id){
@@ -15603,7 +16349,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   const FALLBACK_IMAGE="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=82";
   
   const ACCOUNT_KEYS=["hutoon_accounts_v3","hutoon_accounts_v2"];
-  const POINTS_PER_OMR=30;
+  const POINTS_PER_OMR=20; // ٢٠ نقطة لكل ريال عماني
   let liveProducts=[];
   let productUnsubscribe=null;
   let profileUnsubscribe=null;
@@ -15675,10 +16421,15 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
       "auth/network-request-failed":"تعذر الاتصال بالخدمة؛ تحقق من الإنترنت",
       "auth/unauthorized-domain":"نطاق الموقع غير مضاف في Firebase Authorized domains",
       "auth/operation-not-allowed":"فعّل Email/Password في Firebase Authentication",
-      "permission-denied":"قواعد Firestore تمنع الحفظ؛ انشر ملف firestore.rules المرفق",
+      "permission-denied":"قواعد Firestore ترفض الحفظ. لهذا يظهر المنتج للحظة ثم يختفي: يُحفظ في متصفحك أولًا ثم يرفضه الخادم فيتراجع عنه. الحل: انشر ملف firestore.rules من Firebase Console ← Firestore Database ← Rules.",
+      "unauthenticated":"انتهت جلسة الدخول. سجّل دخول الإدارة من جديد ثم أعد الحفظ.",
+      "unavailable":"تعذر الوصول إلى Firestore. تحقق من الإنترنت ثم أعد المحاولة.",
       "hutoon/timeout":"تأخر اتصال المتجر. تحقق من الإنترنت وقواعد Firestore ثم حاول مجددًا"
     };
-    return messages[code]||error?.message||"حدث خطأ غير متوقع";
+    // اعرض الرمز عند عدم معرفة الخطأ حتى يمكن تشخيصه بدل رسالة عامة.
+    if(messages[code])return messages[code];
+    if(code)return `${error?.message||"خطأ"} (${code})`;
+    return error?.message||"حدث خطأ غير متوقع";
   }
 
   function setUser(user){
@@ -16011,7 +16762,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
         <h3>${esc(product.name)}</h3><div class="hutoon-product-tags"><span>${esc(product.gender==="يونيسكس"?"للجنسين":product.gender||"")}</span><span>${esc(product.use||product.mood||product.season||"")}</span></div>
         <p class="hutoon-product-description">${esc(product.description||"عطر مختار بعناية ضمن مجموعة هتون.")}</p>
         <div class="hutoon-product-price">${price>0?`<strong>${money(price)}</strong>${oldPrice>price?`<del>${money(oldPrice)}</del>`:""}`:'<strong class="hutoon-price-on-request">السعر عند الطلب</strong>'}</div>
-        <div class="hutoon-product-actions"><button class="hutoon-order-product" type="button" onclick="hutoonOpenProduct(decodeURIComponent('${enc(product.id)}'))">اطلب الآن</button>
+        <div class="hutoon-product-actions"><button class="hutoon-order-product" type="button" onclick="hutoonOpenProduct(decodeURIComponent('${enc(product.id)}'))">اطلب الآن</button><button class="hutoon-add-cart" type="button" onclick="hutoonQuickAdd(decodeURIComponent('${enc(product.id)}'))" aria-label="أضف ${esc(product.name)} إلى السلة" title="أضف إلى السلة">🛍</button>
         <button class="hutoon-play-audio" type="button" ${audio?"":"disabled"} onclick="hutoonPlayAudio(decodeURIComponent('${enc(product.id)}'))" aria-label="تشغيل وصف ${esc(product.name)}">♫</button></div></div>
       </article>`;
     }).join("");
@@ -16035,6 +16786,9 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     box.classList.toggle("ok",ok===true);
     box.classList.toggle("bad",ok===false);
     const text=box.querySelector("strong");if(text)text.textContent=message;
+    // Uploading is blocked until one backend works, so the panel says so
+    // loudly rather than sitting quietly above the product list.
+    document.querySelector(".admin-storage-panel")?.classList.toggle("needs-setup",ok===false);
   }
   function setBadge(id,label,state){
     const el=document.getElementById(id);if(!el)return;
@@ -16084,18 +16838,22 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     storageStatus("جاري فحص Firebase Storage...",null);
     firebase.storage().ref("hutoon/products/images/.probe").getDownloadURL()
       .then(()=>{
+        firebaseStorageUsable=true;
         setBadge("firebaseBadge","جاهز","ok");
         storageStatus("الرفع يتم عبر Firebase Storage.",true);
       })
       .catch(error=>{
         const code=error?.code||"";
         if(code==="storage/object-not-found"){
+          firebaseStorageUsable=true;
           setBadge("firebaseBadge","جاهز","ok");
           storageStatus("الرفع يتم عبر Firebase Storage.",true);
         }else if(code==="storage/unauthorized"){
+          firebaseStorageUsable=false;
           setBadge("firebaseBadge","القواعد تمنع","bad");
           storageStatus("Firebase Storage موجود لكن القواعد تمنع الوصول. استخدم Cloudinary أو عدّل Storage Rules.",false);
         }else{
+          firebaseStorageUsable=false;
           setBadge("firebaseBadge","غير مُفعّل","bad");
           storageStatus("Firebase Storage غير مُفعّل. أدخل بيانات Cloudinary أعلاه لتفعيل الرفع مجانًا.",false);
         }
@@ -16155,7 +16913,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   const STORAGE_ERRORS={
     "storage/unauthorized":"لا تملك صلاحية الرفع. سجّل دخول الإدارة وتأكد من قواعد Firebase Storage.",
     "storage/unauthenticated":"انتهت الجلسة. سجّل الدخول مرة أخرى ثم أعد الرفع.",
-    "storage/retry-limit-exceeded":"تعذر الوصول إلى التخزين. الغالب أن Firebase Storage غير مُفعّل في مشروعك — فعّله من Firebase Console ثم أعد المحاولة.",
+    "storage/retry-limit-exceeded":"تعذر الوصول إلى التخزين. أسهل حل: أدخل بيانات Cloudinary المجانية من بطاقة «تخزين الصور والصوت» أعلى الصفحة. (البديل: تفعيل Firebase Storage من Firebase Console وهو يتطلب خطة Blaze.)",
     "storage/quota-exceeded":"امتلأت مساحة التخزين في Firebase. احذف ملفات قديمة أو رقِّ الخطة.",
     "storage/canceled":"تم إلغاء الرفع.",
     "storage/invalid-checksum":"تلف الملف أثناء الرفع. أعد المحاولة.",
@@ -16283,8 +17041,12 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
       return uploadToCloudinary(file,folder,progressId);
     }
 
-    if(!window.firebase?.storage){
-      throw new Error("لم يتم إعداد أي خدمة تخزين. أدخل بيانات Cloudinary من لوحة الإدارة.");
+    // Cloudinary is unset. Before falling back, use what the status probe
+    // already discovered: if the Firebase bucket is known to be unreachable,
+    // say so now instead of making the admin wait 30s for a retry timeout —
+    // and point at the free option they actually chose, not at Blaze.
+    if(!window.firebase?.storage||firebaseStorageUsable===false){
+      throw new Error("لم تُدخل بيانات Cloudinary على هذا الموقع بعد. افتح بطاقة «تخزين الصور والصوت» أعلى صفحة إدارة العطور وأدخل Cloud Name وUpload Preset، ثم أعد المحاولة.");
     }
 
     // Default retry windows are 2 minutes. If the bucket does not exist the
@@ -16334,6 +17096,8 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   }
 
   let lastUploadPath="";
+  // null = not probed yet, true/false = what the status card found.
+  let firebaseStorageUsable=null;
   window.hutoonLastUploadPath=()=>lastUploadPath;
 
   // Deleting a product should not leave its media orphaned in the bucket.
@@ -16766,7 +17530,13 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   };
   window.confirmOrderAndAwardPoints=async function(orderId){
     if(!isAdmin())return notify("هذه العملية للإدارة فقط");
-    const amount=Number(prompt("أدخل قيمة الطلب النهائية بالريال العماني:",""));if(!Number.isFinite(amount)||amount<=0)return notify("أدخل قيمة صحيحة");
+    const order=(window.state?.orders||[]).find(o=>String(o.id)===String(orderId))||{};
+    const suggested=Number(order.total||order.subtotal||0);
+    const amount=Number(prompt(
+      "قيمة الطلب النهائية بالريال العماني:",
+      suggested>0?suggested.toFixed(3):""
+    ));
+    if(!Number.isFinite(amount)||amount<=0)return notify("أدخل قيمة صحيحة");
     try{
       const db=firestore(),orderRef=db.collection("orders").doc(String(orderId));
       await db.runTransaction(async transaction=>{const orderSnap=await transaction.get(orderRef);if(!orderSnap.exists)throw new Error("الطلب غير موجود");const order=orderSnap.data();if(Number(order.pointsAwarded||0)>0)throw new Error("تم احتساب نقاط الطلب مسبقًا");if(!order.userId)throw new Error("الطلب غير مرتبط بحساب عميل");const userRef=db.collection("users").doc(order.userId),userSnap=await transaction.get(userRef);if(!userSnap.exists)throw new Error("حساب العميل غير موجود");const points=Math.round(amount*POINTS_PER_OMR);transaction.update(userRef,{points:Number(userSnap.data().points||0)+points,raindrops:Number(userSnap.data().raindrops||0)+(amount>=5?1:0),updatedAt:timestamp()});transaction.update(orderRef,{status:"مؤكد",total:amount,pointsAwarded:points,updatedAt:timestamp()})});

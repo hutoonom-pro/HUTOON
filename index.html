@@ -10551,6 +10551,50 @@ main > section { position: relative; }
   .hutoon-cart-button.is-bump { animation: none; }
 }
 
+/* زر السلة العائم — للجوال فقط، فوق شريط التنقل السفلي */
+.mobile-cart-fab { display: none; }
+
+@media (max-width: 900px) {
+  .mobile-cart-fab {
+    position: fixed;
+    inset-inline-start: 16px;
+    bottom: calc(96px + env(safe-area-inset-bottom));
+    z-index: 1900;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: 0;
+    border-radius: 50%;
+    background: linear-gradient(150deg, #22375c, #0e1a2e);
+    color: #fff;
+    font-size: 21px;
+    box-shadow: 0 8px 24px rgba(16, 30, 52, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+  .mobile-cart-fab[hidden] { display: none; }
+  .mobile-cart-fab:active { transform: scale(0.9); }
+  .mobile-cart-fab b {
+    position: absolute;
+    top: -2px;
+    inset-inline-start: -2px;
+    min-width: 23px;
+    height: 23px;
+    padding: 0 6px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: linear-gradient(150deg, #d8bd85, #b8934e);
+    color: #14223a;
+    font-size: 11.5px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    border: 2px solid #fff;
+  }
+  /* يختفي مع شريط التنقل عند فتح نافذة طلب. */
+  body.sample-order-open .mobile-cart-fab { display: none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -13920,6 +13964,10 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 <!-- Mobile-only floating Instagram-style navigation -->
+<button class="mobile-cart-fab" id="mobileCartFab" type="button" onclick="hutoonOpenCart()" aria-label="فتح سلة المشتريات" hidden>
+<span aria-hidden="true">🛍</span>
+<b id="mobileCartCount">0</b>
+</button>
 <nav aria-label="التنقل السريع للجوال" class="mobile-floating-nav" id="mobileFloatingNav">
 <a aria-label="الرئيسية" class="mobile-nav-item active" data-section="home" href="#home">
 <svg aria-hidden="true" viewbox="0 0 24 24">
@@ -14618,25 +14666,48 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function whatsappText(order,invoiceUrl){
+    const multi=Array.isArray(order.items)&&order.items.length>0;
     const item=order.perfume||order.productName||order.details||order.serviceType||"طلب هتون";
-    const lines=[
-      "السلام عليكم، طلب جديد من موقع HUTOON 🌷",
+
+    const تفاصيل = multi
+      ? ["🛍 تفاصيل الطلب:", ...order.items.map((it,n)=>
+          `${n+1}. ${it.name}${it.brand?` (${it.brand})`:""}`+
+          `\n    الحجم: ${it.size||"عبوة كاملة"} — الكمية: ${it.qty}`+
+          (Number(it.lineTotal||0)>0?`\n    السعر: ${money(it.lineTotal)}`:"")
+        )]
+      : [
+          "🛍 تفاصيل الطلب:",
+          `• ${item}`,
+          order.size?`   الحجم: ${order.size}`:false,
+          `   الكمية: ${order.qty||1}`
+        ];
+
+    const مبالغ=[];
+    if(Number(order.subtotal||0)>0) مبالغ.push(`المجموع: ${money(order.subtotal)}`);
+    if(order.discountCode) مبالغ.push(`الخصم (${order.discountCode}) ${order.discountPercent}%: −${money(order.discountAmount)}`);
+    if(Number(order.total||0)>0) مبالغ.push(`الإجمالي: ${money(order.total)}`);
+
+    return [
+      "السلام عليكم ورحمة الله وبركاته 🌷",
+      "طلب جديد من متجر HUTOON",
       "",
-      "رقم الطلب: "+(order.id||"-"),
-      "العميل: "+(order.customer||"-"),
-      "الخدمة: "+(order.serviceType||"طلب"),
-      "الطلب: "+item,
-      order.size ? "الحجم: "+order.size : "",
-      "الكمية: "+(order.qty||1),
-      Number(order.subtotal||0)>0 ? "المجموع: "+money(order.subtotal) : "",
-      order.discountCode ? `الخصم: ${order.discountPercent}% (${order.discountCode}) − ${money(order.discountAmount)}` : "",
-      Number(order.total||0)>0 ? "الإجمالي: "+money(order.total) : "",
-      invoiceUrl ? "رابط الفاتورة: "+invoiceUrl : "",
+      `📄 رقم الطلب: ${order.id||"-"}`,
+      `👤 الاسم: ${order.customer||"-"}`,
+      order.phone?`📱 الهاتف: ${order.phone}`:false,
+      order.date?`🗓 التاريخ: ${order.date}`:false,
       "",
-      "يرجى إرسال الفاتورة في هذه المحادثة لتأكيد الطلب."
-    ].filter(Boolean);
-    return lines.join("\n");
+      ...تفاصيل,
+      ...(مبالغ.length?["","💰 "+مبالغ.join("\n")]:[]),
+      invoiceUrl?`🔗 رابط الفاتورة: ${invoiceUrl}`:false,
+      "",
+      "━━━━━━━━━━━━━━━",
+      // آخر سطر عمدًا: هو الإجراء الوحيد المطلوب من العميل، وقد نزلت
+      // الفاتورة على جهازه قبل فتح هذه المحادثة مباشرة.
+      "⚠️ مهم: أرفق ملف الفاتورة الذي نزل على جهازك في هذه المحادثة لتأكيد الطلب.",
+      "بدون إرسال الفاتورة لن يُعتمد الطلب."
+    ].filter(line=>line!==false&&line!==undefined&&line!==null).join("\n");
   }
+
   async function finishOrder(order){
     const storeNumber="96877353930";
     const user=currentUser()||window.hutoonRestoreUser?.();
@@ -15036,12 +15107,18 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---- العرض ------------------------------------------------------------ */
 
   function updateCartBadge(){
-    const badge=document.getElementById("cartCountBadge");
     const count=cartCount();
+    const badge=document.getElementById("cartCountBadge");
     if(badge){
       badge.textContent=String(count);
       badge.dataset.count=String(count);
     }
+    // الهيدر مخفي على الجوال، فالسلة تُفتح من زر عائم يظهر عند امتلائها فقط
+    // حتى لا يزاحم شريط التنقل السفلي وهو فارغ.
+    const fab=document.getElementById("mobileCartFab");
+    const fabCount=document.getElementById("mobileCartCount");
+    if(fabCount)fabCount.textContent=String(count);
+    if(fab)fab.hidden=count===0;
   }
 
   function bumpCartButton(){
@@ -15110,10 +15187,13 @@ document.addEventListener('DOMContentLoaded', function () {
     renderCart();
     document.getElementById("cartPanel")?.classList.add("show");
     document.getElementById("cartBackdrop")?.classList.add("show");
+    // الشريط السفلي والزر العائم يغطيان زر الإتمام على الجوال.
+    document.body.classList.add("cart-open");
   };
   window.hutoonCloseCart=function(){
     document.getElementById("cartPanel")?.classList.remove("show");
     document.getElementById("cartBackdrop")?.classList.remove("show");
+    document.body.classList.remove("cart-open");
   };
 
   /* ---- إتمام الطلب ------------------------------------------------------ */
@@ -18175,5 +18255,138 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
 })();
 
 </script>
+<style id="hutoon-mobile-polish">
+/* ==========================================================================
+   22. تحسينات الجوال
+   الهيدر مخفي على الجوال ويحل محله شريط سفلي، فالتنقّل والإجراءات كلها
+   تحدث بالإبهام في أسفل الشاشة.
+   ========================================================================== */
+
+@media (max-width: 620px) {
+
+  /* --- تنفّس على الحواف -------------------------------------------------
+     كانت المسافة الجانبية 11px فقط، فالنصوص تلتصق بحافة الشاشة. */
+  .shell,
+  body > main > section > .shell {
+    width: min(1180px, calc(100% - 34px)) !important;
+  }
+
+  /* --- العناوين ----------------------------------------------------------
+     48px على شاشة 375 يكسر الكلمات العربية ويزحمها. */
+  .hero h1,
+  #home h1 {
+    font-size: clamp(30px, 9.5vw, 40px) !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.01em;
+  }
+  section h2 { font-size: clamp(22px, 6.4vw, 28px) !important; line-height: 1.25 !important; }
+  section h3 { font-size: clamp(18px, 5vw, 22px) !important; }
+  .hero p, section > p { font-size: 14px; line-height: 1.75; }
+
+  /* --- مسافات الأقسام ---------------------------------------------------- */
+  main > section { padding-block: 46px !important; }
+  /* الشريط السفلي يغطي آخر الصفحة، فيُترك له مكان. */
+  footer { padding-bottom: calc(104px + env(safe-area-inset-bottom)) !important; }
+
+  /* --- بطاقات المنتجات ---------------------------------------------------
+     عمودان مع حشو أقل، والوصف يُخفى لأن البطاقة أضيق من أن تحمله. */
+  .hutoon-products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 11px !important;
+  }
+  .hutoon-product-card .hutoon-product-body { padding: 11px 12px 13px !important; gap: 6px; }
+  .hutoon-product-card h3 { font-size: 13.5px !important; }
+  .hutoon-product-card .hutoon-product-description { display: none; }
+  .hutoon-product-card .hutoon-product-tags { display: none; }
+  .hutoon-product-card .hutoon-product-price strong { font-size: 15px; }
+  .hutoon-product-actions { grid-template-columns: 1fr auto !important; gap: 6px; }
+  .hutoon-order-product { padding: 11px 10px !important; font-size: 12.5px; }
+  /* زر السماعة يُخفى على الشاشة الضيقة: زر الطلب والسلة أهم. */
+  .hutoon-play-audio { display: none !important; }
+  .hutoon-add-cart { width: 42px; height: 42px; font-size: 15px; }
+
+  /* --- شرائح التصنيف ----------------------------------------------------
+     تمرير أفقي بدل التفافها على ثلاثة أسطر. */
+  .hutoon-product-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+  }
+  .hutoon-product-filters::-webkit-scrollbar { display: none; }
+  .hutoon-product-filters button {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    padding: 9px 15px !important;
+    font-size: 12.5px;
+  }
+
+  /* --- النوافذ -----------------------------------------------------------
+     تُثبَّت في الأسفل كورقة، فأقرب لليد وأسهل في الإغلاق. */
+  .modal { align-items: flex-end !important; padding: 0 !important; }
+  .modal > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92dvh;
+    overflow-y: auto;
+    border-radius: var(--r-xl) var(--r-xl) 0 0 !important;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+  }
+  /* مقبض صغير يوضّح أن الورقة تُسحب. */
+  .modal > *::after {
+    content: "";
+    position: sticky;
+    top: 8px;
+    display: block;
+    width: 42px;
+    height: 4px;
+    margin: -4px auto 10px;
+    border-radius: 999px;
+    background: rgba(22, 37, 63, 0.18);
+  }
+
+  /* --- أهداف اللمس -------------------------------------------------------
+     أزرار الكمية كانت 25px عرضًا؛ الحد المريح 40px. */
+  .cart-qty button { width: 40px; height: 40px; font-size: 17px; }
+  .cart-qty b { min-width: 32px; font-size: 14px; }
+  .cart-remove { width: 40px; height: 40px; font-size: 13px; }
+  .catalog-size-card,
+  .quiz-options button { min-height: 46px; }
+
+  /* السلة تغطي الشاشة، فيختفي ما تحتها حتى لا يحجب زر الإتمام. */
+  body.cart-open .mobile-floating-nav,
+  body.cart-open .mobile-cart-fab { display: none !important; }
+
+  /* --- السلة على الجوال --------------------------------------------------- */
+  .cart-panel { width: 100vw; border-radius: 0; }
+  .cart-line { grid-template-columns: 56px minmax(0, 1fr); padding: 10px; }
+  .cart-line-media { width: 56px; height: 56px; }
+  .cart-foot { padding: 12px 14px calc(14px + env(safe-area-inset-bottom)); }
+  .cart-checkout { min-height: 54px; }
+
+  /* --- النماذج -----------------------------------------------------------
+     16px تمنع iOS من تكبير الصفحة عند التركيز على الحقل. */
+  input, select, textarea {
+    font-size: 16px !important;
+    min-height: 48px;
+  }
+  textarea { min-height: 92px; }
+  .form-grid { grid-template-columns: 1fr !important; }
+
+  /* --- الولاء والتواصل ---------------------------------------------------- */
+  .rewards-grid,
+  .cards-4,
+  .contact-grid { grid-template-columns: 1fr !important; }
+}
+
+/* شاشات ضيقة جدًا: عمود واحد للمنتجات حتى تبقى البطاقة مقروءة. */
+@media (max-width: 360px) {
+  .hutoon-products-grid { grid-template-columns: 1fr !important; }
+  .hero h1, #home h1 { font-size: 28px !important; }
+}
+
+</style>
 </body>
 </html>

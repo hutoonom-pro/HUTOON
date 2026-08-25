@@ -14603,18 +14603,29 @@ document.addEventListener('DOMContentLoaded', function () {
     return pdf.output("blob");
   }
 
+  // رفع الفاتورة إلى Firebase Storage اختياري تمامًا: الفاتورة تنزل على جهاز
+  // العميل على أي حال. وبما أن Storage غير مُفعّل هنا، كان put() يعلّق حتى
+  // دقيقتين فيبدو الإتمام وكأنه "لا يفعل شيئًا". الآن يُتخطّى بسرعة.
   async function uploadInvoice(order,blob){
     if(location.protocol==="file:"||!window.firebase?.storage)return "";
     try{
+      firebase.storage().setMaxUploadRetryTime(6000);
+      firebase.storage().setMaxOperationRetryTime(6000);
+    }catch(_){}
+    try{
       const ref=firebase.storage().ref(`invoices/${order.id}.pdf`);
-      await ref.put(blob,{contentType:"application/pdf"});
-      const url=await ref.getDownloadURL();
-      if(window.firebase?.firestore){
-        await firebase.firestore().collection("orders").doc(order.id).set({invoiceUrl:url},{merge:true});
+      const url=await Promise.race([
+        ref.put(blob,{contentType:"application/pdf"}).then(()=>ref.getDownloadURL()),
+        new Promise((_,reject)=>setTimeout(()=>reject(new Error("invoice-upload-timeout")),8000))
+      ]);
+      if(url&&window.firebase?.firestore){
+        try{
+          await firebase.firestore().collection("orders").doc(order.id).set({invoiceUrl:url},{merge:true});
+        }catch(_){}
       }
-      return url;
+      return url||"";
     }catch(error){
-      console.warn("Invoice upload failed",error);
+      console.warn("Invoice upload skipped:",error?.code||error?.message||error);
       return "";
     }
   }
@@ -14751,11 +14762,11 @@ document.addEventListener('DOMContentLoaded', function () {
       saved=completeOrder;
 
       if(window.firebase?.firestore && invoiceUrl){
-        await firebase.firestore().collection("orders").doc(saved.id).set({
+        firebase.firestore().collection("orders").doc(saved.id).set({
           invoiceUrl,
           invoiceReady:true,
           updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-        },{merge:true});
+        },{merge:true}).catch(error=>console.warn("Invoice link update skipped:",error?.code||error));
       }
 
       // تنزيل الفاتورة على جهاز العميل ليرفقها في واتساب.
@@ -18483,6 +18494,106 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   .catalog-size-card { padding: 12px 6px !important; }
   .catalog-size-card strong { font-size: 19px; }
   .catalog-size-card .size-price { font-size: 10px; padding: 2px 7px; }
+}
+</style>
+<style id="hutoon-cart-refine">
+/* ==========================================================================
+   24. تحسين السلة
+   الصورة كانت صغيرة والسطر واسع، فبدا المحتوى مبعثرًا. الآن الصورة أكبر
+   والمعلومة مرصوصة عمودًا واحدًا، والسعر أثقل عنصر في السطر.
+   ========================================================================== */
+
+.cart-head { padding: 22px 20px 15px; }
+.cart-head h3 { font-size: 20px; }
+
+.cart-items { padding: 14px 14px 6px; gap: 10px; }
+
+.cart-line {
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 13px;
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: #fff;
+  border: 1px solid rgba(22, 37, 63, 0.08);
+  box-shadow: 0 1px 2px rgba(16, 30, 52, 0.04);
+}
+.cart-line-media {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(168deg, #ffffff, #f4eee4);
+  border: 1px solid rgba(22, 37, 63, 0.06);
+  padding: 5px;
+}
+.cart-line-media img { border-radius: 8px; }
+
+.cart-line-body { gap: 3px; }
+.cart-line-body small { font-size: 9.5px; letter-spacing: 0.13em; }
+.cart-line-body strong { font-size: 14.5px; line-height: 1.3; }
+.cart-line-variant {
+  margin-top: 4px;
+  padding: 3px 10px;
+  background: rgba(184, 147, 78, 0.13);
+  color: #7a6027;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.cart-line-controls {
+  margin-top: 11px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(22, 37, 63, 0.10);
+}
+.cart-qty { background: rgba(22, 37, 63, 0.055); padding: 3px; }
+.cart-qty button {
+  width: 28px; height: 28px;
+  border: 1px solid rgba(22, 37, 63, 0.07);
+  box-shadow: none;
+}
+.cart-line-price { font-size: 15px; letter-spacing: -0.01em; }
+
+/* التذييل ورقة واحدة هادئة بدل ثلاث بطاقات متجاورة. */
+.cart-foot {
+  padding: 14px;
+  gap: 11px;
+  background: rgba(250, 247, 241, 0.92);
+  border-top: 1px solid rgba(22, 37, 63, 0.08);
+}
+.cart-foot .coupon-box {
+  padding: 12px 13px;
+  border-radius: var(--r-sm);
+  border-style: solid;
+  border-color: rgba(184, 147, 78, 0.28);
+  background: rgba(184, 147, 78, 0.06);
+}
+.cart-foot .coupon-box > label { font-size: 12px; margin-bottom: 7px; }
+.cart-foot .coupon-row input { min-height: 42px; font-size: 13.5px; }
+.cart-foot .coupon-row .btn { min-height: 42px; padding: 0 16px; font-size: 13.5px; }
+
+.cart-foot .order-totals {
+  padding: 13px 14px;
+  border-radius: var(--r-sm);
+  background: #fff;
+  border: 1px solid rgba(22, 37, 63, 0.08);
+  gap: 7px;
+}
+.cart-foot .order-totals .grand { padding-top: 8px; }
+.cart-foot .order-totals .grand strong { font-size: 20px; }
+
+.cart-checkout {
+  min-height: 54px;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  box-shadow: 0 8px 22px rgba(16, 30, 52, 0.22);
+}
+
+.cart-empty { padding: 66px 24px; }
+.cart-empty-icon { width: 64px; height: 64px; font-size: 26px; }
+
+@media (max-width: 620px) {
+  .cart-line { grid-template-columns: 62px minmax(0, 1fr); gap: 11px; }
+  .cart-line-media { width: 62px; height: 62px; }
+  .cart-line-body strong { font-size: 13.5px; }
 }
 </style>
 </body>

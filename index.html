@@ -11078,6 +11078,25 @@ main > section { position: relative; }
   </div>
 </aside>
 
+<!-- تأكيد الطلب -->
+<div class="order-success-sheet" id="orderSuccessSheet">
+  <div class="order-success-card">
+    <div class="order-success-icon" aria-hidden="true">✓</div>
+    <h3>تم استلام طلبك</h3>
+    <p class="order-success-id">رقم الطلب: <strong id="orderSuccessId">—</strong></p>
+    <p class="order-success-note">
+      اضغط الزر أدناه لإرسال الطلب مع الفاتورة إلى واتساب المتجر، ثم حوّل المبلغ وأرسل الإيصال وموقعك.
+    </p>
+    <button class="btn btn-primary order-success-send" type="button" onclick="hutoonSendOrder()">
+      إرسال الطلب على واتساب
+    </button>
+    <button class="btn btn-outline order-success-download" type="button" onclick="hutoonDownloadOrderInvoice()">
+      تنزيل الفاتورة
+    </button>
+    <button class="order-success-close" type="button" onclick="hutoonCloseOrderSuccess()">إغلاق</button>
+  </div>
+</div>
+
 <div class="modal" id="catalogOrderModal">
 <div class="modal-card catalog-order-card">
 <div class="modal-head">
@@ -14630,6 +14649,71 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  let pendingInvoice=null;
+
+  function showOrderSuccess(order,blob,whatsappUrl,message){
+    pendingInvoice={blob,name:`HUTOON-${order.id}.pdf`,whatsappUrl,message};
+    const host=document.getElementById("orderSuccessSheet");
+    if(!host){
+      // احتياط: لو غاب اللوح لأي سبب، لا يضيع الطلب على العميل.
+      window.location.assign(whatsappUrl);
+      return;
+    }
+    document.getElementById("orderSuccessId").textContent=order.id||"-";
+    host.classList.add("show");
+    document.body.style.overflow="hidden";
+  }
+
+  window.hutoonCloseOrderSuccess=function(){
+    document.getElementById("orderSuccessSheet")?.classList.remove("show");
+    document.body.style.overflow="";
+  };
+
+  // مشاركة الملف مباشرة أفضل حل على الجوال: تفتح واتساب ومعه الفاتورة
+  // مرفقة، بدل أن يبحث العميل عنها في التنزيلات.
+  window.hutoonSendOrder=async function(){
+    if(!pendingInvoice)return;
+    const {blob,name,whatsappUrl,message}=pendingInvoice;
+
+    try{
+      const file=new File([blob],name,{type:"application/pdf"});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],text:message,title:"طلب HUTOON"});
+        window.hutoonCloseOrderSuccess();
+        return;
+      }
+    }catch(error){
+      // إلغاء المستخدم للمشاركة ليس خطأ يستوجب فتح واتساب رغمًا عنه.
+      if(error?.name==="AbortError"){return}
+      console.warn("Share unavailable:",error?.name||error);
+    }
+
+    // لا مشاركة: ننزّل الفاتورة ثم ننتقل لواتساب في نفس التبويب
+    // (الانتقال لا يُحجب، بخلاف النافذة المنبثقة).
+    saveInvoice();
+    window.location.assign(whatsappUrl);
+  };
+
+  window.hutoonDownloadOrderInvoice=function(){ saveInvoice() };
+
+  function saveInvoice(){
+    if(!pendingInvoice?.blob)return;
+    const {blob,name}=pendingInvoice;
+    const url=URL.createObjectURL(blob);
+    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)
+      ||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+    if(isIOS){
+      // iOS يتجاهل خاصية download لملفات blob، ففتحها في تبويب هو
+      // الطريق الوحيد ليتمكن العميل من حفظها أو مشاركتها.
+      window.open(url,"_blank");
+    }else{
+      const link=document.createElement("a");
+      link.href=url; link.download=name; link.style.display="none";
+      document.body.appendChild(link); link.click(); link.remove();
+    }
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }
+
   function downloadInvoiceBlob(blob,fileName){
     if(!blob)return false;
     try{
@@ -14769,9 +14853,8 @@ document.addEventListener('DOMContentLoaded', function () {
         },{merge:true}).catch(error=>console.warn("Invoice link update skipped:",error?.code||error));
       }
 
-      // تنزيل الفاتورة على جهاز العميل ليرفقها في واتساب.
-      // كانت تعتمد على دالة حُذفت ضمن كود ميت، فلم يكن ينزل شيء.
-      downloadInvoiceBlob(invoiceBlob,`HUTOON-${saved.id}.pdf`);
+      // التنزيل صار من لوح التأكيد بضغطة المستخدم، لأن المتصفحات
+      // المحمولة تتجاهل التنزيل التلقائي خارج سياق الضغطة.
     }catch(error){
       console.error("Invoice preparation failed:",error);
       showToast("تم حفظ الطلب، لكن تعذر إنشاء الفاتورة. جرّب تنزيلها من حسابك لاحقًا.");
@@ -14785,14 +14868,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const message=whatsappText(saved,invoiceUrl);
     const whatsappUrl=`https://api.whatsapp.com/send?phone=${storeNumber}&text=${encodeURIComponent(message)}`;
 
-    // الانتقال المباشر كان يقطع تنزيل الفاتورة. تُفتح المحادثة في تبويب
-    // جديد بعد مهلة قصيرة، ليكتمل التنزيل ويبقى العميل في الموقع.
-    showToast("تم حفظ الطلب وتنزيل الفاتورة، جاري فتح واتساب المتجر...");
-    setTimeout(()=>{
-      const opened=window.open(whatsappUrl,"_blank","noopener");
-      // منع النوافذ المنبثقة يعني عدم فتح شيء — عندها ننتقل في نفس التبويب.
-      if(!opened)window.location.assign(whatsappUrl);
-    },1200);
+    // الفتح التلقائي لواتساب يُحجب على الجوال لأنه يقع بعد await فيخرج من
+    // سياق ضغطة المستخدم، و iOS يتجاهل تنزيل ملفات blob. لذلك يُعرض بدلًا
+    // منه لوح تأكيد بزرّين يضغطهما العميل — فيعملان داخل ضغطته.
+    showOrderSuccess(saved,invoiceBlob,whatsappUrl,message);
     return saved;
   }
   // Catalog products.
@@ -18594,6 +18673,99 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   .cart-line { grid-template-columns: 62px minmax(0, 1fr); gap: 11px; }
   .cart-line-media { width: 62px; height: 62px; }
   .cart-line-body strong { font-size: 13.5px; }
+}
+</style>
+<style id="hutoon-order-success">
+/* ==========================================================================
+   25. لوح تأكيد الطلب
+   المتصفحات المحمولة تحجب فتح واتساب وتتجاهل تنزيل blob خارج ضغطة
+   المستخدم، فالإرسال صار زرًا يضغطه هو — وهذا أيضًا ما يريده صاحب المتجر:
+   العميل يرسل الفاتورة بنفسه.
+   ========================================================================== */
+
+.order-success-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 3200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(12, 22, 38, 0.45);
+  -webkit-backdrop-filter: blur(5px) saturate(120%);
+          backdrop-filter: blur(5px) saturate(120%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-quick) var(--ease-out), visibility 0s linear var(--dur-quick);
+}
+.order-success-sheet.show {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-quick) var(--ease-out), visibility 0s;
+}
+
+.order-success-card {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  text-align: center;
+  padding: 30px 24px 24px;
+  border-radius: var(--r-xl);
+  background: rgba(253, 251, 247, 0.98);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+          backdrop-filter: saturate(180%) blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--lift-4);
+  transform: scale(0.94) translateY(14px);
+  transition: transform var(--dur-settle) var(--ease-settle);
+}
+.order-success-sheet.show .order-success-card { transform: none; }
+
+.order-success-icon {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: rgba(62, 125, 99, 0.14);
+  color: #2c5f4b;
+  font-size: 30px;
+  font-weight: 800;
+}
+.order-success-card h3 { margin: 0; font-size: 21px; color: var(--lg-ink); letter-spacing: -0.015em; }
+.order-success-id { margin: 0; font-size: 13px; color: var(--lg-muted); }
+.order-success-id strong { color: var(--lg-ink); font-variant-numeric: tabular-nums; }
+.order-success-note {
+  margin: 4px 0 14px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--lg-muted);
+  max-width: 34ch;
+}
+
+.order-success-send { width: 100%; min-height: 54px; font-size: 16px; }
+.order-success-download { width: 100%; min-height: 48px; font-size: 14px; }
+.order-success-close {
+  margin-top: 4px;
+  padding: 8px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--lg-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 620px) {
+  .order-success-sheet { align-items: flex-end; padding: 0; }
+  .order-success-card {
+    width: 100%;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+  /* الشريط السفلي يغطي الأزرار. */
+  body:has(.order-success-sheet.show) .mobile-floating-nav,
+  body:has(.order-success-sheet.show) .mobile-cart-fab { display: none !important; }
 }
 </style>
 </body>

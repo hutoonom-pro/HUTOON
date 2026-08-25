@@ -11082,9 +11082,9 @@ main > section { position: relative; }
 <div class="modal-card catalog-order-card">
 <div class="modal-head">
 <div>
-<small>HUTOON PRODUCT ORDER</small>
-<h3>إتمام طلب المنتج</h3>
-<p>راجع المنتج وحدد الكمية، ثم سيتم حفظ الطلب وإنشاء الفاتورة.</p>
+<small>HUTOON SAMPLE</small>
+<h3>اختر الحجم والكمية</h3>
+<p>حدد حجم العينة والكمية، ثم أضفها إلى سلتك.</p>
 </div>
 <button class="close-btn" onclick="closeCatalogOrder()" type="button">×</button>
 </div>
@@ -11097,30 +11097,21 @@ main > section { position: relative; }
 </div>
 </div>
 <div class="catalog-order-options">
-  <div class="catalog-option-block">
-    <label>نوع الطلب</label>
-    <div class="catalog-mode-switch">
-      <button class="active" id="catalogFullMode" onclick="setCatalogOrderMode('full')" type="button">عبوة كاملة</button>
-      <button id="catalogSampleMode" onclick="setCatalogOrderMode('sample')" type="button">عينة</button>
-    </div>
-  </div>
-
-  <div class="catalog-option-block hidden" id="catalogSizeBlock">
+  <div class="catalog-option-block" id="catalogSizeBlock">
     <label>الحجم</label>
     <div class="catalog-size-cards" id="catalogSizeCards">
       <button class="catalog-size-card active" data-size="2 مل" onclick="selectCatalogSize('2 مل')" type="button">
-        <strong>2</strong><span>مل</span>
+        <strong>2</strong><span>مل</span><b class="size-price" data-size-price="2 مل">—</b>
       </button>
       <button class="catalog-size-card" data-size="5 مل" onclick="selectCatalogSize('5 مل')" type="button">
-        <strong>5</strong><span>مل</span>
+        <strong>5</strong><span>مل</span><b class="size-price" data-size-price="5 مل">—</b>
       </button>
       <button class="catalog-size-card" data-size="10 مل" onclick="selectCatalogSize('10 مل')" type="button">
-        <strong>10</strong><span>مل</span>
+        <strong>10</strong><span>مل</span><b class="size-price" data-size-price="10 مل">—</b>
       </button>
     </div>
     <input id="catalogOrderSize" type="hidden" value="2 مل"/>
   </div>
-
   <div class="catalog-option-block">
     <label>الكمية</label>
     <div class="sample-quantity-control catalog-qty">
@@ -11130,36 +11121,18 @@ main > section { position: relative; }
     </div>
   </div>
 </div>
-
 <div class="catalog-order-summary">
-  <span>الطلب المختار</span>
-  <strong id="catalogOrderSummary">عبوة كاملة · الكمية 1</strong>
+  <span>الإجمالي</span>
+  <strong id="catalogOrderSummary">—</strong>
 </div>
 
-<div class="coupon-box">
-  <label for="orderCouponCode">هل لديك كود خصم؟</label>
-  <div class="coupon-row">
-    <input id="orderCouponCode" maxlength="24" placeholder="اكتب الكود هنا" autocomplete="off" spellcheck="false"/>
-    <button class="btn btn-outline" type="button" id="orderCouponApply" onclick="applyOrderCoupon()">تطبيق</button>
-  </div>
-  <div class="coupon-feedback" id="orderCouponFeedback"></div>
+<button class="btn btn-primary catalog-add-cart-main" onclick="hutoonAddCurrentToCart()" type="button">
+  أضف إلى السلة
+</button>
+<small class="catalog-order-note">أضف ما تشاء من العينات، ثم أكمل الطلب من السلة دفعة واحدة.</small>
+</div>
 </div>
 
-<div class="order-totals" id="orderTotals">
-  <div><span>المجموع</span><strong id="orderSubtotal">—</strong></div>
-  <div class="discount-line hidden" id="orderDiscountLine"><span>الخصم <b id="orderDiscountLabel"></b></span><strong id="orderDiscountValue">—</strong></div>
-  <div class="grand"><span>الإجمالي</span><strong id="orderGrandTotal">—</strong></div>
-</div>
-
-<div class="catalog-order-buttons">
-<button class="btn btn-outline catalog-add-cart" onclick="hutoonAddCurrentToCart()" type="button">أضف إلى السلة</button>
-<button class="btn btn-primary catalog-order-submit" onclick="completeCatalogOrder()" type="button">
-      حفظ الطلب وإنشاء الفاتورة
-    </button>
-</div>
-<small class="catalog-order-note">سيُحفظ الطلب في لوحة الإدارة، ثم تُجهز فاتورة PDF ورسالة واتساب.</small>
-</div>
-</div>
 <!-- Auth -->
 <div class="modal" id="authModal">
 <div class="modal-card auth-premium-card">
@@ -12203,7 +12176,7 @@ main > section { position: relative; }
           <div class="hutoon-product-tags"><span>${hutoonEscape(p.gender==='يونيسكس'?'للجنسين':p.gender||'')}</span><span>${hutoonEscape(p.mood||p.use||p.season||'')}</span></div>
           <p class="hutoon-product-description">${hutoonEscape(p.description||'عطر مختار بعناية ضمن مجموعة هتون.')}</p>
           <div class="hutoon-product-price">${price>0?`<strong>${hutoonMoney(price)}</strong>${oldPrice>price?`<del>${hutoonMoney(oldPrice)}</del>`:''}`:'<strong class="hutoon-price-on-request">السعر عند الطلب</strong>'}</div>
-          <div class="hutoon-product-actions"><a class="hutoon-order-product" href="${wa}" target="_blank" rel="noopener">اطلب الآن</a><button class="hutoon-play-audio" ${hasAudio?'':'disabled'} onclick="previewAdminAudio('${id}')" title="استمع لوصف العطر">♫</button></div>
+          <div class="hutoon-product-actions"><a class="hutoon-order-product" href="${wa}" target="_blank" rel="noopener">أضف إلى السلة</a><button class="hutoon-play-audio" ${hasAudio?'':'disabled'} onclick="previewAdminAudio('${id}')" title="استمع لوصف العطر">♫</button></div>
           </div></article>`;
       }).join('');
       setTimeout(()=>initScrollReveal?.(),20);
@@ -14398,7 +14371,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const WHATSAPP_NUMBER="96877353930";
   let selectedCatalogProduct=null;
   let catalogQty=1;
-  let catalogOrderMode='full';
+  // المتجر يبيع عينات فقط، فلا يوجد وضع آخر.
+  const catalogOrderMode='sample';
   let pendingPerfumeFile=null;
 
   function money(value){
@@ -14701,10 +14675,20 @@ document.addEventListener('DOMContentLoaded', function () {
       invoiceUrl?`🔗 رابط الفاتورة: ${invoiceUrl}`:false,
       "",
       "━━━━━━━━━━━━━━━",
-      // آخر سطر عمدًا: هو الإجراء الوحيد المطلوب من العميل، وقد نزلت
-      // الفاتورة على جهازه قبل فتح هذه المحادثة مباشرة.
-      "⚠️ مهم: أرفق ملف الفاتورة الذي نزل على جهازك في هذه المحادثة لتأكيد الطلب.",
-      "بدون إرسال الفاتورة لن يُعتمد الطلب."
+      "🏦 بيانات التحويل:",
+      "رقم الحساب: 0379014181980039",
+      "الاسم: Wail Abdullah Alwardi",
+      "البنك: Bank Muscat",
+      "رقم التحويل: 95120017",
+      "",
+      // الخطوات الثلاث مرقّمة لأنها ما يجب على العميل فعله بعد هذه الرسالة.
+      "📌 لإتمام الطلب بأسرع وقت:",
+      "1) حوّل المبلغ على الحساب أعلاه.",
+      "2) أرسل صورة إيصال التحويل هنا.",
+      "3) أرسل موقعك وعنوان التوصيل بالتفصيل.",
+      "",
+      "⚠️ مهم: أرفق أيضًا ملف الفاتورة الذي نزل على جهازك.",
+      "بدون الإيصال والفاتورة لن يُعتمد الطلب."
     ].filter(line=>line!==false&&line!==undefined&&line!==null).join("\n");
   }
 
@@ -14825,33 +14809,22 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCatalogOrderSummary();
   };
 
-  window.setCatalogOrderMode=function(mode){
-    catalogOrderMode=mode==="sample"?"sample":"full";
-    document.getElementById("catalogFullMode")?.classList.toggle("active",catalogOrderMode==="full");
-    document.getElementById("catalogSampleMode")?.classList.toggle("active",catalogOrderMode==="sample");
-
-    const sizeBlock=document.getElementById("catalogSizeBlock");
-    const sizeInput=document.getElementById("catalogOrderSize");
-
-    if(catalogOrderMode==="sample"){
-      sizeBlock?.classList.remove("hidden");
-      renderCatalogSizes("2 مل");
-    }else{
-      sizeBlock?.classList.add("hidden");
-      if(sizeInput)sizeInput.value="";
-      document.querySelectorAll(".catalog-size-card").forEach(card=>card.classList.remove("active"));
-    }
-    updateCatalogOrderSummary();
-  };
-
   window.updateCatalogOrderSummary=function(){
-    const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
-    const label=catalogOrderMode==="sample"?"عينة":"عبوة كاملة";
     const summary=document.getElementById("catalogOrderSummary");
-    if(!summary)return;
-    summary.textContent=catalogOrderMode==="sample"
-      ? `${label} · ${size} · الكمية ${catalogQty}`
-      : `${label} · الكمية ${catalogQty}`;
+    const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
+    if(summary){
+      const t=orderTotals();
+      summary.textContent=t.subtotal>0
+        ? `${money(t.subtotal)} · ${size} × ${catalogQty}`
+        : "السعر عند الطلب";
+    }
+    // سعر كل حجم يظهر على بطاقته ليقارن العميل قبل الاختيار.
+    if(selectedCatalogProduct){
+      document.querySelectorAll("[data-size-price]").forEach(el=>{
+        const v=sizePriceOf(selectedCatalogProduct,el.dataset.sizePrice);
+        el.textContent=v>0?money(v):"—";
+      });
+    }
     window.hutoonRenderOrderTotals?.();
   };
 
@@ -14871,12 +14844,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function orderUnitPrice(){
     if(!selectedCatalogProduct)return 0;
-    if(catalogOrderMode==="sample"){
-      const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
-      const map={"2 مل":"price2ml","5 مل":"price5ml","10 مل":"price10ml"};
-      return Number(selectedCatalogProduct[map[size]]||0);
-    }
-    return Number(selectedCatalogProduct.price||0);
+    const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
+    return sizePriceOf(selectedCatalogProduct,size);
   }
 
   // One place computes the money, so the modal, the order record and the
@@ -14965,6 +14934,20 @@ document.addEventListener('DOMContentLoaded', function () {
      طلب واحد، وتُحفظ محليًا حتى لا تضيع عند تحديث الصفحة.
      ====================================================================== */
 
+  // لوحة الإدارة تحفظ أسعار العينات في كائن sizePrices، بينما كانت الواجهة
+  // تقرأ حقولًا مسطّحة (price2ml…) — فلم يظهر أي سعر. هذه الدالة تقبل
+  // الشكلين حتى لا تتعطّل المنتجات القديمة ولا الجديدة.
+  const SIZE_FIELD={"2 مل":"price2ml","5 مل":"price5ml","10 مل":"price10ml"};
+  function sizePriceOf(product,size){
+    if(!product)return 0;
+    const nested=product.sizePrices&&product.sizePrices[size];
+    if(Number(nested)>0)return Number(nested);
+    const flat=product[SIZE_FIELD[size]];
+    if(Number(flat)>0)return Number(flat);
+    return 0;
+  }
+  window.hutoonSizePrice=sizePriceOf;
+
   const CART_KEY="hutoon_cart_v1";
   let cart=[];
 
@@ -15012,9 +14995,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.hutoonAddToCart=function(product,mode,size,qty){
     if(!product)return;
-    const unitPrice=mode==="sample"
-      ? Number(product[{"2 مل":"price2ml","5 مل":"price5ml","10 مل":"price10ml"}[size]]||0)
-      : Number(product.price||0);
+    const unitPrice=sizePriceOf(product,size||"2 مل");
 
     const line={
       id:String(product.id),
@@ -15266,17 +15247,49 @@ document.addEventListener('DOMContentLoaded', function () {
     const product=(typeof hutoonMergedProducts==="function"?hutoonMergedProducts():[])
       .find(p=>String(p.id)===String(id));
     if(!product)return showToast("تعذر العثور على المنتج");
-    window.hutoonAddToCart(product,"full","",1);
+    // العينات فقط: الإضافة السريعة تختار أصغر حجم.
+    window.hutoonAddToCart(product,"sample","2 مل",1);
   };
 
   // إضافة من نافذة الطلب بالخيارات التي اختارها العميل فعلًا.
   window.hutoonAddCurrentToCart=function(){
     if(!selectedCatalogProduct)return showToast("اختر منتجًا أولًا");
-    const isSample=catalogOrderMode==="sample";
-    const size=isSample?(document.getElementById("catalogOrderSize")?.value||"2 مل"):"";
-    window.hutoonAddToCart(selectedCatalogProduct,catalogOrderMode,size,catalogQty);
+    const size=document.getElementById("catalogOrderSize")?.value||"2 مل";
+    const img=document.getElementById("catalogOrderImage");
+    window.hutoonAddToCart(selectedCatalogProduct,"sample",size,catalogQty);
+    flyToCart(img);
     window.closeCatalogOrder?.();
   };
+
+  // نسخة شبحية من صورة المنتج تنتقل إلى زر السلة، فيرى العميل أين ذهب
+  // ما أضافه بدل أن يتغيّر رقم صغير في الزاوية فجأة.
+  function flyToCart(sourceImg){
+    if(!sourceImg||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    const target=document.getElementById("mobileCartFab")?.offsetParent
+      ? document.getElementById("mobileCartFab")
+      : document.getElementById("hutoonCartButton");
+    if(!target)return;
+
+    const from=sourceImg.getBoundingClientRect();
+    const to=target.getBoundingClientRect();
+    if(!from.width||!to.width)return;
+
+    const ghost=document.createElement("img");
+    ghost.src=sourceImg.src;
+    ghost.className="cart-fly-ghost";
+    ghost.style.cssText=`position:fixed;z-index:5000;pointer-events:none;border-radius:14px;object-fit:contain;background:#fff;
+      left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;
+      transition:transform 620ms cubic-bezier(0.32,0.72,0,1),opacity 620ms ease;`;
+    document.body.appendChild(ghost);
+
+    const dx=(to.left+to.width/2)-(from.left+from.width/2);
+    const dy=(to.top+to.height/2)-(from.top+from.height/2);
+    requestAnimationFrame(()=>{
+      ghost.style.transform=`translate(${dx}px, ${dy}px) scale(0.16)`;
+      ghost.style.opacity="0.25";
+    });
+    setTimeout(()=>ghost.remove(),660);
+  }
 
   window.openCatalogOrder=function(id){
     if(!requireLogin())return;
@@ -15285,23 +15298,19 @@ document.addEventListener('DOMContentLoaded', function () {
     if(!selectedCatalogProduct)return showToast("تعذر العثور على المنتج");
 
     catalogQty=1;
-    catalogOrderMode="full";
 
     document.getElementById("catalogOrderName").textContent=selectedCatalogProduct.name||"—";
     document.getElementById("catalogOrderBrand").textContent=selectedCatalogProduct.brand||"HUTOON";
-    document.getElementById("catalogOrderPrice").textContent=money(selectedCatalogProduct.price);
     document.getElementById("catalogOrderImage").src=selectedCatalogProduct.image||"";
     document.getElementById("catalogOrderQuantity").textContent="1";
 
-    document.getElementById("catalogFullMode")?.classList.add("active");
-    document.getElementById("catalogSampleMode")?.classList.remove("active");
-    document.getElementById("catalogSizeBlock")?.classList.add("hidden");
-    const sizeInput=document.getElementById("catalogOrderSize");
-    if(sizeInput)sizeInput.value="";
-    document.querySelectorAll(".catalog-size-card").forEach(card=>card.classList.remove("active"));
+    // العينات فقط: يُفتح اختيار الحجم دائمًا على 2 مل.
+    document.getElementById("catalogSizeBlock")?.classList.remove("hidden");
+    renderCatalogSizes("2 مل");
+    const cheapest=sizePriceOf(selectedCatalogProduct,"2 مل");
+    document.getElementById("catalogOrderPrice").textContent=cheapest>0?`تبدأ من ${money(cheapest)}`:"السعر عند الطلب";
     window.hutoonClearCoupon?.();
     updateCatalogOrderSummary();
-    renderOrderTotals();
 
     document.getElementById("catalogOrderModal")?.classList.add("show");
   };
@@ -15389,7 +15398,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const button=document.createElement("button");
       button.type="button";
       button.className=anchor.className;
-      button.textContent="اطلب الآن";
+      button.textContent="أضف إلى السلة";
       button.onclick=()=>openCatalogOrder(product.id);
       anchor.replaceWith(button);
     });
@@ -16842,7 +16851,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
         <h3>${esc(product.name)}</h3><div class="hutoon-product-tags"><span>${esc(product.gender==="يونيسكس"?"للجنسين":product.gender||"")}</span><span>${esc(product.use||product.mood||product.season||"")}</span></div>
         <p class="hutoon-product-description">${esc(product.description||"عطر مختار بعناية ضمن مجموعة هتون.")}</p>
         <div class="hutoon-product-price">${price>0?`<strong>${money(price)}</strong>${oldPrice>price?`<del>${money(oldPrice)}</del>`:""}`:'<strong class="hutoon-price-on-request">السعر عند الطلب</strong>'}</div>
-        <div class="hutoon-product-actions"><button class="hutoon-order-product" type="button" onclick="hutoonOpenProduct(decodeURIComponent('${enc(product.id)}'))">اطلب الآن</button><button class="hutoon-add-cart" type="button" onclick="hutoonQuickAdd(decodeURIComponent('${enc(product.id)}'))" aria-label="أضف ${esc(product.name)} إلى السلة" title="أضف إلى السلة">🛍</button>
+        <div class="hutoon-product-actions"><button class="hutoon-order-product" type="button" onclick="hutoonOpenProduct(decodeURIComponent('${enc(product.id)}'))">أضف إلى السلة</button>
         <button class="hutoon-play-audio" type="button" ${audio?"":"disabled"} onclick="hutoonPlayAudio(decodeURIComponent('${enc(product.id)}'))" aria-label="تشغيل وصف ${esc(product.name)}">♫</button></div></div>
       </article>`;
     }).join("");
@@ -18387,6 +18396,94 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   .hero h1, #home h1 { font-size: 28px !important; }
 }
 
+</style>
+<style id="hutoon-samples-polish">
+/* ==========================================================================
+   23. متجر العينات
+   العبوة الكاملة أُلغيت، فبطاقة الحجم صارت هي القرار الوحيد قبل السلة —
+   ولهذا تحمل سعرها بنفسها ليقارن العميل دون فتح شيء آخر.
+   ========================================================================== */
+
+.catalog-size-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.catalog-size-card {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  padding: 14px 8px 16px !important;
+  border: 1.5px solid rgba(22, 37, 63, 0.12) !important;
+  border-radius: var(--r-md) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  color: var(--lg-ink);
+  transition: transform var(--dur-press) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out),
+              background-color var(--dur-quick) var(--ease-out),
+              box-shadow var(--dur-quick) var(--ease-out);
+}
+.catalog-size-card strong { font-size: 22px; line-height: 1; font-variant-numeric: tabular-nums; }
+.catalog-size-card span { font-size: 11px; color: var(--lg-muted); font-weight: 700; }
+.catalog-size-card .size-price {
+  margin-top: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(22, 37, 63, 0.06);
+  color: var(--lg-muted);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.catalog-size-card:active { transform: scale(0.96); }
+.catalog-size-card.active {
+  border-color: rgba(184, 147, 78, 0.85) !important;
+  background: rgba(184, 147, 78, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(184, 147, 78, 0.16);
+}
+.catalog-size-card.active .size-price {
+  background: linear-gradient(150deg, #d8bd85, #b8934e);
+  color: #14223a;
+}
+
+.catalog-add-cart-main {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 16px;
+  font-size: 16px;
+}
+.catalog-order-note { display: block; margin-top: 9px; text-align: center; font-size: 12px; color: var(--lg-muted); }
+
+.catalog-order-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 13px 16px;
+  border-radius: var(--r-sm);
+  background: rgba(22, 37, 63, 0.05);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lg-muted);
+}
+.catalog-order-summary strong {
+  font-size: 17px;
+  color: var(--lg-ink);
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* زر البطاقة صار إجراءً واحدًا يملأ العرض. */
+.hutoon-product-actions { grid-template-columns: 1fr !important; }
+
+.cart-fly-ghost { box-shadow: 0 12px 32px rgba(16, 30, 52, 0.28); }
+
+@media (max-width: 620px) {
+  .catalog-size-card { padding: 12px 6px !important; }
+  .catalog-size-card strong { font-size: 19px; }
+  .catalog-size-card .size-price { font-size: 10px; padding: 2px 7px; }
+}
 </style>
 </body>
 </html>

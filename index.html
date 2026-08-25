@@ -14497,6 +14497,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return full;
   }
 
+  // التهريب محليًا: النسخة العامة esc تعيش في طبقة أخرى ولا تصل هنا.
+  function invEsc(value){
+    return String(value??"").replace(/[&<>"']/g,c=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+  }
+
   function invoiceHtml(order){
     const unit=Number(order.unitPrice||order.price||0);
     const qty=Math.max(1,Number(order.qty||1));
@@ -14504,110 +14511,98 @@ document.addEventListener('DOMContentLoaded', function () {
     const discountAmount=Number(order.discountAmount||0);
     const discountPercent=Number(order.discountPercent||0);
     const total=Number(order.total||0)||Math.max(0,subtotal-discountAmount);
-    const itemName=order.perfume||order.productName||order.details||order.serviceType||"طلب هتون";
-    const brand=order.brand||"HUTOON";
-    const notes=order.notes||order.details||"لا توجد ملاحظات إضافية";
+    const notes=order.notes||order.details||"";
     const invoiceDate=new Date().toLocaleString("ar-OM",{
       year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"
     });
-    const image=order.image||order.productImage||"";
-    const imageMarkup=image
-      ? `<img src="${image}" alt="${itemName}" crossorigin="anonymous">`
-      : `<span>H</span>`;
+
+    // طلب السلة يحمل مصفوفة أصناف؛ الطلب المفرد يُغلَّف ليمر بنفس الجدول
+    // فيبقى شكل الفاتورة واحدًا في الحالتين.
+    const items=Array.isArray(order.items)&&order.items.length
+      ? order.items
+      : [{
+          name:order.perfume||order.productName||order.details||order.serviceType||"طلب هتون",
+          brand:order.brand||"",
+          size:order.size||"عبوة كاملة",
+          qty,
+          lineTotal:unit>0?unit*qty:0
+        }];
+
+    const rows=items.map((it,n)=>`<tr>
+      <td class="cell-index">${n+1}</td>
+      <td class="cell-name">
+        <b>${invEsc(it.name||"-")}</b>
+        ${it.brand?`<span>${invEsc(it.brand)}</span>`:""}
+      </td>
+      <td>${invEsc(it.size||"-")}</td>
+      <td>${Number(it.qty||1)}</td>
+      <td class="cell-price">${Number(it.lineTotal||0)>0?money(it.lineTotal):"عند الطلب"}</td>
+    </tr>`).join("");
 
     return `<div class="hutoon-invoice">
-      <div class="hutoon-invoice-head">
-        <div class="hutoon-invoice-brand">
+      <header class="inv-top">
+        <div class="inv-brand">
           <h1>HUTOON</h1>
-          <p>LUXURY PERFUME HOUSE</p>
+          <span>بيت العطور الفاخرة</span>
         </div>
-        <div class="hutoon-invoice-title">
-          <small>ORDER INVOICE</small>
-          <h2>بطاقة طلب</h2>
-          <strong>${order.id}</strong>
-          <span>${invoiceDate}</span>
+        <div class="inv-meta">
+          <span class="inv-label">فاتورة طلب</span>
+          <strong>${invEsc(order.id||"-")}</strong>
+          <span class="inv-date">${invoiceDate}</span>
         </div>
-      </div>
+      </header>
 
-      <div class="hutoon-invoice-section-title">بيانات العميل والطلب</div>
-      <div class="hutoon-invoice-grid">
-        <div class="hutoon-invoice-box">
-          <small>اسم العميل</small>
-          <strong>${order.customer||"-"}</strong>
+      <section class="inv-parties">
+        <div>
+          <span class="inv-label">العميل</span>
+          <b>${invEsc(order.customer||"-")}</b>
+          ${order.phone?`<span>${invEsc(order.phone)}</span>`:""}
+          ${order.customerEmail?`<span>${invEsc(order.customerEmail)}</span>`:""}
         </div>
-        <div class="hutoon-invoice-box">
-          <small>رقم الهاتف</small>
-          <strong>${order.phone||"-"}</strong>
+        <div>
+          <span class="inv-label">الحالة</span>
+          <b class="inv-status">${invEsc(order.status||"جديد")}</b>
+          <span>${invEsc(order.serviceType||"طلب عينات")}</span>
         </div>
-        <div class="hutoon-invoice-box">
-          <small>البريد الإلكتروني</small>
-          <strong>${order.customerEmail||"-"}</strong>
-        </div>
-        <div class="hutoon-invoice-box">
-          <small>نوع الخدمة</small>
-          <strong>${order.serviceType||"طلب"}</strong>
-        </div>
-      </div>
+      </section>
 
-      <div class="hutoon-invoice-section-title">تفاصيل الطلب</div>
-      ${Array.isArray(order.items)&&order.items.length>1
-      ? `<table class="hutoon-invoice-items">
-          <thead><tr><th>المنتج</th><th>الحجم</th><th>الكمية</th><th>السعر</th></tr></thead>
-          <tbody>${order.items.map(it=>`<tr>
-            <td><b>${esc(it.name)}</b><br><small>${esc(it.brand||"")}</small></td>
-            <td>${esc(it.size||"-")}</td>
-            <td>${Number(it.qty||1)}</td>
-            <td>${Number(it.lineTotal||0)>0?money(it.lineTotal):"عند الطلب"}</td>
-          </tr>`).join("")}</tbody>
-        </table>`
-      : `<div class="hutoon-invoice-product-card">
-        <div class="hutoon-invoice-product-image">${imageMarkup}</div>
-        <div class="hutoon-invoice-product-copy">
-          <small>${brand}</small>
-          <h3>${itemName}</h3>
-          <div class="hutoon-invoice-product-meta">
-            <div><small>الحجم</small><strong>${order.size||"-"}</strong></div>
-            <div><small>الكمية</small><strong>${qty}</strong></div>
-            <div><small>سعر الوحدة</small><strong>${unit>0?money(unit):"يُحدد لاحقًا"}</strong></div>
-            <div><small>نوع الطلب</small><strong>${order.serviceType||"طلب"}</strong></div>
-          </div>
-        </div>
-      </div>`}
+      <table class="inv-table">
+        <thead>
+          <tr><th>#</th><th>الصنف</th><th>الحجم</th><th>الكمية</th><th>السعر</th></tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
 
-      <div class="hutoon-invoice-section-title">الملاحظات</div>
-      <div class="hutoon-invoice-notes">${notes}</div>
+      <section class="inv-sums">
+        ${subtotal>0?`<div><span>المجموع</span><b>${money(subtotal)}</b></div>`:""}
+        ${discountAmount>0?`<div class="inv-discount"><span>الخصم ${discountPercent}%${order.discountCode?` · ${invEsc(order.discountCode)}`:""}</span><b>− ${money(discountAmount)}</b></div>`:""}
+        <div class="inv-grand"><span>الإجمالي</span><b>${total>0?money(total):"يُحدد بعد التأكيد"}</b></div>
+      </section>
 
-      <div class="hutoon-invoice-summary">
-        <div class="hutoon-invoice-status">
-          <span>حالة الطلب</span>
-          <b>${order.status||"جديد"}</b>
+      <section class="inv-bank">
+        <span class="inv-label">بيانات التحويل</span>
+        <div class="inv-bank-grid">
+          <div><small>رقم الحساب</small><b dir="ltr">0379014181980039</b></div>
+          <div><small>الاسم</small><b dir="ltr">Wail Abdullah Alwardi</b></div>
+          <div><small>البنك</small><b dir="ltr">Bank Muscat</b></div>
+          <div><small>رقم التحويل</small><b dir="ltr">95120017</b></div>
         </div>
-        ${discountAmount>0?`<div class="hutoon-invoice-total hutoon-invoice-sub">
-          <small>المجموع قبل الخصم</small>
-          <strong>${money(subtotal)}</strong>
-        </div>
-        <div class="hutoon-invoice-total hutoon-invoice-discount">
-          <small>الخصم ${discountPercent}%${order.discountCode?` · ${order.discountCode}`:""}</small>
-          <strong>- ${money(discountAmount)}</strong>
-        </div>`:""}
-        <div class="hutoon-invoice-total">
-          <small>الإجمالي</small>
-          <strong>${total>0?money(total):"يُحدد بعد التأكيد"}</strong>
-        </div>
-      </div>
+        <p>حوّل المبلغ ثم أرسل صورة الإيصال وموقعك على واتساب المتجر ليتم التوصيل.</p>
+      </section>
 
-      <div class="hutoon-invoice-thanks">
+      ${notes?`<section class="inv-notes"><span class="inv-label">ملاحظات</span><p>${invEsc(notes)}</p></section>`:""}
+
+      <footer class="inv-foot">
         <strong>شكرًا لاختياركم هتون</strong>
-        <span>Thank you for choosing HUTOON</span>
-      </div>
-
-      <div class="hutoon-invoice-footer">
-        <div><strong>Instagram</strong>@hutoon.om</div>
-        <div><strong>WhatsApp</strong>+968 77353930</div>
-        <div><strong>HUTOON</strong>سلطنة عُمان</div>
-      </div>
+        <div class="inv-contact">
+          <span dir="ltr">+968 77353930</span>
+          <span dir="ltr">@hutoon.om</span>
+          <span>سلطنة عُمان</span>
+        </div>
+      </footer>
     </div>`;
   }
+
   async function createInvoicePdf(order){
     if(!window.html2canvas||!window.jspdf?.jsPDF)throw new Error("تعذر تحميل أداة الفاتورة");
     let host=document.getElementById("hutoonInvoiceRender");
@@ -14675,6 +14670,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(!pendingInvoice)return;
     const {blob,name,whatsappUrl,message}=pendingInvoice;
 
+    // أفضل مسار على الجوال: قائمة المشاركة تفتح واتساب والفاتورة مرفقة معًا.
     try{
       const file=new File([blob],name,{type:"application/pdf"});
       if(navigator.canShare&&navigator.canShare({files:[file]})){
@@ -14683,35 +14679,43 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
     }catch(error){
-      // إلغاء المستخدم للمشاركة ليس خطأ يستوجب فتح واتساب رغمًا عنه.
-      if(error?.name==="AbortError"){return}
+      if(error?.name==="AbortError")return;   // ألغى المستخدم المشاركة
       console.warn("Share unavailable:",error?.name||error);
     }
 
-    // لا مشاركة: ننزّل الفاتورة ثم ننتقل لواتساب في نفس التبويب
-    // (الانتقال لا يُحجب، بخلاف النافذة المنبثقة).
+    // لا مشاركة: ننزّل الفاتورة ثم ننتقل لواتساب في نفس التبويب.
+    // المهلة تمنح المتصفح وقتًا لبدء التنزيل قبل مغادرة الصفحة.
     saveInvoice();
-    window.location.assign(whatsappUrl);
+    setTimeout(()=>{ window.location.href=whatsappUrl; },900);
   };
 
-  window.hutoonDownloadOrderInvoice=function(){ saveInvoice() };
+  window.hutoonDownloadOrderInvoice=function(){
+    if(saveInvoice())showToast("تم تنزيل الفاتورة على جهازك");
+    else showToast("تعذر تجهيز الفاتورة، أعد المحاولة");
+  };
 
+  // التنزيل عبر رابط download يعمل على أندرويد وسطح المكتب و iOS 13+.
+  // النسخة السابقة كانت تفتح الـ blob في تبويب جديد على أي جهاز لمس،
+  // فيبدو الزر معطّلًا، ثم ينتقل التبويب الأصلي لواتساب دون أن يراه العميل.
   function saveInvoice(){
-    if(!pendingInvoice?.blob)return;
+    if(!pendingInvoice?.blob)return false;
     const {blob,name}=pendingInvoice;
-    const url=URL.createObjectURL(blob);
-    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)
-      ||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-    if(isIOS){
-      // iOS يتجاهل خاصية download لملفات blob، ففتحها في تبويب هو
-      // الطريق الوحيد ليتمكن العميل من حفظها أو مشاركتها.
-      window.open(url,"_blank");
-    }else{
+    try{
+      const url=URL.createObjectURL(blob);
       const link=document.createElement("a");
-      link.href=url; link.download=name; link.style.display="none";
-      document.body.appendChild(link); link.click(); link.remove();
+      link.href=url;
+      link.download=name;
+      link.rel="noopener";
+      link.style.display="none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+      return true;
+    }catch(error){
+      console.warn("Invoice save failed:",error);
+      return false;
     }
-    setTimeout(()=>URL.revokeObjectURL(url),60000);
   }
 
   function downloadInvoiceBlob(blob,fileName){
@@ -18766,6 +18770,206 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   /* الشريط السفلي يغطي الأزرار. */
   body:has(.order-success-sheet.show) .mobile-floating-nav,
   body:has(.order-success-sheet.show) .mobile-cart-fab { display: none !important; }
+}
+</style>
+<style id="hutoon-invoice-v2">
+/* ==========================================================================
+   26. الفاتورة
+   تُصوَّر بـ html2canvas ثم تُحوَّل PDF، فكل شيء هنا ألوان صريحة وحدود
+   واضحة — الزجاج والشفافية لا يُصوَّران جيدًا.
+   ========================================================================== */
+
+.hutoon-invoice {
+  width: 794px;                 /* عرض A4 عند 96dpi */
+  padding: 44px 46px 34px;
+  background: #ffffff;
+  color: #16253f;
+  font-family: "Cairo", sans-serif;
+  direction: rtl;
+  box-sizing: border-box;
+}
+
+.hutoon-invoice .inv-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #b8934e;
+  margin-bottom: 5px;
+}
+
+/* --- الترويسة -------------------------------------------------------------- */
+.hutoon-invoice .inv-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #16253f;
+}
+.hutoon-invoice .inv-brand h1 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: 40px;
+  letter-spacing: 6px;
+  color: #16253f;
+  line-height: 1;
+}
+.hutoon-invoice .inv-brand span {
+  display: block;
+  margin-top: 7px;
+  font-size: 13px;
+  color: #b8934e;
+  font-weight: 700;
+}
+.hutoon-invoice .inv-meta { text-align: left; }
+.hutoon-invoice .inv-meta strong {
+  display: block;
+  font-size: 19px;
+  letter-spacing: 1px;
+  color: #16253f;
+}
+.hutoon-invoice .inv-date { display: block; margin-top: 5px; font-size: 12px; color: #6b7789; }
+
+/* --- بيانات الطرفين -------------------------------------------------------- */
+.hutoon-invoice .inv-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 22px 0;
+}
+.hutoon-invoice .inv-parties > div {
+  padding: 15px 17px;
+  border: 1px solid #e6dcc8;
+  border-radius: 12px;
+  background: #fdfbf7;
+}
+.hutoon-invoice .inv-parties b {
+  display: block;
+  font-size: 15px;
+  color: #16253f;
+  margin-bottom: 3px;
+}
+.hutoon-invoice .inv-parties span:not(.inv-label) {
+  display: block;
+  font-size: 12.5px;
+  color: #6b7789;
+  line-height: 1.7;
+}
+.hutoon-invoice .inv-status { color: #2c5f4b !important; }
+
+/* --- جدول الأصناف --------------------------------------------------------- */
+.hutoon-invoice .inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+}
+.hutoon-invoice .inv-table th {
+  padding: 12px 10px;
+  background: #16253f;
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+.hutoon-invoice .inv-table th:nth-child(2) { text-align: right; }
+.hutoon-invoice .inv-table td {
+  padding: 13px 10px;
+  border-bottom: 1px solid #eee4d2;
+  font-size: 13px;
+  text-align: center;
+  color: #16253f;
+}
+.hutoon-invoice .inv-table tbody tr:nth-child(even) { background: #fdfbf7; }
+.hutoon-invoice .cell-index { color: #9aa4b4; font-size: 12px; width: 34px; }
+.hutoon-invoice .cell-name { text-align: right; }
+.hutoon-invoice .cell-name b { display: block; font-size: 13.5px; }
+.hutoon-invoice .cell-name span { display: block; margin-top: 2px; font-size: 11px; color: #b8934e; font-weight: 700; }
+.hutoon-invoice .cell-price { font-weight: 800; white-space: nowrap; }
+
+/* --- الإجماليات ------------------------------------------------------------ */
+.hutoon-invoice .inv-sums {
+  margin: 20px 0 0 auto;
+  width: 320px;
+  border: 1px solid #e6dcc8;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.hutoon-invoice .inv-sums > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 16px;
+  font-size: 13px;
+  color: #6b7789;
+  background: #fdfbf7;
+}
+.hutoon-invoice .inv-sums b { color: #16253f; font-size: 14px; }
+.hutoon-invoice .inv-discount { color: #2c5f4b; }
+.hutoon-invoice .inv-discount b { color: #2c5f4b; }
+.hutoon-invoice .inv-grand {
+  background: #16253f !important;
+  color: #ffffff !important;
+  padding: 15px 16px !important;
+  font-size: 14px !important;
+  font-weight: 700;
+}
+.hutoon-invoice .inv-grand b { color: #d8bd85 !important; font-size: 20px !important; }
+
+/* --- بيانات التحويل -------------------------------------------------------- */
+.hutoon-invoice .inv-bank {
+  clear: both;
+  margin-top: 24px;
+  padding: 17px 19px;
+  border: 1.5px dashed #d8bd85;
+  border-radius: 12px;
+  background: #fdf9f0;
+}
+.hutoon-invoice .inv-bank-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 11px 18px;
+  margin-bottom: 11px;
+}
+.hutoon-invoice .inv-bank-grid small {
+  display: block;
+  font-size: 10.5px;
+  color: #8a7550;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.hutoon-invoice .inv-bank-grid b { font-size: 14px; color: #16253f; letter-spacing: 0.5px; }
+.hutoon-invoice .inv-bank p { margin: 0; font-size: 12px; color: #6b7789; line-height: 1.7; }
+
+/* --- ملاحظات وتذييل ------------------------------------------------------- */
+.hutoon-invoice .inv-notes { margin-top: 18px; }
+.hutoon-invoice .inv-notes p {
+  margin: 0;
+  padding: 13px 16px;
+  border-radius: 10px;
+  background: #f6f2ea;
+  font-size: 12.5px;
+  color: #52607a;
+  line-height: 1.8;
+}
+.hutoon-invoice .inv-foot {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 2px solid #eee4d2;
+  text-align: center;
+}
+.hutoon-invoice .inv-foot strong {
+  display: block;
+  font-size: 15px;
+  color: #16253f;
+  margin-bottom: 9px;
+}
+.hutoon-invoice .inv-contact {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  font-size: 12px;
+  color: #6b7789;
 }
 </style>
 </body>

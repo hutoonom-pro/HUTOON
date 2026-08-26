@@ -14540,7 +14540,7 @@ document.addEventListener('DOMContentLoaded', function () {
     </tr>`).join("");
 
     return `<div class="hutoon-invoice">
-      <header class="inv-top">
+      <div class="inv-top">
         <div class="inv-brand">
           <h1>HUTOON</h1>
           <span>بيت العطور الفاخرة</span>
@@ -14550,10 +14550,10 @@ document.addEventListener('DOMContentLoaded', function () {
           <strong>${invEsc(order.id||"-")}</strong>
           <span class="inv-date">${invoiceDate}</span>
         </div>
-      </header>
+      </div>
 
       <div class="inv-body">
-      <section class="inv-parties">
+      <div class="inv-parties">
         <div>
           <span class="inv-label">العميل</span>
           <b>${invEsc(order.customer||"-")}</b>
@@ -14565,7 +14565,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <b class="inv-status">${invEsc(order.status||"جديد")}</b>
           <span>${invEsc(order.serviceType||"طلب عينات")}</span>
         </div>
-      </section>
+      </div>
 
       <table class="inv-table">
         <thead>
@@ -14574,13 +14574,13 @@ document.addEventListener('DOMContentLoaded', function () {
         <tbody>${rows}</tbody>
       </table>
 
-      <section class="inv-sums">
+      <div class="inv-sums">
         ${subtotal>0?`<div><span>المجموع</span><b>${money(subtotal)}</b></div>`:""}
         ${discountAmount>0?`<div class="inv-discount"><span>الخصم ${discountPercent}%${order.discountCode?` · ${invEsc(order.discountCode)}`:""}</span><b>− ${money(discountAmount)}</b></div>`:""}
         <div class="inv-grand"><span>الإجمالي</span><b>${total>0?money(total):"يُحدد بعد التأكيد"}</b></div>
-      </section>
+      </div>
 
-      <section class="inv-bank">
+      <div class="inv-bank">
         <span class="inv-label">بيانات التحويل</span>
         <div class="inv-bank-grid">
           <div><small>رقم الحساب</small><b dir="ltr">0379014181980039</b></div>
@@ -14589,19 +14589,19 @@ document.addEventListener('DOMContentLoaded', function () {
           <div><small>رقم التحويل</small><b dir="ltr">95120017</b></div>
         </div>
         <p>حوّل المبلغ ثم أرسل صورة الإيصال وموقعك على واتساب المتجر ليتم التوصيل.</p>
-      </section>
+      </div>
 
-      ${notes?`<section class="inv-notes"><span class="inv-label">ملاحظات</span><p>${invEsc(notes)}</p></section>`:""}
+      ${notes?`<div class="inv-notes"><span class="inv-label">ملاحظات</span><p>${invEsc(notes)}</p></div>`:""}
 
       </div>
-      <footer class="inv-foot">
+      <div class="inv-foot">
         <strong>شكرًا لاختياركم هتون</strong>
         <div class="inv-contact">
           <span dir="ltr">+968 77353930</span>
           <span dir="ltr">@hutoon.om</span>
           <span>سلطنة عُمان</span>
         </div>
-      </footer>
+      </div>
     </div>`;
   }
 
@@ -14690,31 +14690,23 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   window.hutoonDownloadOrderInvoice=function(){
-    const blob=pendingInvoice?.blob;
-    const name=pendingInvoice?.name||"HUTOON-invoice.pdf";
-
-    // لا ملف PDF (فشل توليده على بعض أجهزة الجوال): نفتح نسخة قابلة
-    // للطباعة، ومنها يحفظها العميل PDF عبر مشاركة المتصفح.
-    if(!blob){
-      if(openPrintableInvoice())return;
-      showToast("تعذر تجهيز الفاتورة — تفاصيل الطلب موجودة في رسالة واتساب");
-      return;
+    // iOS Safari يحجب window.open لروابط blob ويتجاهل خاصية download،
+    // فأي مسار يعتمد عليهما يبدو "لا يفعل شيئًا". الحل الوحيد الموثوق
+    // هناك: عرض الفاتورة داخل الصفحة نفسها ثم الطباعة/الحفظ من المتصفح.
+    if(isRealIOS||!pendingInvoice?.blob){
+      if(showInvoicePreview())return;
     }
+
+    const blob=pendingInvoice?.blob;
+    if(!blob){showToast("تعذر تجهيز الفاتورة");return}
 
     const url=URL.createObjectURL(blob);
     setTimeout(()=>URL.revokeObjectURL(url),120000);
-
-    // iOS لا ينزّل blob أبدًا؛ فتحه في تبويب يعرضه في قارئ PDF
-    // ومنه زر المشاركة للحفظ أو الإرسال.
-    if(isRealIOS){
-      const win=window.open(url,"_blank");
-      if(!win)window.location.href=url;      // مُنعت النافذة المنبثقة
-      return;
-    }
-
     try{
       const link=document.createElement("a");
-      link.href=url; link.download=name; link.rel="noopener";
+      link.href=url;
+      link.download=pendingInvoice.name||"HUTOON-invoice.pdf";
+      link.rel="noopener";
       link.style.display="none";
       document.body.appendChild(link);
       link.click();
@@ -14722,32 +14714,34 @@ document.addEventListener('DOMContentLoaded', function () {
       showToast("تم تنزيل الفاتورة على جهازك");
     }catch(error){
       console.warn("Invoice download failed:",error);
-      window.open(url,"_blank");
+      showInvoicePreview();
     }
   };
 
-  // نسخة HTML كاملة للطباعة: تعمل حيث يفشل توليد PDF، والعربية تظهر سليمة.
-  function openPrintableInvoice(){
+  // عرض الفاتورة داخل الصفحة: لا نافذة منبثقة ولا blob، فيعمل في كل مكان.
+  function showInvoicePreview(){
     if(!pendingInvoice?.order)return false;
-    const win=window.open("","_blank");
-    if(!win)return false;
-    const styles=document.getElementById("hutoon-invoice-v2")?.textContent||"";
-    win.document.write(`<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>فاتورة ${pendingInvoice.order.id||""}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<style>body{margin:0;background:#fff}${styles}
-@media print{body{background:#fff}}
-.print-bar{position:sticky;top:0;display:flex;gap:10px;justify-content:center;padding:12px;background:#16253f}
-.print-bar button{padding:11px 22px;border:0;border-radius:30px;background:#d8bd85;color:#16253f;font:700 15px Cairo,sans-serif}
-@media print{.print-bar{display:none}}
-</style></head><body>
-<div class="print-bar"><button onclick="window.print()">حفظ أو طباعة الفاتورة</button></div>
-${invoiceHtml(pendingInvoice.order)}
-</body></html>`);
-    win.document.close();
+    let host=document.getElementById("invoicePreview");
+    if(!host){
+      host=document.createElement("div");
+      host.id="invoicePreview";
+      document.body.appendChild(host);
+    }
+    host.innerHTML=`
+      <div class="inv-preview-bar">
+        <button type="button" onclick="window.print()">طباعة أو حفظ PDF</button>
+        <button type="button" class="ghost" onclick="hutoonCloseInvoicePreview()">إغلاق</button>
+      </div>
+      <div class="inv-preview-scroll">${invoiceHtml(pendingInvoice.order)}</div>`;
+    host.classList.add("show");
+    document.body.classList.add("invoice-preview-open");
     return true;
   }
+
+  window.hutoonCloseInvoicePreview=function(){
+    document.getElementById("invoicePreview")?.classList.remove("show");
+    document.body.classList.remove("invoice-preview-open");
+  };
 
   function downloadInvoiceBlob(blob,fileName){
     if(!blob)return false;
@@ -18804,6 +18798,12 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
 }
 </style>
 <style id="hutoon-invoice-v2">
+/* تحييد زخارف الفاتورة القديمة: شريط علوي وشعار كانا يركبان فوق
+   الترويسة الجديدة. */
+.hutoon-invoice::before,
+.hutoon-invoice::after,
+.hutoon-invoice .hutoon-invoice-logo { content: none !important; display: none !important; }
+
 /* ==========================================================================
    الفاتورة — نسخة ٣
    تُصوَّر بـ html2canvas ثم تُحوَّل PDF: ألوان صريحة، بلا شفافية ولا ظلال
@@ -18811,8 +18811,9 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
    ========================================================================== */
 
 .hutoon-invoice {
-  width: 794px;
-  background: #ffffff;
+  width: 794px !important;
+  background: #ffffff !important;
+  min-height: 0 !important;
   color: #16253f;
   font-family: "Cairo", sans-serif;
   direction: rtl;
@@ -19101,6 +19102,101 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   color: #9db0cc;
 }
 
+/* تثبيت ألوان الفاتورة: أنماط الموقع العامة للعناوين والوسوم تطغى عليها
+   بأولوية أعلى، فتصبح الكتابة كحلية على كحلي. */
+.hutoon-invoice .inv-top,
+.hutoon-invoice .inv-foot { background: #16253f !important; }
+.hutoon-invoice .inv-brand h1,
+.hutoon-invoice .inv-top .inv-meta strong { color: #ffffff !important; }
+.hutoon-invoice .inv-top .inv-meta strong { color: #16253f !important; background: #d8bd85 !important; }
+.hutoon-invoice .inv-brand span,
+.hutoon-invoice .inv-foot strong { color: #d8bd85 !important; }
+.hutoon-invoice .inv-top .inv-label,
+.hutoon-invoice .inv-date,
+.hutoon-invoice .inv-contact { color: #9db0cc !important; }
+.hutoon-invoice .inv-grand { background: #16253f !important; color: #ffffff !important; }
+.hutoon-invoice .inv-grand b { color: #d8bd85 !important; }
+.hutoon-invoice .inv-table th { background: #f4efe4 !important; color: #8a7550 !important; }
+.hutoon-invoice .inv-table td,
+.hutoon-invoice .inv-parties b,
+.hutoon-invoice .inv-bank-grid b { color: #16253f !important; }
+.hutoon-invoice .inv-label { color: #b8934e !important; }
+.hutoon-invoice .cell-name span { color: #b8934e !important; }
+.hutoon-invoice .inv-status { color: #2c5f4b !important; background: #e4efe9 !important; }
+
+</style>
+<style id="hutoon-invoice-preview">
+/* ==========================================================================
+   27. معاينة الفاتورة داخل الصفحة
+   iOS يحجب فتح روابط blob ويتجاهل التنزيل، فالعرض هنا ثم الطباعة هو
+   المسار الوحيد الذي يعمل على كل جهاز بلا استثناء.
+   ========================================================================== */
+
+#invoicePreview {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: none;
+  flex-direction: column;
+  background: #ded8cc;
+}
+#invoicePreview.show { display: flex; }
+body.invoice-preview-open { overflow: hidden; }
+
+.inv-preview-bar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 12px 14px calc(12px + env(safe-area-inset-top));
+  padding-top: calc(12px + env(safe-area-inset-top));
+  background: #16253f;
+  flex: 0 0 auto;
+}
+.inv-preview-bar button {
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 30px;
+  background: #d8bd85;
+  color: #16253f;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: "Cairo", sans-serif;
+}
+.inv-preview-bar button.ghost {
+  background: transparent;
+  color: #9db0cc;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.inv-preview-scroll {
+  flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 12px calc(24px + env(safe-area-inset-bottom));
+  display: grid;
+  place-items: start center;
+}
+/* الفاتورة مصمَّمة على عرض A4 ثابت؛ تُصغَّر لتناسب الشاشة دون أن تتكسّر. */
+.inv-preview-scroll .hutoon-invoice {
+  transform-origin: top center;
+  box-shadow: 0 10px 40px rgba(16, 30, 52, 0.25);
+}
+@media (max-width: 860px) {
+  .inv-preview-scroll { padding-inline: 0; }
+  .inv-preview-scroll .hutoon-invoice { transform: scale(calc(100vw / 794)); }
+  /* التحجيم لا يقلّص الارتفاع المحجوز، فيُعوَّض بهامش سالب. */
+  .inv-preview-scroll { align-content: start; }
+}
+
+/* عند الطباعة تختفي الصفحة كلها وتبقى الفاتورة وحدها بحجمها الطبيعي. */
+@media print {
+  body > *:not(#invoicePreview) { display: none !important; }
+  #invoicePreview { position: static; background: #fff; display: block !important; }
+  .inv-preview-bar { display: none !important; }
+  .inv-preview-scroll { overflow: visible; padding: 0; display: block; }
+  .inv-preview-scroll .hutoon-invoice { transform: none !important; box-shadow: none; }
+  @page { margin: 0; size: A4; }
+}
 </style>
 </body>
 </html>

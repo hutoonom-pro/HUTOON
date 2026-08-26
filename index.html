@@ -14610,8 +14610,16 @@ document.addEventListener('DOMContentLoaded', function () {
     let host=document.getElementById("hutoonInvoiceRender");
     if(!host){host=document.createElement("div");host.id="hutoonInvoiceRender";document.body.appendChild(host)}
     host.innerHTML=invoiceHtml(order);
-    await document.fonts?.ready;
-    const canvas=await html2canvas(host,{scale:2,backgroundColor:"#ffffff",useCORS:true});
+    try{ await document.fonts?.ready }catch(_){}
+    const scale=window.innerWidth<820?1.5:2;
+    const canvas=await html2canvas(host,{
+      scale,
+      backgroundColor:"#ffffff",
+      useCORS:true,
+      logging:false,
+      windowWidth:820
+    });
+    if(!canvas||!canvas.width||!canvas.height)throw new Error("تعذر رسم الفاتورة");
     const {jsPDF}=window.jspdf;
     const pdf=new jsPDF({orientation:"portrait",unit:"pt",format:"a4"});
     const width=595.28, height=canvas.height*width/canvas.width;
@@ -14649,7 +14657,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let pendingInvoice=null;
 
   function showOrderSuccess(order,blob,whatsappUrl,message){
-    pendingInvoice={blob,name:`HUTOON-${order.id}.pdf`,whatsappUrl,message};
+    pendingInvoice={blob,name:`HUTOON-${order.id}.pdf`,whatsappUrl,message,order};
     const host=document.getElementById("orderSuccessSheet");
     if(!host){
       // احتياط: لو غاب اللوح لأي سبب، لا يضيع الطلب على العميل.
@@ -14668,90 +14676,77 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // مشاركة الملف مباشرة أفضل حل على الجوال: تفتح واتساب ومعه الفاتورة
   // مرفقة، بدل أن يبحث العميل عنها في التنزيلات.
-  // ⚠️ كل ما يلي يجب أن يعمل **داخل ضغطة المستخدم مباشرة**:
-  //  · iOS Safari يحجب أي انتقال يقع بعد await أو setTimeout
-  //  · و يتجاهل خاصية download لملفات blob تجاهلًا تامًا
-  // لذلك: لا async، ولا مهلة قبل الانتقال، والمشاركة أولًا لأنها الطريق
-  // الوحيد الموثوق لإيصال ملف إلى واتساب على الجوال.
+  // ⚠️ يجب أن يعمل كل ما يلي **داخل ضغطة المستخدم مباشرة**: iOS Safari
+  // يحجب أي انتقال يقع بعد await أو setTimeout، ويتجاهل خاصية download
+  // لملفات blob تجاهلًا تامًا. لذلك: لا async، ولا مهلة، ومسارات احتياطية.
 
   const isRealIOS=/iP(hone|ad|od)/.test(navigator.userAgent);
 
-  function invoiceFile(){
-    if(!pendingInvoice?.blob)return null;
-    try{ return new File([pendingInvoice.blob],pendingInvoice.name,{type:"application/pdf"}) }
-    catch(_){ return null }
-  }
-
-  function canShareInvoice(file){
-    return Boolean(file&&navigator.canShare&&navigator.canShare({files:[file]}));
-  }
-
+  // انتقال مباشر إلى محادثة المتجر مع الرسالة الجاهزة — بلا قائمة مشاركة
+  // ولا نافذة منبثقة، فهذا ما يفتح تطبيق واتساب فورًا على الجوال.
   window.hutoonSendOrder=function(){
     if(!pendingInvoice)return;
-    const {whatsappUrl,message}=pendingInvoice;
-    const file=invoiceFile();
-
-    // المسار الأفضل على الجوال: قائمة المشاركة تحمل الفاتورة والرسالة معًا،
-    // فيختار العميل واتساب ويرسل الاثنين بضغطة واحدة.
-    if(canShareInvoice(file)){
-      navigator.share({files:[file],text:message,title:"طلب HUTOON"})
-        .then(()=>window.hutoonCloseOrderSuccess())
-        .catch(error=>{
-          if(error?.name==="AbortError")return;      // ألغى المستخدم
-          openWhatsAppNow(whatsappUrl);
-        });
-      return;
-    }
-
-    // لا مشاركة: ننزّل ثم ننتقل — الاثنان في نفس الضغطة بلا مهلة.
-    saveInvoice();
-    openWhatsAppNow(whatsappUrl);
+    window.location.href=pendingInvoice.whatsappUrl;
   };
-
-  function openWhatsAppNow(url){
-    // الانتقال في نفس التبويب لا يُحجب كنافذة منبثقة، بخلاف window.open.
-    window.location.href=url;
-  }
 
   window.hutoonDownloadOrderInvoice=function(){
-    if(!pendingInvoice){showToast("تعذر تجهيز الفاتورة، أعد المحاولة");return}
-    const file=invoiceFile();
+    const blob=pendingInvoice?.blob;
+    const name=pendingInvoice?.name||"HUTOON-invoice.pdf";
 
-    // على الجوال، "الحفظ" الحقيقي يمر عبر قائمة المشاركة — منها يختار
-    // العميل "حفظ في الملفات" أو يرسلها مباشرة.
-    if(canShareInvoice(file)){
-      navigator.share({files:[file],title:pendingInvoice.name})
-        .catch(error=>{ if(error?.name!=="AbortError")saveInvoice() });
+    // لا ملف PDF (فشل توليده على بعض أجهزة الجوال): نفتح نسخة قابلة
+    // للطباعة، ومنها يحفظها العميل PDF عبر مشاركة المتصفح.
+    if(!blob){
+      if(openPrintableInvoice())return;
+      showToast("تعذر تجهيز الفاتورة — تفاصيل الطلب موجودة في رسالة واتساب");
       return;
     }
 
-    if(saveInvoice())showToast("تم تنزيل الفاتورة على جهازك");
-    else showToast("تعذر تنزيل الفاتورة");
+    const url=URL.createObjectURL(blob);
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
+
+    // iOS لا ينزّل blob أبدًا؛ فتحه في تبويب يعرضه في قارئ PDF
+    // ومنه زر المشاركة للحفظ أو الإرسال.
+    if(isRealIOS){
+      const win=window.open(url,"_blank");
+      if(!win)window.location.href=url;      // مُنعت النافذة المنبثقة
+      return;
+    }
+
+    try{
+      const link=document.createElement("a");
+      link.href=url; link.download=name; link.rel="noopener";
+      link.style.display="none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast("تم تنزيل الفاتورة على جهازك");
+    }catch(error){
+      console.warn("Invoice download failed:",error);
+      window.open(url,"_blank");
+    }
   };
 
-  function saveInvoice(){
-    if(!pendingInvoice?.blob)return false;
-    const {blob,name}=pendingInvoice;
-    try{
-      const url=URL.createObjectURL(blob);
-      // iOS بلا دعم مشاركة: فتح الـ blob هو السبيل الوحيد لرؤية الملف
-      // وحفظه، لأن خاصية download لا تعمل هناك إطلاقًا.
-      if(isRealIOS){
-        window.open(url,"_blank");
-      }else{
-        const link=document.createElement("a");
-        link.href=url; link.download=name; link.rel="noopener";
-        link.style.display="none";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      }
-      setTimeout(()=>URL.revokeObjectURL(url),60000);
-      return true;
-    }catch(error){
-      console.warn("Invoice save failed:",error);
-      return false;
-    }
+  // نسخة HTML كاملة للطباعة: تعمل حيث يفشل توليد PDF، والعربية تظهر سليمة.
+  function openPrintableInvoice(){
+    if(!pendingInvoice?.order)return false;
+    const win=window.open("","_blank");
+    if(!win)return false;
+    const styles=document.getElementById("hutoon-invoice-v2")?.textContent||"";
+    win.document.write(`<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>فاتورة ${pendingInvoice.order.id||""}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#fff}${styles}
+@media print{body{background:#fff}}
+.print-bar{position:sticky;top:0;display:flex;gap:10px;justify-content:center;padding:12px;background:#16253f}
+.print-bar button{padding:11px 22px;border:0;border-radius:30px;background:#d8bd85;color:#16253f;font:700 15px Cairo,sans-serif}
+@media print{.print-bar{display:none}}
+</style></head><body>
+<div class="print-bar"><button onclick="window.print()">حفظ أو طباعة الفاتورة</button></div>
+${invoiceHtml(pendingInvoice.order)}
+</body></html>`);
+    win.document.close();
+    return true;
   }
 
   function downloadInvoiceBlob(blob,fileName){
@@ -14906,7 +14901,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(typeof renderNotifications==="function")renderNotifications();
 
     const message=whatsappText(saved,invoiceUrl);
-    const whatsappUrl=`https://api.whatsapp.com/send?phone=${storeNumber}&text=${encodeURIComponent(message)}`;
+    const whatsappUrl=`https://wa.me/${storeNumber}?text=${encodeURIComponent(message)}`;
 
     // الفتح التلقائي لواتساب يُحجب على الجوال لأنه يقع بعد await فيخرج من
     // سياق ضغطة المستخدم، و iOS يتجاهل تنزيل ملفات blob. لذلك يُعرض بدلًا

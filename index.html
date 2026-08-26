@@ -14690,31 +14690,36 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   window.hutoonDownloadOrderInvoice=function(){
-    // iOS Safari يحجب window.open لروابط blob ويتجاهل خاصية download،
-    // فأي مسار يعتمد عليهما يبدو "لا يفعل شيئًا". الحل الوحيد الموثوق
-    // هناك: عرض الفاتورة داخل الصفحة نفسها ثم الطباعة/الحفظ من المتصفح.
-    if(isRealIOS||!pendingInvoice?.blob){
-      if(showInvoicePreview())return;
+    // على سطح المكتب: تنزيل ملف حقيقي. على الجوال: عرض داخل الصفحة ثم
+    // طباعة/حفظ — لأن iOS يحجب window.open لـ blob ويتجاهل download.
+    // وأي فشل يُعلَن بدل أن يمر صامتًا؛ الصمت هو ما جعل تشخيصه صعبًا.
+    const mobile=isRealIOS||window.innerWidth<820;
+
+    if(!mobile&&pendingInvoice?.blob){
+      try{
+        const url=URL.createObjectURL(pendingInvoice.blob);
+        setTimeout(()=>URL.revokeObjectURL(url),120000);
+        const link=document.createElement("a");
+        link.href=url;
+        link.download=pendingInvoice.name||"HUTOON-invoice.pdf";
+        link.rel="noopener";
+        link.style.display="none";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        showToast("تم تنزيل الفاتورة على جهازك");
+        return;
+      }catch(error){
+        console.warn("Direct download failed, falling back:",error);
+      }
     }
 
-    const blob=pendingInvoice?.blob;
-    if(!blob){showToast("تعذر تجهيز الفاتورة");return}
-
-    const url=URL.createObjectURL(blob);
-    setTimeout(()=>URL.revokeObjectURL(url),120000);
     try{
-      const link=document.createElement("a");
-      link.href=url;
-      link.download=pendingInvoice.name||"HUTOON-invoice.pdf";
-      link.rel="noopener";
-      link.style.display="none";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      showToast("تم تنزيل الفاتورة على جهازك");
+      if(showInvoicePreview())return;
+      showToast("تعذر عرض الفاتورة: بيانات الطلب غير متاحة");
     }catch(error){
-      console.warn("Invoice download failed:",error);
-      showInvoicePreview();
+      console.error("Invoice preview failed:",error);
+      showToast("خطأ في الفاتورة: "+(error?.message||error));
     }
   };
 
@@ -16881,13 +16886,28 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
       const credential=await auth.createUserWithEmailAndPassword(email,password);createdUser=credential.user;
       await credential.user.updateProfile?.({displayName:name});
       const profile={uid:credential.user.uid,email,name,phone,phoneDigits:phone.replace(/\D/g,""),role:"customer",points:0,raindrops:0};
-      await db.collection("users").doc(credential.user.uid).set({...profile,createdAt:timestamp(),updatedAt:timestamp()},{merge:true});
+      // حفظ الملف الشخصي منفصل عن إنشاء الحساب: لو رفضته قواعد Firestore
+      // أو تأخّر، يبقى الحساب صالحًا ويُنشأ الملف تلقائيًا عند أول دخول.
+      // الحذف عند أي خطأ كان يحوّل عطلًا بسيطًا إلى فشل كامل للتسجيل.
+      let profileSaved=true;
+      try{
+        await db.collection("users").doc(credential.user.uid)
+          .set({...profile,createdAt:timestamp(),updatedAt:timestamp()},{merge:true});
+      }catch(profileError){
+        profileSaved=false;
+        console.warn("Profile write failed:",profileError?.code||profileError);
+      }
+
       verifiedAdminUid=null;
-      setUser(profile);subscribeProfile(profile);subscribeOrders(profile);
-      form.reset();window.closeAuth?.();window.openProfile?.();notify("تم إنشاء الحساب وحفظ جلسة الدخول");
+      setUser(profile);
+      try{subscribeProfile(profile);subscribeOrders(profile)}catch(subError){console.warn("Subscribe failed:",subError)}
+      form.reset();window.closeAuth?.();window.openProfile?.();
+      notify(profileSaved
+        ? "تم إنشاء الحساب وحفظ جلسة الدخول"
+        : "تم إنشاء الحساب. تعذر حفظ بياناتك الآن وسيُعاد حفظها عند الدخول.");
     }catch(error){
-      console.error(error);
-      if(createdUser){try{await createdUser.delete()}catch(cleanupError){console.warn("Incomplete account cleanup",cleanupError)}}
+      console.error("Register:",error);
+      // الحساب لا يُحذف إلا إذا لم تكتمل المصادقة نفسها.
       notify(authMessage(error));
     }
     finally{if(button){button.disabled=false;button.textContent=oldText}}

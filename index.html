@@ -11167,8 +11167,8 @@ main > section { position: relative; }
 <button class="tab" id="registerTab" onclick="switchAuth('register')">إنشاء حساب</button>
 </div>
 <form class="auth-form" id="loginForm" onsubmit="hutoonFixedLogin(event)">
-<label class="auth-label">البريد الإلكتروني أو رقم الهاتف</label>
-<input autocomplete="username" id="loginIdentifier" placeholder="البريد الإلكتروني أو رقم الهاتف" required="" type="text"/>
+<label class="auth-label">رقم الهاتف</label>
+<input autocomplete="tel" id="loginIdentifier" inputmode="numeric" placeholder="مثال: 9XXXXXXX" required="" type="tel"/>
 <label class="auth-label">كلمة المرور</label>
 <input autocomplete="current-password" id="loginPassword" placeholder="••••••••" required="" type="password"/>
 <button class="btn btn-primary auth-submit">تسجيل الدخول</button>
@@ -11177,12 +11177,11 @@ main > section { position: relative; }
 <form class="auth-form hidden" id="registerForm" onsubmit="hutoonFixedRegister(event)">
 <label class="auth-label">الاسم الكامل</label>
 <input id="regName" placeholder="اكتب اسمك" required=""/>
-<label class="auth-label">البريد الإلكتروني</label>
-<input autocomplete="email" id="regEmail" placeholder="name@example.com" required="" type="email"/>
 <label class="auth-label">رقم الهاتف</label>
-<input id="regPhone" placeholder="مثال: 9XXXXXXX" required="" type="tel"/>
+<input id="regPhone" inputmode="numeric" placeholder="مثال: 9XXXXXXX" required="" type="tel"/>
 <label class="auth-label">كلمة المرور</label>
 <input autocomplete="new-password" id="regPassword" minlength="6" placeholder="6 أحرف على الأقل" required="" type="password"/>
+<input id="regEmail" type="hidden"/>
 <button class="btn btn-primary auth-submit">إنشاء الحساب</button>
 </form>
 <p class="auth-note">يتم تحديد صلاحية الحساب تلقائيًا بعد تسجيل الدخول.</p>
@@ -14410,6 +14409,31 @@ document.addEventListener('DOMContentLoaded', function () {
     return null;
   }
 
+  /* ---- الدخول برقم الهاتف ------------------------------------------------
+     Firebase لا يقبل إلا بريدًا وكلمة مرور بدون خطة مدفوعة، فيُشتق بريد
+     داخلي ثابت من الرقم. العميل لا يراه أبدًا؛ هو مجرد معرّف تخزين.
+     --------------------------------------------------------------------- */
+  const PHONE_DOMAIN="hutoon.phone";
+  const ADMIN_PHONE="95120017";
+
+  // توحيد الرقم: تُزال المسافات والرموز ومفتاح عُمان إن كُتب.
+  function normalizePhone(value){
+    let d=String(value||"").replace(/\D/g,"");
+    if(d.startsWith("00968"))d=d.slice(5);
+    else if(d.startsWith("968")&&d.length>8)d=d.slice(3);
+    return d;
+  }
+  window.hutoonNormalizePhone=normalizePhone;
+
+  function phoneToEmail(phone){
+    return `${normalizePhone(phone)}@${PHONE_DOMAIN}`;
+  }
+
+  function isAdminPhone(phone){
+    return normalizePhone(phone)===ADMIN_PHONE;
+  }
+  window.hutoonIsAdminPhone=isAdminPhone;
+
   function currentUser(){
     const stateUser=window.state?.user||window.hutoonState?.user||readStoredUser();
     if(stateUser)return stateUser;
@@ -16623,12 +16647,12 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   function authMessage(error){
     const code=error?.code||"";
     const messages={
-      "auth/email-already-in-use":"هذا البريد مسجل مسبقًا — استخدم تسجيل الدخول أو نسيت كلمة المرور",
-      "auth/invalid-email":"البريد الإلكتروني غير صحيح",
+      "auth/email-already-in-use":"هذا الرقم مسجل مسبقًا — سجّل الدخول أو استعد كلمة المرور",
+      "auth/invalid-email":"رقم الهاتف غير صحيح",
       "auth/weak-password":"كلمة المرور يجب أن تكون 6 أحرف على الأقل",
-      "auth/invalid-credential":"البريد الإلكتروني أو كلمة المرور غير صحيحة",
-      "auth/invalid-login-credentials":"البريد الإلكتروني أو كلمة المرور غير صحيحة",
-      "auth/user-not-found":"الحساب غير موجود",
+      "auth/invalid-credential":"رقم الهاتف أو كلمة المرور غير صحيحة",
+      "auth/invalid-login-credentials":"رقم الهاتف أو كلمة المرور غير صحيحة",
+      "auth/user-not-found":"لا يوجد حساب بهذا الرقم — أنشئ حسابًا جديدًا",
       "auth/wrong-password":"كلمة المرور غير صحيحة",
       "auth/too-many-requests":"محاولات كثيرة؛ انتظر قليلًا ثم حاول من جديد",
       "auth/network-request-failed":"تعذر الاتصال بالخدمة؛ تحقق من الإنترنت",
@@ -16760,7 +16784,11 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   }
 
   async function roleFor(firebaseUser,profile){
-    if(ADMIN_EMAILS.has(String(firebaseUser.email||"").toLowerCase()))return "admin";
+    // الإدارة تُعرَّف برقم الهاتف: البريد الداخلي المشتق منه هو ما يُخزَّن.
+    const mail=String(firebaseUser.email||"").toLowerCase();
+    if(mail===phoneToEmail(ADMIN_PHONE))return "admin";
+    if(isAdminPhone(profile?.phone))return "admin";
+    if(ADMIN_EMAILS.has(mail))return "admin";
     try{
       const admin=await firestore()?.collection("admins").doc(firebaseUser.uid).get();
       if(admin?.exists&&admin.data()?.active!==false)return "admin";
@@ -16768,30 +16796,83 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     return profile?.role==="admin"?"customer":(profile?.role||"customer");
   }
 
+  // الرقم مخبّأ في البريد الداخلي ({رقم}@hutoon.phone)، فيمكن استرجاعه
+  // دائمًا حتى لو ضاع من الملف الشخصي.
+  function phoneFromEmail(email){
+    const m=String(email||"").match(/^(\d+)@/);
+    return m?m[1]:"";
+  }
+
+  // نسخة محلية احتياطية: لو تعذّر الوصول إلى Firestore لحظةَ الدخول لا
+  // يفقد العميل اسمه ونقاطه من الشاشة، وتُعاد المزامنة عند أول نجاح.
+  const PROFILE_CACHE="hutoon_profile_cache";
+  function cacheProfile(p){
+    try{localStorage.setItem(PROFILE_CACHE,JSON.stringify(p))}catch(_){}
+  }
+  function cachedProfile(uid){
+    try{
+      const p=JSON.parse(localStorage.getItem(PROFILE_CACHE)||"null");
+      return p&&p.uid===uid?p:null;
+    }catch(_){return null}
+  }
+
   async function loadProfile(firebaseUser,extra={}){
     const db=firestore();
+    const cached=cachedProfile(firebaseUser.uid)||{};
+    const derivedPhone=phoneFromEmail(firebaseUser.email);
     let data={};
+    let stored=false;
+
     if(db){
       const ref=db.collection("users").doc(firebaseUser.uid);
-      const snap=await ref.get();
-      if(snap.exists)data=snap.data();
-      else{
-        data={
-          uid:firebaseUser.uid,email:firebaseUser.email||extra.email||"",name:extra.name||firebaseUser.displayName||"عميل هتون",
-          phone:extra.phone||"",phoneDigits:String(extra.phone||"").replace(/\D/g,""),role:"customer",points:0,raindrops:0,
-          createdAt:timestamp(),updatedAt:timestamp()
-        };
-        await ref.set(data,{merge:true});
+      try{
+        const snap=await ref.get();
+        if(snap.exists){ data=snap.data()||{}; stored=true; }
+      }catch(error){
+        // فشل القراءة لا يجوز أن يمنع الدخول؛ نكمل بالنسخة المحلية.
+        console.warn("Profile read failed:",error?.code||error);
       }
+
+      // البيانات المفقودة تُستكمل من الرقم المشتق ومن النسخة المحلية،
+      // ثم تُكتب مرة واحدة حتى لا تُفقد في الدخول القادم.
+      const merged={
+        uid:firebaseUser.uid,
+        email:firebaseUser.email||data.email||cached.email||extra.email||"",
+        name:data.name||extra.name||cached.name||firebaseUser.displayName||"عميل هتون",
+        phone:data.phone||extra.phone||cached.phone||derivedPhone||"",
+        phoneDigits:derivedPhone||String(data.phone||extra.phone||cached.phone||"").replace(/\D/g,""),
+        points:Number(data.points??cached.points??0),
+        raindrops:Number(data.raindrops??cached.raindrops??0),
+        role:data.role||"customer"
+      };
+
+      const needsWrite=!stored
+        || !data.phone && merged.phone
+        || !data.name && merged.name!=="عميل هتون";
+      if(needsWrite){
+        try{
+          await ref.set({...merged,
+            ...(stored?{}:{createdAt:timestamp()}),
+            updatedAt:timestamp()},{merge:true});
+        }catch(error){
+          console.warn("Profile write failed:",error?.code||error);
+        }
+      }
+      data={...data,...merged};
     }
+
     const profile={
-      uid:firebaseUser.uid,email:firebaseUser.email||data.email||extra.email||"",
-      name:data.name||extra.name||firebaseUser.displayName||firebaseUser.email?.split("@")[0]||"عميل هتون",
-      phone:data.phone||extra.phone||"",points:Number(data.points||0),raindrops:Number(data.raindrops||0)
+      uid:firebaseUser.uid,
+      email:firebaseUser.email||data.email||cached.email||"",
+      name:data.name||cached.name||firebaseUser.displayName||"عميل هتون",
+      phone:data.phone||cached.phone||derivedPhone||"",
+      points:Number(data.points??cached.points??0),
+      raindrops:Number(data.raindrops??cached.raindrops??0)
     };
     profile.role=await roleFor(firebaseUser,data);
     if(profile.role==="admin")verifiedAdminUid=firebaseUser.uid;
     else if(verifiedAdminUid===firebaseUser.uid)verifiedAdminUid=null;
+    cacheProfile(profile);
     return profile;
   }
 
@@ -16807,6 +16888,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
       if(updated.role==="admin")verifiedAdminUid=updated.uid;
       else if(verifiedAdminUid===updated.uid)verifiedAdminUid=null;
       setUser(updated);
+      cacheProfile(updated);
     },error=>console.warn("Profile listener",error));
   }
 
@@ -16836,19 +16918,23 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     const password=document.getElementById("loginPassword")?.value||"";
     const button=form.querySelector('button[type="submit"],button:not([type])');
     const oldText=button?.textContent||"تسجيل الدخول";
-    if(!identifier||!password)return notify("اكتب البريد الإلكتروني وكلمة المرور");
+    if(!identifier||!password)return notify("اكتب رقم الهاتف وكلمة المرور");
     if(location.protocol==="file:")return notify("افتح الموقع من رابط الاستضافة أو الخادم المحلي حتى يعمل تسجيل الدخول");
+
+    // الدخول برقم الهاتف. البريد يبقى مقبولًا للحسابات القديمة حتى لا
+    // ينقطع عن أصحابها بعد التحويل.
+    const phone=normalizePhone(identifier);
     if(!identifier.includes("@")){
-      const legacy=oldAccounts().find(item=>String(item.phone||"").replace(/\D/g,"")===identifier.replace(/\D/g,"")&&item.password===password);
-      if(legacy?.email)document.getElementById("loginIdentifier").value=legacy.email;
-      else return notify("لأمان الحساب أدخل البريد الإلكتروني. يمكنك استعادة كلمة المرور من الزر أسفل النموذج");
+      if(phone.length<8)return notify("اكتب رقم هاتف صحيح (8 أرقام)");
+      document.getElementById("loginIdentifier").dataset.resolved=phoneToEmail(phone);
     }
     try{
       if(button){button.disabled=true;button.textContent="جاري الدخول..."}
       const auth=firebaseAuth();
       if(!auth)throw new Error("تعذر تحميل خدمة تسجيل الدخول");
       await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-      const email=document.getElementById("loginIdentifier").value.trim().toLowerCase();
+      const field=document.getElementById("loginIdentifier");
+      const email=field.dataset.resolved||field.value.trim().toLowerCase();
       const credential=await auth.signInWithEmailAndPassword(email,password);
       const profile=await loadProfile(credential.user);
       setUser(profile);subscribeProfile(profile);subscribeOrders(profile);
@@ -16869,12 +16955,15 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     event.preventDefault();
     const form=event.currentTarget;
     const name=document.getElementById("regName")?.value.trim()||"";
-    const email=document.getElementById("regEmail")?.value.trim().toLowerCase()||"";
-    const phone=document.getElementById("regPhone")?.value.trim()||"";
+    const rawPhone=document.getElementById("regPhone")?.value.trim()||"";
+    const phone=normalizePhone(rawPhone);
+    // البريد الداخلي يُشتق من الرقم؛ العميل لا يكتبه ولا يراه.
+    const email=phoneToEmail(phone);
     const password=document.getElementById("regPassword")?.value||"";
     const button=form.querySelector('button[type="submit"],button:not([type])');
     const oldText=button?.textContent||"إنشاء الحساب";
-    if(!name||!email||!phone||!password)return notify("أكمل جميع البيانات");
+    if(!name||!phone||!password)return notify("أكمل جميع البيانات");
+    if(phone.length<8)return notify("اكتب رقم هاتف صحيح (8 أرقام)");
     if(password.length<6)return notify("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
     if(location.protocol==="file:")return notify("افتح الموقع من رابط الاستضافة أو الخادم المحلي حتى يعمل إنشاء الحساب");
     let createdUser=null;
@@ -16885,7 +16974,8 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
       await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
       const credential=await auth.createUserWithEmailAndPassword(email,password);createdUser=credential.user;
       await credential.user.updateProfile?.({displayName:name});
-      const profile={uid:credential.user.uid,email,name,phone,phoneDigits:phone.replace(/\D/g,""),role:"customer",points:0,raindrops:0};
+      const profile={uid:credential.user.uid,email,name,phone,phoneDigits:phone,
+        role:isAdminPhone(phone)?"admin":"customer",points:0,raindrops:0};
       // حفظ الملف الشخصي منفصل عن إنشاء الحساب: لو رفضته قواعد Firestore
       // أو تأخّر، يبقى الحساب صالحًا ويُنشأ الملف تلقائيًا عند أول دخول.
       // الحذف عند أي خطأ كان يحوّل عطلًا بسيطًا إلى فشل كامل للتسجيل.
@@ -16914,15 +17004,24 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   };
 
   window.resetLoginPassword=async function(){
-    const email=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
-    if(!email.includes("@"))return notify("اكتب بريدك الإلكتروني أولًا");
-    try{await firebaseAuth().sendPasswordResetEmail(email);notify("أرسلنا رابط تغيير كلمة المرور إلى بريدك")}
+    const raw=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
+    if(!raw.includes("@")){
+      const phone=normalizePhone(raw);
+      const text=phone
+        ? `السلام عليكم، نسيت كلمة المرور لحسابي في هتون. رقمي: ${phone}`
+        : "السلام عليكم، نسيت كلمة المرور لحسابي في هتون.";
+      notify("سنحوّلك إلى واتساب المتجر لاستعادة كلمة المرور");
+      window.location.href="https://wa.me/96877353930?text="+encodeURIComponent(text);
+      return;
+    }
+    try{await firebaseAuth().sendPasswordResetEmail(raw);notify("أرسلنا رابط تغيير كلمة المرور إلى بريدك")}
     catch(error){notify(authMessage(error))}
   };
 
   window.logout=async function(){
     try{await firebaseAuth()?.signOut()}catch(error){console.warn(error)}
     verifiedAdminUid=null;
+    try{localStorage.removeItem(PROFILE_CACHE)}catch(_){}
     profileUnsubscribe?.();orderUnsubscribe?.();setUser(null);
     window.state.orders=[];window.hutoonState.orders=[];
     document.getElementById("adminView")?.classList.remove("show");window.closeProfile?.();notify("تم تسجيل الخروج");
@@ -17566,6 +17665,12 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     brandUnsubscribe?.();const db=firestore();if(!db)return renderBrands(brandsFallback());
     brandUnsubscribe=db.collection("brands").onSnapshot(snapshot=>renderBrands(snapshot.empty?brandsFallback():snapshot.docs.map(doc=>({id:doc.id,...doc.data()}))),error=>console.warn(error));
   }
+  // تُعاد هنا لأن نسخة أقدم منها تعرض من الذاكرة المحلية وتمسح القائمة
+  // الحية القادمة من Firestore بمجرد فتح تبويب البراندات.
+  window.renderAdminBrands=function(){
+    renderBrands(window.hutoonLiveBrands||brandsFallback());
+  };
+
   window.saveAdminBrand=async function(event){
     event.preventDefault();if(!isAdmin())return notify("هذه العملية للإدارة فقط");
     const id=document.getElementById("brandEditId").value||firestore().collection("brands").doc().id;
@@ -18058,7 +18163,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     setupAuthCloseControls();
     setupSectionPop();
     const password=document.getElementById("regPassword");if(password&&!password.nextElementSibling?.classList.contains("hutoon-field-help")){const help=document.createElement("small");help.className="hutoon-field-help";help.textContent="استخدم 6 أحرف على الأقل، وسيبقى حسابك مسجلًا على هذا الجهاز.";password.insertAdjacentElement("afterend",help)}
-    document.getElementById("loginIdentifier")?.setAttribute("placeholder","البريد الإلكتروني");
+    // الدخول صار برقم الهاتف؛ هذا السطر كان بقية من عهد البريد.
     const productForm=document.getElementById("hutoonProductForm");
     if(productForm){
       delete productForm.dataset.saving;

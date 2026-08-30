@@ -14409,31 +14409,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return null;
   }
 
-  /* ---- الدخول برقم الهاتف ------------------------------------------------
-     Firebase لا يقبل إلا بريدًا وكلمة مرور بدون خطة مدفوعة، فيُشتق بريد
-     داخلي ثابت من الرقم. العميل لا يراه أبدًا؛ هو مجرد معرّف تخزين.
-     --------------------------------------------------------------------- */
-  const PHONE_DOMAIN="hutoon.phone";
-  const ADMIN_PHONE="95120017";
-
-  // توحيد الرقم: تُزال المسافات والرموز ومفتاح عُمان إن كُتب.
-  function normalizePhone(value){
-    let d=String(value||"").replace(/\D/g,"");
-    if(d.startsWith("00968"))d=d.slice(5);
-    else if(d.startsWith("968")&&d.length>8)d=d.slice(3);
-    return d;
-  }
-  window.hutoonNormalizePhone=normalizePhone;
-
-  function phoneToEmail(phone){
-    return `${normalizePhone(phone)}@${PHONE_DOMAIN}`;
-  }
-
-  function isAdminPhone(phone){
-    return normalizePhone(phone)===ADMIN_PHONE;
-  }
-  window.hutoonIsAdminPhone=isAdminPhone;
-
   function currentUser(){
     const stateUser=window.state?.user||window.hutoonState?.user||readStoredUser();
     if(stateUser)return stateUser;
@@ -16798,6 +16773,31 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
 
   // الرقم مخبّأ في البريد الداخلي ({رقم}@hutoon.phone)، فيمكن استرجاعه
   // دائمًا حتى لو ضاع من الملف الشخصي.
+  /* ---- الدخول برقم الهاتف ------------------------------------------------
+     Firebase لا يقبل إلا بريدًا وكلمة مرور بدون خطة مدفوعة، فيُشتق بريد
+     داخلي ثابت من الرقم. العميل لا يراه أبدًا؛ هو مجرد معرّف تخزين.
+     --------------------------------------------------------------------- */
+  const PHONE_DOMAIN="hutoon.phone";
+  const ADMIN_PHONE="95120017";
+
+  // توحيد الرقم: تُزال المسافات والرموز ومفتاح عُمان إن كُتب.
+  function normalizePhone(value){
+    let d=String(value||"").replace(/\D/g,"");
+    if(d.startsWith("00968"))d=d.slice(5);
+    else if(d.startsWith("968")&&d.length>8)d=d.slice(3);
+    return d;
+  }
+  window.hutoonNormalizePhone=normalizePhone;
+
+  function phoneToEmail(phone){
+    return `${normalizePhone(phone)}@${PHONE_DOMAIN}`;
+  }
+
+  function isAdminPhone(phone){
+    return normalizePhone(phone)===ADMIN_PHONE;
+  }
+  window.hutoonIsAdminPhone=isAdminPhone;
+
   function phoneFromEmail(email){
     const m=String(email||"").match(/^(\d+)@/);
     return m?m[1]:"";

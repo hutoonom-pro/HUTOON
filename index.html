@@ -10968,6 +10968,21 @@ main > section { position: relative; }
 <div class="points-box"><small>رصيد نقاطك</small><strong><span id="loyaltyPoints">0</span> نقطة</strong><p>كل 10 نقاط = 1 ريال عماني</p></div>
 <div class="raindrop-box"><div class="raindrop-head"><div><small>بطاقة قطرات هتون</small><h3>اجمع 5 قطرات واحصل على السادس مجانًا</h3></div><span id="raindropCountLabel">0 / 5</span></div><div class="raindrop-stamps" id="raindropStamps"><span>💧</span><span>💧</span><span>💧</span><span>💧</span><span>💧</span></div><p>تضاف قطرة لكل منتج مؤهل بقيمة لا تقل عن 5 ر.ع.</p></div>
 </div>
+<div class="reward-redeem reveal reveal-up" id="rewardRedeemBox">
+<div class="rr-head">
+<span class="rr-icon" aria-hidden="true">✧</span>
+<div>
+<small>REWARD CODE</small>
+<h3>عندك كود مكافأة؟</h3>
+<p>أدخل الكود لتُضاف النقاط وقطرات هتون إلى حسابك فورًا.</p>
+</div>
+</div>
+<div class="rr-row">
+<input id="rewardCodeInput" type="text" inputmode="latin" autocomplete="off" spellcheck="false" maxlength="24" placeholder="مثال: HRAB23CD" onkeydown="if(event.key==='Enter'){event.preventDefault();hutoonRedeemRewardCode('rewardCodeInput')}"/>
+<button class="btn btn-gold" type="button" onclick="hutoonRedeemRewardCode('rewardCodeInput')">تفعيل الكود</button>
+</div>
+<p class="rr-status" id="rewardCodeStatus">كل كود يُستخدم مرة واحدة فقط وله تاريخ انتهاء.</p>
+</div>
 <div class="rewards-heading reveal reveal-up"><div><small>REDEEM YOUR POINTS</small><h3>استبدل نقاطك بمكافآت هتون</h3></div></div>
 <div class="reward-cards">
 <article class="reward-card"><div class="reward-top"><span class="reward-tag">خصم</span><strong>1000 نقطة</strong></div><div class="reward-symbol">10%</div><h3>خصم 10% على السلة</h3><p>استبدل 1000 نقطة واحصل على خصم 10% على طلبك.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('cart10',1000,'خصم 10% على السلة')">استبدال العرض</button><small class="reward-status" id="rewardStatus-cart10">سجل الدخول لمعرفة أهليتك</small></article>
@@ -11231,9 +11246,16 @@ main > section { position: relative; }
 <div>
 <small>رصيد نقاطك</small>
 <strong><span id="profileLoyaltyPoints">0</span> نقطة</strong>
-<p>كل ريال عماني = 30 نقطة</p>
+<p>كل ريال عماني = 10 نقاط</p>
 </div>
 <a class="profile-points-link" href="#loyalty" onclick="closeProfile()">العروض ←</a>
+</div>
+<div class="reward-redeem reward-redeem-compact" id="profileRewardRedeemBox">
+<div class="rr-row">
+<input id="profileRewardCodeInput" type="text" inputmode="latin" autocomplete="off" spellcheck="false" maxlength="24" placeholder="كود مكافأة" onkeydown="if(event.key==='Enter'){event.preventDefault();hutoonRedeemRewardCode('profileRewardCodeInput')}"/>
+<button class="btn btn-gold" type="button" onclick="hutoonRedeemRewardCode('profileRewardCodeInput')">تفعيل</button>
+</div>
+<p class="rr-status" id="profileRewardCodeStatus">أدخل كود الرصيد أو القطرات لإضافته إلى حسابك.</p>
 </div>
 <div class="profile-quick-stats">
 <div class="profile-stat">
@@ -11307,6 +11329,7 @@ main > section { position: relative; }
 <button class="active" onclick="scrollAdminTo('overviewAdminSection',this)"><span>⌂</span> لوحة التحكم</button>
 <button onclick="scrollAdminTo('ordersAdminSection',this)"><span>▤</span> الطلبات</button>
 <button onclick="scrollAdminTo('discountAdminSection',this)"><span>%</span> الأكواد والخصومات</button>
+<button onclick="scrollAdminTo('rewardCodeAdminSection',this)"><span>✧</span> أكواد الرصيد والولاء</button>
 <button onclick="scrollAdminTo('brandAdminSection',this)"><span>◆</span> إدارة البراندات</button>
 <button onclick="scrollAdminTo('perfumeAdminSection',this)"><span>✦</span> إدارة العطور</button>
 </div>
@@ -11338,6 +11361,9 @@ main > section { position: relative; }
 </button>
 <button onclick="scrollAdminTo('discountAdminSection')" type="button">
 <span aria-hidden="true">%</span><b>إنشاء كود خصم</b><small>أطلق عرضًا جديدًا لعملائك</small>
+</button>
+<button onclick="scrollAdminTo('rewardCodeAdminSection')" type="button">
+<span aria-hidden="true">✧</span><b>كود رصيد وولاء</b><small>امنح نقاطًا وقطرات بكود واحد</small>
 </button>
 <button onclick="scrollAdminTo('brandAdminSection')" type="button">
 <span aria-hidden="true">◆</span><b>إدارة البراندات</b><small>رتّب العلامات الظاهرة في المتجر</small>
@@ -11384,6 +11410,52 @@ main > section { position: relative; }
 <article><small>إجمالي مرات الاستخدام</small><strong id="discountUsageCount">0</strong></article>
 </div>
 <div class="admin-discount-list" id="adminDiscountList"></div>
+</section>
+<section class="admin-discount-manager admin-reward-manager admin-panel" id="rewardCodeAdminSection">
+<div class="admin-audio-title">
+<div>
+<small>REWARD CODES</small>
+<h3>أكواد الرصيد وقطرات هتون</h3>
+<p>أنشئ كودًا يمنح العميل نقاطًا وقطرات دفعة واحدة. كل كود يُستخدم مرة واحدة فقط ثم يُقفل تلقائيًا.</p>
+</div>
+<span>✧</span>
+</div>
+<form id="adminRewardForm" onsubmit="saveAdminRewardCode(event)">
+<div class="admin-discount-grid">
+<label>
+الرصيد (نقاط)
+<input id="rewardPoints" min="0" placeholder="مثال: 500" step="1" type="number" value="0"/>
+<small class="rw-hint">كل 10 نقاط = 1 ر.ع</small>
+</label>
+<label>
+قطرات هتون
+<input id="rewardDrops" min="0" max="5" placeholder="مثال: 1" step="1" type="number" value="0"/>
+<small class="rw-hint">5 قطرات = السادس مجانًا</small>
+</label>
+<label>
+تاريخ الانتهاء
+<input id="rewardExpiry" required="" type="date"/>
+</label>
+<label class="wide discount-code-field">
+الكود
+<div class="code-row">
+<input id="rewardCode" maxlength="24" readonly placeholder="سيتم توليده تلقائيًا"/>
+<button class="btn btn-outline" type="button" onclick="regenerateRewardCode()" title="توليد كود جديد">تغيير</button>
+</div>
+<small>يُولَّد تلقائيًا ولا يتكرر. انسخه وأرسله للعميل بعد الحفظ.</small>
+</label>
+</div>
+<div class="admin-discount-actions">
+<button class="btn btn-primary" type="submit">حفظ الكود</button>
+<button class="btn btn-outline" onclick="resetAdminRewardForm()" type="button">كود جديد</button>
+</div>
+</form>
+<div class="admin-discount-summary">
+<article><small>إجمالي الأكواد</small><strong id="rewardTotalCount">0</strong></article>
+<article><small>المتاحة</small><strong id="rewardActiveCount">0</strong></article>
+<article><small>المستخدمة</small><strong id="rewardUsedCount">0</strong></article>
+</div>
+<div class="admin-discount-list" id="adminRewardList"></div>
 </section>
 <section class="admin-brand-manager admin-panel" id="brandAdminSection">
 <div class="admin-audio-title">
@@ -18277,6 +18349,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     "overviewAdminSection",
     "ordersAdminSection",
     "discountAdminSection",
+    "rewardCodeAdminSection",
     "brandAdminSection",
     "perfumeAdminSection",
   ];
@@ -18311,6 +18384,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     // Let the existing renderers refresh whatever just became visible.
     if (target.id === "brandAdminSection") window.renderAdminBrands?.();
     if (target.id === "discountAdminSection") window.renderAdminDiscounts?.();
+    if (target.id === "rewardCodeAdminSection") window.renderAdminRewardCodes?.();
     if (target.id === "perfumeAdminSection") window.renderAdminPerfumes?.();
   }
 
@@ -19891,5 +19965,385 @@ footer .footer-copy {
   footer .footer-social .fs-text small { color: rgba(30, 46, 79, 0.75) !important; }
 }
 </style>
+
+<style id="hutoon-reward-codes">
+/* ==========================================================================
+   أكواد الرصيد وقطرات هتون — صندوق العميل ولوحة الإدارة.
+   القسم يعيد استخدام أصناف الخصومات (admin-discount-*) ليطابق شكلها
+   تمامًا، ولا يضيف هنا إلا ما يخصّه.
+   ========================================================================== */
+
+/* ---- صندوق إدخال الكود عند العميل ------------------------------------ */
+.reward-redeem {
+  margin: 26px 0 34px;
+  padding: 24px;
+  border-radius: 22px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.92), rgba(250, 246, 238, 0.86));
+  border: 1px solid rgba(184, 147, 78, 0.28);
+  box-shadow: 0 18px 40px -30px rgba(20, 34, 58, 0.5);
+}
+.reward-redeem .rr-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.reward-redeem .rr-icon {
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(150deg, #d8bd85, #b8934e);
+  color: #14223a;
+  font-size: 19px;
+}
+.reward-redeem .rr-head small {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: rgba(184, 147, 78, 0.95);
+  margin-bottom: 4px;
+}
+.reward-redeem .rr-head h3 { margin: 0 0 4px; font-size: 21px; }
+.reward-redeem .rr-head p { margin: 0; font-size: 13px; line-height: 1.6; color: #1c2b45; opacity: 0.75; }
+
+.reward-redeem .rr-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+.reward-redeem .rr-row input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(20, 34, 58, 0.14);
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  direction: ltr;
+  text-align: center;
+  color: #14223a;
+}
+.reward-redeem .rr-row input::placeholder {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  opacity: 0.45;
+}
+.reward-redeem .rr-row input:focus {
+  outline: none;
+  border-color: rgba(184, 147, 78, 0.65);
+  box-shadow: 0 0 0 4px rgba(184, 147, 78, 0.16);
+}
+.reward-redeem .rr-row button { white-space: nowrap; }
+
+/* حالة الطلب تُقال بالنص واللون معًا، لا باللون وحده. */
+.reward-redeem .rr-status {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #1c2b45;
+  opacity: 0.7;
+}
+.reward-redeem .rr-status.ok { color: #2c5f4b; opacity: 1; font-weight: 700; }
+.reward-redeem .rr-status.bad { color: #9d3d3d; opacity: 1; font-weight: 700; }
+.reward-redeem .rr-status.busy { opacity: 0.9; }
+
+/* النسخة المختصرة داخل درج الملف الشخصي. */
+.reward-redeem-compact {
+  margin: 12px 0 0;
+  padding: 14px;
+  border-radius: 16px;
+}
+.reward-redeem-compact .rr-row input { padding: 11px 12px; font-size: 13.5px; }
+.reward-redeem-compact .rr-status { margin-top: 8px; font-size: 11.5px; }
+
+@media (max-width: 620px) {
+  .reward-redeem { padding: 18px; border-radius: 18px; }
+  .reward-redeem .rr-row { grid-template-columns: 1fr; }
+  .reward-redeem .rr-head h3 { font-size: 18px; }
+}
+
+/* ---- لوحة الإدارة ----------------------------------------------------- */
+#adminView .admin-reward-manager .rw-hint {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lg-muted, #6b7280);
+}
+#adminView .admin-reward-manager .rw-gift {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+#adminView .admin-reward-manager .rw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 800;
+  background: rgba(184, 147, 78, 0.16);
+  color: #7a5c22;
+  white-space: nowrap;
+}
+#adminView .admin-reward-manager .rw-chip.drops {
+  background: rgba(70, 130, 190, 0.15);
+  color: #23557f;
+}
+</style>
+
+<script>
+/* أكواد الرصيد وقطرات هتون.
+   الكود نفسه هو معرّف المستند في مجموعة rewardCodes، فيمكن قراءته
+   بمعاملة واحدة عند التفعيل — والاستعلامات ممنوعة داخل المعاملات. */
+(function(){
+  const ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // بلا I/O/0/1
+  let liveCodes=[], unsubscribe=null;
+
+  const db=()=>window.firebase?.firestore?firebase.firestore():null;
+  const stamp=()=>firebase.firestore.FieldValue.serverTimestamp();
+  function me(){
+    if(window.state&&window.state.user)return window.state.user;
+    try{return JSON.parse(localStorage.getItem("hutoon_user")||"null")}catch(_){return null}
+  }
+  const isAdmin=()=>me()&&me().role==="admin";
+  const toast=m=>(window.showToast||window.notify||function(x){alert(x)})(m);
+  const esc=v=>String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const enc=v=>encodeURIComponent(String(v==null?"":v));
+  const val=id=>{const el=document.getElementById(id);return el?el.value:""};
+  const put=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v==null?"":v};
+
+  function normalizeCode(v){return String(v||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"")}
+
+  // تاريخ الانتهاء يشمل يومه كاملًا؛ الكود ينتهي بنهاية ذلك اليوم لا بأوله.
+  function isExpired(expiry){
+    if(!expiry)return false;
+    const end=new Date(String(expiry)+"T23:59:59");
+    return !isNaN(end) && end<new Date();
+  }
+  function codeState(item){
+    if(item.used)return {key:"used",label:"مستخدم"};
+    if(item.active===false)return {key:"off",label:"موقوف"};
+    if(isExpired(item.expiry))return {key:"expired",label:"منتهي"};
+    return {key:"active",label:"متاح"};
+  }
+
+  function freshCode(){
+    const taken=new Set(liveCodes.map(c=>String(c.code||c.id||"").toUpperCase()));
+    for(let i=0;i<40;i++){
+      let body="";
+      for(let j=0;j<6;j++)body+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)];
+      const code="HR"+body;
+      if(!taken.has(code))return code;
+    }
+    return "HR"+Date.now().toString(36).toUpperCase().slice(-6);
+  }
+
+  /* ---- لوحة الإدارة --------------------------------------------------- */
+
+  function render(){
+    const list=document.getElementById("adminRewardList");
+    if(!list)return;
+    const items=liveCodes.slice().sort((a,b)=>(b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0)-(a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0));
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v)};
+    set("rewardTotalCount",items.length);
+    set("rewardActiveCount",items.filter(i=>codeState(i).key==="active").length);
+    set("rewardUsedCount",items.filter(i=>i.used).length);
+
+    if(!items.length){
+      list.innerHTML='<div class="hutoon-wallet-empty">لا توجد أكواد مكافآت بعد. أنشئ أول كود من النموذج أعلاه.</div>';
+      return;
+    }
+    list.innerHTML=items.map(item=>{
+      const st=codeState(item);
+      const points=Number(item.points||0), drops=Number(item.raindrops||0);
+      const gift=[
+        points?`<span class="rw-chip">✦ ${points} نقطة</span>`:"",
+        drops?`<span class="rw-chip drops">💧 ${drops} قطرة</span>`:""
+      ].join("")||'<span class="rw-chip">بلا مكافأة</span>';
+      return `<article class="admin-discount-row">
+        <div class="discount-code-cell">
+          <span class="admin-discount-code">${esc(item.code||item.id)}</span>
+          <button class="copy-code" type="button" onclick="copyRewardCode('${enc(item.code||item.id)}')" title="نسخ الكود">نسخ</button>
+        </div>
+        <div class="rw-gift">${gift}</div>
+        <div><strong>${esc(item.expiry||"—")}</strong><small>ينتهي في</small></div>
+        <div><span class="admin-discount-status ${st.key}">${st.label}</span>${item.usedByPhone?`<small>${esc(item.usedByPhone)}</small>`:""}</div>
+        <div class="admin-discount-row-actions">
+          <button class="toggle" onclick="toggleAdminRewardCode('${enc(item.id)}')" ${item.used?"disabled":""}>${item.active!==false?"إيقاف":"تفعيل"}</button>
+          <button class="delete" onclick="deleteAdminRewardCode('${enc(item.id)}')">حذف</button>
+        </div>
+      </article>`;
+    }).join("");
+  }
+
+  // الاشتراك للإدارة فقط: القواعد تمنع سرد المجموعة على غيرهم عمدًا،
+  // حتى لا يُستخرج أي كود بقائمة واحدة.
+  function subscribe(){
+    if(unsubscribe)return;
+    const d=db();
+    if(!d||!isAdmin())return;
+    unsubscribe=d.collection("rewardCodes").onSnapshot(
+      snap=>{liveCodes=snap.docs.map(doc=>({id:doc.id,...doc.data()}));render()},
+      error=>console.warn("rewardCodes listener",error&&error.code||error)
+    );
+  }
+
+  window.renderAdminRewardCodes=function(){
+    subscribe();
+    if(!val("rewardCode"))put("rewardCode",freshCode());
+    render();
+  };
+  window.regenerateRewardCode=function(){put("rewardCode",freshCode())};
+  window.resetAdminRewardForm=function(){
+    put("rewardPoints","0");put("rewardDrops","0");put("rewardExpiry","");
+    put("rewardCode",freshCode());
+  };
+
+  window.saveAdminRewardCode=async function(event){
+    if(event&&event.preventDefault)event.preventDefault();
+    if(!isAdmin())return toast("هذه العملية للإدارة فقط");
+    const code=normalizeCode(val("rewardCode"))||freshCode();
+    const points=Math.max(0,Math.round(Number(val("rewardPoints")||0)));
+    const drops=Math.max(0,Math.round(Number(val("rewardDrops")||0)));
+    const expiry=val("rewardExpiry");
+    if(!points&&!drops)return toast("حدّد نقاطًا أو قطرات — الكود بلا مكافأة لا معنى له");
+    if(!expiry)return toast("حدّد تاريخ انتهاء الكود");
+    if(isExpired(expiry))return toast("تاريخ الانتهاء يجب أن يكون اليوم أو بعده");
+    const d=db();
+    if(!d)return toast("لا يوجد اتصال بقاعدة البيانات");
+    try{
+      const ref=d.collection("rewardCodes").doc(code);
+      // الكود هو المعرّف، فوجوده مسبقًا يعني تكرارًا لا تحديثًا.
+      const existing=await ref.get();
+      if(existing.exists)return toast("هذا الكود موجود مسبقًا — اضغط «تغيير» لتوليد غيره");
+      await ref.set({
+        code,points,raindrops:drops,expiry,
+        active:true,used:false,usedBy:"",usedByPhone:"",
+        createdAt:stamp(),updatedAt:stamp()
+      });
+      toast(`تم إنشاء الكود ${code}`);
+      window.resetAdminRewardForm();
+    }catch(error){
+      console.error(error);
+      toast((window.authMessage?window.authMessage(error):null)||error.message||"تعذر حفظ الكود");
+    }
+  };
+
+  window.toggleAdminRewardCode=async function(encoded){
+    if(!isAdmin())return toast("هذه العملية للإدارة فقط");
+    const id=decodeURIComponent(encoded);
+    const item=liveCodes.find(x=>String(x.id)===id);
+    if(!item||item.used)return;
+    try{
+      await db().collection("rewardCodes").doc(id).set({active:item.active===false,updatedAt:stamp()},{merge:true});
+      toast(item.active===false?"تم تفعيل الكود":"تم إيقاف الكود");
+    }catch(error){toast((window.authMessage?window.authMessage(error):null)||"تعذر تحديث الكود")}
+  };
+
+  window.deleteAdminRewardCode=async function(encoded){
+    if(!isAdmin())return toast("هذه العملية للإدارة فقط");
+    if(!confirm("حذف هذا الكود نهائيًا؟"))return;
+    try{
+      await db().collection("rewardCodes").doc(decodeURIComponent(encoded)).delete();
+      toast("تم حذف الكود");
+    }catch(error){toast((window.authMessage?window.authMessage(error):null)||"تعذر حذف الكود")}
+  };
+
+  window.copyRewardCode=async function(encoded){
+    const code=decodeURIComponent(encoded);
+    try{await navigator.clipboard.writeText(code);toast(`تم نسخ الكود ${code}`)}
+    catch(_){
+      const field=document.createElement("input");
+      field.value=code;document.body.appendChild(field);field.select();
+      try{document.execCommand("copy");toast(`تم نسخ الكود ${code}`)}catch(e){toast(code)}
+      field.remove();
+    }
+  };
+
+  /* ---- تفعيل الكود عند العميل ----------------------------------------- */
+
+  window.hutoonRedeemRewardCode=async function(inputId){
+    const input=document.getElementById(inputId||"rewardCodeInput");
+    const box=input?input.closest(".reward-redeem"):null;
+    const status=box?box.querySelector(".rr-status"):null;
+    const button=box?box.querySelector("button"):null;
+    const say=(message,kind)=>{
+      if(status){status.textContent=message;status.className="rr-status"+(kind?" "+kind:"")}
+      if(kind==="bad"||kind==="ok")toast(message);
+    };
+
+    const user=me();
+    if(!user||!user.uid){
+      say("سجّل الدخول أولًا لاستخدام الكود","bad");
+      if(window.openAuth)window.openAuth();
+      return;
+    }
+    const code=normalizeCode(input?input.value:"");
+    if(!code)return say("اكتب الكود أولًا","bad");
+    const d=db();
+    if(!d)return say("لا يوجد اتصال بقاعدة البيانات","bad");
+
+    const oldText=button?button.textContent:"";
+    if(button){button.disabled=true;button.textContent="جاري التحقق..."}
+    say("جاري التحقق من الكود...","busy");
+    try{
+      const ref=d.collection("rewardCodes").doc(code);
+      const userRef=d.collection("users").doc(user.uid);
+      const gained=await d.runTransaction(async t=>{
+        // كل القراءات قبل أي كتابة — شرط معاملات Firestore.
+        const snap=await t.get(ref);
+        if(!snap.exists)throw new Error("الكود غير صحيح");
+        const c=snap.data()||{};
+        if(c.used)throw new Error("هذا الكود مستخدم من قبل");
+        if(c.active===false)throw new Error("هذا الكود موقوف");
+        if(isExpired(c.expiry))throw new Error("انتهت صلاحية هذا الكود");
+        const points=Number(c.points||0), drops=Number(c.raindrops||0);
+        if(!points&&!drops)throw new Error("هذا الكود بلا مكافأة");
+        const uSnap=await t.get(userRef);
+        const had=uSnap.exists?(uSnap.data()||{}):{};
+        t.set(userRef,{
+          points:Number(had.points||0)+points,
+          raindrops:Number(had.raindrops||0)+drops,
+          updatedAt:stamp()
+        },{merge:true});
+        t.update(ref,{
+          used:true,active:false,
+          usedBy:user.uid,usedByPhone:user.phone||"",usedAt:stamp()
+        });
+        return {points,drops};
+      });
+
+      const parts=[];
+      if(gained.points)parts.push(`${gained.points} نقطة`);
+      if(gained.drops)parts.push(`${gained.drops} قطرة`);
+      say(`تم! أُضيف إلى حسابك ${parts.join(" و")}.`,"ok");
+      if(input)input.value="";
+      // المستمع الحي يحدّث الأرقام، وهذه لمن كان المستمع متوقفًا.
+      setTimeout(()=>{window.refreshLoyalty&&window.refreshLoyalty();window.refreshProfile&&window.refreshProfile()},400);
+    }catch(error){
+      console.warn("Reward code",error&&error.code||error);
+      const denied=String(error&&error.code||"").indexOf("permission-denied")>-1;
+      say(denied?"تعذر تفعيل الكود؛ تأكد من نشر قواعد Firestore الجديدة":(error.message||"تعذر تفعيل الكود"),"bad");
+    }finally{
+      if(button){button.disabled=false;button.textContent=oldText||"تفعيل الكود"}
+    }
+  };
+
+  // الاشتراك يبدأ متى صار في الجلسة أدمن، لا عند تحميل الصفحة فقط.
+  const originalRefreshAdmin=window.refreshAdmin;
+  window.refreshAdmin=function(){
+    const out=typeof originalRefreshAdmin==="function"?originalRefreshAdmin.apply(this,arguments):undefined;
+    subscribe();
+    return out;
+  };
+})();
+</script>
 </body>
 </html>

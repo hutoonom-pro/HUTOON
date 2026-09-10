@@ -10985,8 +10985,8 @@ main > section { position: relative; }
 </div>
 <div class="rewards-heading reveal reveal-up"><div><small>REDEEM YOUR POINTS</small><h3>استبدل نقاطك بمكافآت هتون</h3></div></div>
 <div class="reward-cards">
-<article class="reward-card"><div class="reward-top"><span class="reward-tag">خصم</span><strong>1000 نقطة</strong></div><div class="reward-symbol">10%</div><h3>خصم 10% على السلة</h3><p>استبدل 1000 نقطة واحصل على خصم 10% على طلبك.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('cart10',1000,'خصم 10% على السلة')">استبدال العرض</button><small class="reward-status" id="rewardStatus-cart10">سجل الدخول لمعرفة أهليتك</small></article>
-<article class="reward-card featured"><div class="reward-top"><span class="reward-tag">خصم</span><strong>5000 نقطة</strong></div><div class="reward-symbol">50%</div><h3>خصم 50% على منتج واحد</h3><p>استبدل 5000 نقطة واحصل على خصم 50% على منتج واحد.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('item50',5000,'خصم 50% على منتج واحد')">استبدال العرض</button><small class="reward-status" id="rewardStatus-item50">سجل الدخول لمعرفة أهليتك</small></article>
+<article class="reward-card"><div class="reward-top"><span class="reward-tag">خصم</span><strong>100 نقطة</strong></div><div class="reward-symbol">10%</div><h3>خصم 10% على السلة</h3><p>استبدل 100 نقطة واحصل على خصم 10% على طلبك.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('cart10',100,'خصم 10% على السلة')">استبدال العرض</button><small class="reward-status" id="rewardStatus-cart10">سجل الدخول لمعرفة أهليتك</small></article>
+<article class="reward-card featured"><div class="reward-top"><span class="reward-tag">خصم</span><strong>500 نقطة</strong></div><div class="reward-symbol">50%</div><h3>خصم 50% على منتج واحد</h3><p>استبدل 500 نقطة واحصل على خصم 50% على منتج واحد.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('item50',500,'خصم 50% على منتج واحد')">استبدال العرض</button><small class="reward-status" id="rewardStatus-item50">سجل الدخول لمعرفة أهليتك</small></article>
 <article class="reward-card"><div class="reward-top"><span class="reward-tag">هدية</span><strong>10000 نقطة</strong></div><div class="reward-symbol">✦</div><h3>عطر مجاني</h3><p>استبدل 10000 نقطة واحصل على عطر مجاني من العروض المؤهلة.</p><button class="btn btn-gold reward-btn" onclick="redeemReward('freePerfume',10000,'عطر مجاني')">استبدال العرض</button><small class="reward-status" id="rewardStatus-freePerfume">سجل الدخول لمعرفة أهليتك</small></article>
 </div>
 </div></section>
@@ -11085,9 +11085,21 @@ main > section { position: relative; }
       <div class="coupon-feedback" id="cartCouponFeedback"></div>
     </div>
 
+    <div class="cart-points-box hidden" id="cartPointsBox">
+      <div class="cp-info">
+        <span class="cp-icon" aria-hidden="true">✦</span>
+        <div>
+          <strong>عندك <b id="cartPointsHave">0</b> نقطة</strong>
+          <small id="cartPointsNote">تعادل خصمًا بقيمة <b id="cartPointsWorth">0.000 ر.ع</b></small>
+        </div>
+      </div>
+      <button class="btn btn-outline" type="button" id="cartPointsBtn" onclick="hutoonToggleCartPoints()">استخدم نقاطي</button>
+    </div>
+
     <div class="order-totals">
       <div><span>المجموع</span><strong id="cartSubtotal">—</strong></div>
       <div class="discount-line hidden" id="cartDiscountLine"><span>الخصم <b id="cartDiscountLabel"></b></span><strong id="cartDiscountValue">—</strong></div>
+      <div class="discount-line hidden" id="cartPointsLine"><span>خصم النقاط <b id="cartPointsLabel"></b></span><strong id="cartPointsValue">—</strong></div>
       <div class="grand"><span>الإجمالي</span><strong id="cartGrandTotal">—</strong></div>
     </div>
 
@@ -11198,22 +11210,33 @@ main > section { position: relative; }
 <form class="auth-form" id="loginForm" onsubmit="hutoonFixedLogin(event)">
 <label class="auth-label">رقم الهاتف</label>
 <input autocomplete="tel" id="loginIdentifier" inputmode="numeric" placeholder="مثال: 9XXXXXXX" required="" type="tel"/>
+<div class="auth-pass-wrap hidden" id="loginPassWrap">
 <label class="auth-label">كلمة المرور</label>
-<input autocomplete="current-password" id="loginPassword" placeholder="••••••••" required="" type="password"/>
-<button class="btn btn-primary auth-submit">تسجيل الدخول</button>
-<button class="forgot-password-btn" onclick="resetLoginPassword()" type="button">نسيت كلمة المرور؟</button>
+<input autocomplete="current-password" id="loginPassword" placeholder="••••••••" type="password"/>
+<small class="auth-pass-hint" id="loginPassHint">هذا الرقم محمي بكلمة مرور.</small>
+</div>
+<div class="auth-name-wrap hidden" id="loginNameWrap">
+<label class="auth-label">اسمك</label>
+<input id="loginNewName" placeholder="اكتب اسمك" autocomplete="name"/>
+<small class="auth-pass-hint">أول دخول لك — اكتب اسمك وسيُنشأ حسابك مباشرة.</small>
+</div>
+<button class="btn btn-primary auth-submit">دخول</button>
+<button class="forgot-password-btn hidden" id="loginForgotBtn" onclick="resetLoginPassword()" type="button">نسيت كلمة المرور؟</button>
 </form>
 <form class="auth-form hidden" id="registerForm" onsubmit="hutoonFixedRegister(event)">
 <label class="auth-label">الاسم الكامل</label>
 <input id="regName" placeholder="اكتب اسمك" required=""/>
 <label class="auth-label">رقم الهاتف</label>
-<input id="regPhone" inputmode="numeric" placeholder="مثال: 9XXXXXXX" required="" type="tel"/>
-<label class="auth-label">كلمة المرور</label>
-<input autocomplete="new-password" id="regPassword" minlength="6" placeholder="6 أحرف على الأقل" required="" type="password"/>
+<input id="regPhone" inputmode="numeric" placeholder="مثال: 9XXXXXXX" required="" type="tel" oninput="hutoonRegPhoneChanged()"/>
+<div class="auth-pass-wrap hidden" id="regPassWrap">
+<label class="auth-label">كلمة مرور الإدارة</label>
+<input autocomplete="new-password" id="regPassword" minlength="6" placeholder="6 أحرف على الأقل" type="password"/>
+<small class="auth-pass-hint">حساب الإدارة وحده يحتاج كلمة مرور.</small>
+</div>
 <input id="regEmail" type="hidden"/>
 <button class="btn btn-primary auth-submit">إنشاء الحساب</button>
 </form>
-<p class="auth-note">يتم تحديد صلاحية الحساب تلقائيًا بعد تسجيل الدخول.</p>
+<p class="auth-note">الدخول برقم هاتفك فقط — بلا كلمة مرور.</p>
 <div class="auth-error-panel hidden" id="authErrorPanel">
 <strong>تفاصيل خطأ Firebase</strong>
 <span id="authErrorText"></span>
@@ -14595,8 +14618,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const qty=Math.max(1,Number(order.qty||1));
     const subtotal=Number(order.subtotal||0)||(unit>0?unit*qty:0);
     const discountAmount=Number(order.discountAmount||0);
+    const pointsSpent=Number(order.pointsSpent||0);
+    const pointsDiscount=Number(order.pointsDiscount||0);
     const discountPercent=Number(order.discountPercent||0);
-    const total=Number(order.total||0)||Math.max(0,subtotal-discountAmount);
+    const total=Number(order.total||0)||Math.max(0,subtotal-discountAmount-Number(order.pointsDiscount||0));
     const notes=order.notes||order.details||"";
     const invoiceDate=new Date().toLocaleString("ar-OM",{
       year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"
@@ -14663,7 +14688,8 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="inv-sums">
         ${subtotal>0?`<div><span>المجموع</span><b>${money(subtotal)}</b></div>`:""}
         ${discountAmount>0?`<div class="inv-discount"><span>الخصم ${discountPercent}%${order.discountCode?` · ${invEsc(order.discountCode)}`:""}</span><b>− ${money(discountAmount)}</b></div>`:""}
-        <div class="inv-grand"><span>الإجمالي</span><b>${total>0?money(total):"يُحدد بعد التأكيد"}</b></div>
+        ${pointsSpent>0?`<div class="inv-discount"><span>خصم النقاط · ${pointsSpent} نقطة</span><b>−${money(pointsDiscount)}</b></div>`:""}
+        <div class="inv-grand"><span>الإجمالي</span><b>${total>0?money(total):(subtotal>0?"0.000 ر.ع":"يُحدد بعد التأكيد")}</b></div>
       </div>
 
       <div class="inv-bank">
@@ -14902,7 +14928,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const مبالغ=[];
     if(Number(order.subtotal||0)>0) مبالغ.push(`المجموع: ${money(order.subtotal)}`);
     if(order.discountCode) مبالغ.push(`الخصم (${order.discountCode}) ${order.discountPercent}%: −${money(order.discountAmount)}`);
-    if(Number(order.total||0)>0) مبالغ.push(`الإجمالي: ${money(order.total)}`);
+    if(Number(order.pointsSpent||0)>0) مبالغ.push(`خصم النقاط (${order.pointsSpent} نقطة): −${money(order.pointsDiscount)}`);
+    // الإجمالي الصفري يُذكر أيضًا: حذفه كان يترك المتجر بلا رقم نهائي
+    // في الطلب المدفوع بالكامل بالنقاط.
+    if(Number(order.subtotal||0)>0) مبالغ.push(`الإجمالي: ${Number(order.total||0)>0?money(order.total):"0.000 ر.ع (مدفوع بالنقاط)"}`);
 
     return [
       "السلام عليكم ورحمة الله وبركاته 🌷",
@@ -15221,13 +15250,48 @@ document.addEventListener('DOMContentLoaded', function () {
     return cart.reduce((sum,item)=>sum+Number(item.unitPrice||0)*Number(item.qty||0),0);
   }
 
+  // ١٠ نقاط = ١ ريال عند الاستبدال، مطابقة لما يعلنه قسم الولاء.
+  const CART_POINTS_PER_OMR=10;
+  let cartPointsUsed=0;
+
+  function cartUser(){
+    if(window.state&&window.state.user)return window.state.user;
+    try{return JSON.parse(localStorage.getItem("hutoon_user")||"null")}catch(_){return null}
+  }
+  function cartPointsBalance(){return Math.max(0,Math.floor(Number(cartUser()?.points||0)))}
+
+  // أقصى ما يمكن حرقه: رصيده، وبما لا يتجاوز المتبقي بعد كود الخصم —
+  // فلا يصير الإجمالي سالبًا ولا تُهدر نقاط بلا مقابل.
+  function cartMaxPoints(){
+    const subtotal=cartSubtotal();
+    const percent=cartCoupon?Number(cartCoupon.value||0):0;
+    const afterCoupon=Math.max(0,subtotal-Math.round(subtotal*percent)/100);
+    return Math.min(cartPointsBalance(),Math.floor(afterCoupon*CART_POINTS_PER_OMR));
+  }
+
   function cartTotals(){
     const subtotal=cartSubtotal();
     const percent=cartCoupon?Number(cartCoupon.value||0):0;
     const discount=Math.round(subtotal*percent)/100;
-    return {subtotal,percent,discount,total:Math.max(0,subtotal-discount)};
+    const afterCoupon=Math.max(0,subtotal-discount);
+    const points=Math.min(Math.max(0,Math.floor(cartPointsUsed)),cartMaxPoints());
+    const pointsValue=points/CART_POINTS_PER_OMR;
+    return {subtotal,percent,discount,points,pointsValue,
+      total:Math.max(0,afterCoupon-pointsValue)};
   }
   window.hutoonCartTotals=cartTotals;
+
+  window.hutoonToggleCartPoints=function(){
+    if(!cartUser()){showToast("سجّل الدخول لاستخدام نقاطك");window.openAuth?.();return}
+    if(cartPointsUsed>0){cartPointsUsed=0;showToast("تم إلغاء خصم النقاط")}
+    else{
+      const max=cartMaxPoints();
+      if(max<=0)return showToast(cartPointsBalance()?"نقاطك أقل من أن تُخصم من هذا الطلب":"لا توجد نقاط في حسابك");
+      cartPointsUsed=max;
+      showToast(`تم خصم ${max} نقطة من الطلب`);
+    }
+    renderCart();
+  };
 
   /* ---- الإضافة والتعديل ------------------------------------------------ */
 
@@ -15260,20 +15324,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const item=cart.find(x=>cartKey(x)===key);
     if(!item)return;
     item.qty=Math.max(1,Math.min(50,item.qty+Number(diff||0)));
-    cartWrite();
+    cartPointsUsed=Math.min(cartPointsUsed,cartMaxPoints());cartWrite();
   };
 
   window.hutoonCartRemove=function(encodedKey){
     const key=decodeURIComponent(encodedKey);
     cart=cart.filter(x=>cartKey(x)!==key);
     // كود الخصم مرتبط بسلة لها قيمة؛ إفراغها يلغيه.
-    if(!cart.length)cartCoupon=null;
+    if(!cart.length){cartCoupon=null;cartPointsUsed=0}
+    else cartPointsUsed=Math.min(cartPointsUsed,cartMaxPoints());
     cartWrite();
   };
 
   window.hutoonCartClear=function(){
     cart=[];
     cartCoupon=null;
+    cartPointsUsed=0;
     cartWrite();
   };
 
@@ -15295,6 +15361,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if(cartCoupon){
       cartCoupon=null;
+      cartPointsUsed=Math.min(cartPointsUsed,cartMaxPoints());
       if(input){input.value="";input.disabled=false}
       if(button)button.textContent="تطبيق";
       cartCouponFeedback("");
@@ -15317,6 +15384,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(cartSubtotal()<=0)return cartCouponFeedback("أسعار هذه المنتجات تُحدد بعد التأكيد","warn");
 
     cartCoupon=match;
+    cartPointsUsed=Math.min(cartPointsUsed,cartMaxPoints());
     if(input)input.disabled=true;
     if(button)button.textContent="إلغاء";
     cartCouponFeedback(`تم تطبيق خصم ${Number(match.value||0)}%`,"ok");
@@ -15384,7 +15452,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
     const priced=t.subtotal>0;
     set("cartSubtotal",priced?money(t.subtotal):"يُحدد بعد التأكيد");
-    set("cartGrandTotal",priced?money(t.total):"يُحدد بعد التأكيد");
+    // ‎money()‎ تعرض «السعر عند الطلب» لأي صفر، وهو خطأ هنا: الصفر بعد
+    // خصم النقاط سعرٌ نهائي معروف، لا سعرٌ مجهول.
+    set("cartGrandTotal",!priced?"يُحدد بعد التأكيد":(t.total>0?money(t.total):"0.000 ر.ع"));
 
     const dl=document.getElementById("cartDiscountLine");
     if(dl){
@@ -15393,6 +15463,37 @@ document.addEventListener('DOMContentLoaded', function () {
       if(show){
         set("cartDiscountLabel",`${t.percent}%`);
         set("cartDiscountValue","- "+money(t.discount));
+      }
+    }
+
+    // صندوق النقاط لا يظهر إلا لمن عنده رصيد فعلًا وسلة مسعّرة.
+    const balance=cartPointsBalance();
+    const pb=document.getElementById("cartPointsBox");
+    if(pb){
+      const canUse=Boolean(cartUser())&&balance>0&&priced&&cart.length>0;
+      pb.classList.toggle("hidden",!canUse);
+      if(canUse){
+        const max=cartMaxPoints();
+        set("cartPointsHave",String(balance));
+        set("cartPointsWorth",money(max/CART_POINTS_PER_OMR));
+        const note=document.getElementById("cartPointsNote");
+        if(note)note.innerHTML=cartPointsUsed>0
+          ? `مخصوم الآن <b>${t.points}</b> نقطة`
+          : `تعادل خصمًا بقيمة <b id="cartPointsWorth">${money(max/CART_POINTS_PER_OMR)}</b>`;
+        const btn=document.getElementById("cartPointsBtn");
+        if(btn){
+          btn.textContent=cartPointsUsed>0?"إلغاء":"استخدم نقاطي";
+          btn.classList.toggle("is-on",cartPointsUsed>0);
+        }
+      }
+    }
+    const pl=document.getElementById("cartPointsLine");
+    if(pl){
+      const show=t.points>0&&priced;
+      pl.classList.toggle("hidden",!show);
+      if(show){
+        set("cartPointsLabel",`${t.points} نقطة`);
+        set("cartPointsValue","- "+money(t.pointsValue));
       }
     }
 
@@ -15427,6 +15528,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const t=cartTotals();
     const coupon=cartCoupon;
+    const spentPoints=Number(t.points||0);
+    const buyer=cartUser();
     const items=cart.map(item=>({
       id:item.id,name:item.name,brand:item.brand,image:item.image,
       size:item.mode==="sample"?item.size:"عبوة كاملة",
@@ -15451,6 +15554,8 @@ document.addEventListener('DOMContentLoaded', function () {
         discountCode:coupon?coupon.code:"",
         discountPercent:coupon?Number(coupon.value||0):0,
         discountAmount:t.discount,
+        pointsSpent:spentPoints,
+        pointsDiscount:Number(t.pointsValue||0),
         total:t.total,
         notes:items.map(i=>`${i.name} · ${i.size} × ${i.qty}`).join(" | ")
       });
@@ -15461,6 +15566,25 @@ document.addEventListener('DOMContentLoaded', function () {
             used:1,usedAt:firebase.firestore.FieldValue.serverTimestamp(),usedBy:currentUser()?.email||"",active:false
           },{merge:true});
         }catch(error){console.warn("Coupon burn failed:",error)}
+      }
+
+      // خصم النقاط بعد نجاح الطلب فقط، وبمعاملة تقرأ الرصيد الحالي حتى
+      // لا يُخصم مرتين لو تعدّدت النوافذ، ولا ينزل الرصيد تحت الصفر.
+      if(spentPoints>0&&buyer?.uid&&window.firebase?.firestore){
+        try{
+          const fdb=firebase.firestore();
+          const uref=fdb.collection("users").doc(buyer.uid);
+          await fdb.runTransaction(async tr=>{
+            const snap=await tr.get(uref);
+            const have=Number(snap.data()?.points||0);
+            tr.set(uref,{points:Math.max(0,have-spentPoints),
+              updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+          });
+        }catch(error){
+          // الطلب نجح ووصل للمتجر؛ لا يُلغى لأجل فشل الخصم، لكنه يُعلَن.
+          console.warn("Points deduction failed:",error?.code||error);
+          showToast("تم الطلب، لكن تعذّر خصم النقاط الآن — راجعها مع المتجر");
+        }
       }
 
       // تُفرَّغ السلة بعد نجاح الطلب فقط.
@@ -17045,37 +17169,105 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     },error=>console.warn("Orders listener",error));
   }
 
+  /* ---- الدخول برقم الهاتف وحده -------------------------------------------
+     Firebase لا يقبل إلا بريدًا وكلمة مرور، فتُشتق كلمة ثابتة من الرقم
+     نفسه ولا يراها العميل أبدًا. النتيجة: يكتب رقمه ويدخل.
+
+     تنبيه مقصود: رقم الإدارة يبقى بكلمة مرور، لأن من يعرف الرقم وحده
+     كان سيملك المتجر كاملًا — حذفَ المنتجات وبياناتِ كل العملاء.
+     --------------------------------------------------------------------- */
+  function derivedSecret(phone){return `htn.${normalizePhone(phone)}.v1`}
+
+  function showLoginField(wrapId,show,hint){
+    const wrap=document.getElementById(wrapId);
+    if(wrap)wrap.classList.toggle("hidden",!show);
+    if(hint){const el=document.getElementById("loginPassHint");if(el)el.textContent=hint}
+    document.getElementById("loginForgotBtn")?.classList.toggle("hidden",wrapId!=="loginPassWrap"||!show);
+  }
+
   window.hutoonFixedLogin=async function(event){
     event.preventDefault();
     const form=event.currentTarget;
     const identifier=document.getElementById("loginIdentifier")?.value.trim().toLowerCase()||"";
-    const password=document.getElementById("loginPassword")?.value||"";
     const button=form.querySelector('button[type="submit"],button:not([type])');
-    const oldText=button?.textContent||"تسجيل الدخول";
-    if(!identifier||!password)return notify("اكتب رقم الهاتف وكلمة المرور");
+    const oldText=button?.textContent||"دخول";
+    if(!identifier)return notify("اكتب رقم هاتفك");
     if(location.protocol==="file:")return notify("افتح الموقع من رابط الاستضافة أو الخادم المحلي حتى يعمل تسجيل الدخول");
 
-    // الدخول برقم الهاتف. البريد يبقى مقبولًا للحسابات القديمة حتى لا
-    // ينقطع عن أصحابها بعد التحويل.
+    // البريد يبقى مقبولًا للحسابات القديمة حتى لا ينقطع عن أصحابها.
+    const byEmail=identifier.includes("@");
     const phone=normalizePhone(identifier);
-    if(!identifier.includes("@")){
-      if(phone.length<8)return notify("اكتب رقم هاتف صحيح (8 أرقام)");
-      document.getElementById("loginIdentifier").dataset.resolved=phoneToEmail(phone);
+    if(!byEmail&&phone.length<8)return notify("اكتب رقم هاتف صحيح (8 أرقام)");
+    const email=byEmail?identifier:phoneToEmail(phone);
+
+    const typed=document.getElementById("loginPassword")?.value||"";
+    const needsTyped=(!byEmail&&isAdminPhone(phone))||!document.getElementById("loginPassWrap")?.classList.contains("hidden");
+
+    // رقم الإدارة: اطلب كلمة المرور قبل أي محاولة.
+    if(!byEmail&&isAdminPhone(phone)&&!typed){
+      showLoginField("loginPassWrap",true,"رقم الإدارة محمي بكلمة مرور.");
+      document.getElementById("loginPassword")?.focus();
+      return notify("اكتب كلمة مرور الإدارة");
     }
+
+    const password=needsTyped&&typed?typed:derivedSecret(phone);
+
     try{
       if(button){button.disabled=true;button.textContent="جاري الدخول..."}
       const auth=firebaseAuth();
       if(!auth)throw new Error("تعذر تحميل خدمة تسجيل الدخول");
       await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-      const field=document.getElementById("loginIdentifier");
-      const email=field.dataset.resolved||field.value.trim().toLowerCase();
-      const credential=await auth.signInWithEmailAndPassword(email,password);
+
+      let credential=null;
+      try{
+        credential=await auth.signInWithEmailAndPassword(email,password);
+      }catch(signInError){
+        const code=signInError?.code||"";
+        const unknown=["auth/user-not-found","auth/invalid-credential","auth/invalid-login-credentials","auth/wrong-password"].includes(code);
+        if(!unknown||byEmail||isAdminPhone(phone))throw signInError;
+
+        // لا حساب بهذا الرقم؟ يُنشأ فورًا. أما «مستخدم مسبقًا» فيعني
+        // حسابًا قديمًا بكلمة مرور اختارها صاحبه، فتُطلب مرة واحدة.
+        const name=document.getElementById("loginNewName")?.value.trim()||"";
+        if(!name){
+          showLoginField("loginNameWrap",true);
+          document.getElementById("loginNewName")?.focus();
+          notify("أول دخول لك — اكتب اسمك ثم اضغط دخول");
+          if(button){button.disabled=false;button.textContent=oldText}
+          return;
+        }
+        try{
+          credential=await auth.createUserWithEmailAndPassword(email,derivedSecret(phone));
+          await credential.user.updateProfile?.({displayName:name});
+          try{
+            await firestore()?.collection("users").doc(credential.user.uid).set({
+              uid:credential.user.uid,email,name,phone,phoneDigits:phone,
+              role:"customer",points:0,raindrops:0,
+              createdAt:timestamp(),updatedAt:timestamp()
+            },{merge:true});
+          }catch(profileError){console.warn("Profile write failed:",profileError?.code||profileError)}
+        }catch(createError){
+          if(createError?.code==="auth/email-already-in-use"){
+            showLoginField("loginNameWrap",false);
+            showLoginField("loginPassWrap",true,"هذا الرقم له كلمة مرور قديمة — اكتبها مرة واحدة.");
+            document.getElementById("loginPassword")?.focus();
+            notify("هذا الرقم مسجل بكلمة مرور — اكتبها للمتابعة");
+            if(button){button.disabled=false;button.textContent=oldText}
+            return;
+          }
+          throw createError;
+        }
+      }
+
       const profile=await loadProfile(credential.user);
       setUser(profile);subscribeProfile(profile);subscribeOrders(profile);
-      form.reset();window.closeAuth?.();
+      form.reset();
+      showLoginField("loginPassWrap",false);showLoginField("loginNameWrap",false);
+      window.closeAuth?.();
       if(profile.role==="admin"){
         document.getElementById("profilePanel")?.classList.remove("show");
         document.getElementById("adminView")?.classList.add("show");window.refreshAdmin?.();
+
       }else{
         document.getElementById("adminView")?.classList.remove("show");
         window.openProfile?.();
@@ -17083,6 +17275,11 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
       notify(profile.role==="admin"?"مرحبًا بك في لوحة الإدارة":"تم تسجيل الدخول بنجاح");
     }catch(error){console.error(error);notify(authMessage(error));}
     finally{if(button){button.disabled=false;button.textContent=oldText}}
+  };
+
+  window.hutoonRegPhoneChanged=function(){
+    const phone=normalizePhone(document.getElementById("regPhone")?.value||"");
+    document.getElementById("regPassWrap")?.classList.toggle("hidden",!isAdminPhone(phone));
   };
 
   window.hutoonFixedRegister=async function(event){
@@ -17093,12 +17290,18 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     const phone=normalizePhone(rawPhone);
     // البريد الداخلي يُشتق من الرقم؛ العميل لا يكتبه ولا يراه.
     const email=phoneToEmail(phone);
-    const password=document.getElementById("regPassword")?.value||"";
+    const typed=document.getElementById("regPassword")?.value||"";
+    // العميل بلا كلمة مرور؛ الإدارة وحدها تختار واحدة.
+    const adminAccount=isAdminPhone(phone);
+    const password=adminAccount?typed:derivedSecret(phone);
     const button=form.querySelector('button[type="submit"],button:not([type])');
     const oldText=button?.textContent||"إنشاء الحساب";
-    if(!name||!phone||!password)return notify("أكمل جميع البيانات");
+    if(!name||!phone)return notify("اكتب اسمك ورقم هاتفك");
     if(phone.length<8)return notify("اكتب رقم هاتف صحيح (8 أرقام)");
-    if(password.length<6)return notify("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+    if(adminAccount){
+      document.getElementById("regPassWrap")?.classList.remove("hidden");
+      if(typed.length<6)return notify("كلمة مرور الإدارة يجب أن تكون 6 أحرف على الأقل");
+    }
     if(location.protocol==="file:")return notify("افتح الموقع من رابط الاستضافة أو الخادم المحلي حتى يعمل إنشاء الحساب");
     let createdUser=null;
     try{
@@ -17983,7 +18186,7 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
     ["loyaltyPoints","profileLoyaltyPoints"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=String(points)});
     const label=document.getElementById("raindropCountLabel");if(label)label.textContent=`${Math.min(drops,5)} / 5`;
     document.querySelectorAll("#raindropStamps span").forEach((stamp,index)=>stamp.classList.toggle("active",index<drops));
-    [["cart10",1000],["item50",5000],["freePerfume",10000]].forEach(([id,cost])=>{const el=document.getElementById("rewardStatus-"+id);if(el)el.textContent=!user?"سجل الدخول لمعرفة أهليتك":points>=cost?"العرض متاح للاستبدال الآن":`يتبقى ${cost-points} نقطة`});
+    [["cart10",100],["item50",500],["freePerfume",10000]].forEach(([id,cost])=>{const el=document.getElementById("rewardStatus-"+id);if(el)el.textContent=!user?"سجل الدخول لمعرفة أهليتك":points>=cost?"العرض متاح للاستبدال الآن":`يتبقى ${cost-points} نقطة`});
   };
   window.redeemReward=async function(code,cost,title){
     const user=currentUser();if(!user){window.openAuth?.();return notify("سجّل الدخول أولًا")}
@@ -20345,5 +20548,79 @@ footer .footer-copy {
   };
 })();
 </script>
+
+<style id="hutoon-passwordless-points">
+/* ==========================================================================
+   الدخول بالرقم وحده + خصم النقاط في السلة
+   ========================================================================== */
+
+/* حقول تظهر عند الحاجة فقط: كلمة مرور الإدارة، واسم العميل أول مرة. */
+#authModal .auth-pass-wrap,
+#authModal .auth-name-wrap { display: grid; gap: 7px; }
+#authModal .auth-pass-wrap.hidden,
+#authModal .auth-name-wrap.hidden { display: none; }
+#authModal .auth-pass-hint {
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #1c2b45;
+  opacity: 0.7;
+}
+
+/* ---- صندوق النقاط في السلة ------------------------------------------- */
+.cart-points-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 13px 14px;
+  border-radius: 16px;
+  background: linear-gradient(150deg, rgba(216, 189, 133, 0.16), rgba(184, 147, 78, 0.08));
+  border: 1px solid rgba(184, 147, 78, 0.3);
+}
+.cart-points-box.hidden { display: none; }
+.cart-points-box .cp-info {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.cart-points-box .cp-icon {
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: linear-gradient(150deg, #d8bd85, #b8934e);
+  color: #14223a;
+  font-size: 15px;
+}
+.cart-points-box strong { display: block; font-size: 13.5px; color: #14223a; }
+.cart-points-box small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: #1c2b45;
+  opacity: 0.75;
+}
+.cart-points-box b { font-variant-numeric: tabular-nums; }
+.cart-points-box button {
+  flex: 0 0 auto;
+  padding: 9px 15px !important;
+  font-size: 12.5px !important;
+  white-space: nowrap;
+}
+.cart-points-box button.is-on {
+  background: rgba(157, 61, 61, 0.1) !important;
+  border-color: rgba(157, 61, 61, 0.35) !important;
+  color: #9d3d3d !important;
+}
+
+@media (max-width: 420px) {
+  .cart-points-box { flex-direction: column; align-items: stretch; }
+  .cart-points-box button { width: 100%; }
+}
+</style>
 </body>
 </html>

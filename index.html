@@ -10792,7 +10792,7 @@ main > section { position: relative; }
 <div>
 <small>HUTOON PERFUME COLLECTION</small>
 <h2>مجموعة العطور</h2>
-<p>اكتشفي تشكيلتنا المختارة من العطور العالمية، وصفي النتائج حسب النوع أو الاستخدام.</p>
+<p>اكتشف تشكيلتنا المختارة من العطور العالمية، وصَفِّ النتائج حسب النوع أو الاستخدام.</p>
 </div>
 <span id="hutoonProductsCount">0 عطر</span>
 </div>
@@ -11566,7 +11566,7 @@ main > section { position: relative; }
   <div>
     <small>PRODUCT CATALOG</small>
     <h3>المنتجات</h3>
-    <p>أضيفي منتجًا جديدًا أو عدّلي الصور والصوت والأسعار بسرعة.</p>
+    <p>أضف منتجًا جديدًا أو عدّل الصور والصوت والأسعار بسرعة.</p>
   </div>
   <button class="admin-add-product-btn" type="button" onclick="openProductEditor()">
     <span>＋</span> إضافة منتج
@@ -11576,7 +11576,7 @@ main > section { position: relative; }
 <div class="admin-products-toolbar">
   <label class="admin-product-search">
     <span>⌕</span>
-    <input id="adminProductSearch" type="search" placeholder="ابحثي باسم العطر أو البراند" oninput="filterAdminProducts()"/>
+    <input id="adminProductSearch" type="search" placeholder="ابحث باسم العطر أو البراند" oninput="filterAdminProducts()"/>
   </label>
   <select id="adminProductGenderFilter" onchange="filterAdminProducts()">
     <option value="">كل الأنواع</option>
@@ -12535,7 +12535,7 @@ main > section { position: relative; }
       if (openedAsFile) {
         document.getElementById("localProtocolWarning")?.classList.remove("hidden");
         setTimeout(() => {
-          showToast("شغّلي الموقع عبر ملف run_hutoon_local.bat ثم افتحي الرابط localhost");
+          showToast("شغّل الموقع عبر ملف run_hutoon_local.bat ثم افتح الرابط localhost");
         }, 2400);
       }
 
@@ -12905,7 +12905,7 @@ main > section { position: relative; }
       function firebaseMessage(error) {
         const code = error?.code || "";
         const messages = {
-          "auth/operation-not-supported-in-this-environment": "Firebase لا يسمح بتسجيل الدخول عند فتح الملف مباشرة. شغّلي الملف عبر run_hutoon_local.bat أو ارفعيه على الاستضافة.",
+          "auth/operation-not-supported-in-this-environment": "Firebase لا يسمح بتسجيل الدخول عند فتح الملف مباشرة. شغّل الملف عبر run_hutoon_local.bat أو ارفعه على الاستضافة.",
           "auth/email-already-in-use": "هذا البريد مستخدم مسبقًا",
           "auth/invalid-email": "البريد الإلكتروني غير صحيح",
           "auth/weak-password": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
@@ -12913,14 +12913,14 @@ main > section { position: relative; }
           "auth/invalid-credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
           "auth/user-not-found": "الحساب غير موجود",
           "auth/wrong-password": "كلمة المرور غير صحيحة",
-          "auth/too-many-requests": "محاولات كثيرة، جربي مرة أخرى لاحقًا",
+          "auth/too-many-requests": "محاولات كثيرة، جرّب مرة أخرى لاحقًا",
           "auth/network-request-failed": "تعذر الاتصال بخدمة Firebase",
           "auth/unauthorized-domain": "دومين الموقع غير مضاف في Firebase Authentication > Settings > Authorized domains",
           "auth/app-not-authorized": "تطبيق الويب غير مصرح له باستخدام Firebase Authentication",
           "auth/api-key-not-valid.-please-pass-a-valid-api-key.": "مفتاح Firebase غير صالح أو عليه قيود تمنع هذا الدومين",
           "auth/configuration-not-found": "طريقة Email/Password غير مفعلة في Firebase Authentication",
-          "auth/requires-recent-login": "سجلي خروجك ثم ادخلي مجددًا لتغيير كلمة المرور",
-          "permission-denied": "قواعد Firestore تمنع العملية. تأكدي من نشر ملف القواعد."
+          "auth/requires-recent-login": "سجّل خروجك ثم ادخل مجددًا لتغيير كلمة المرور",
+          "permission-denied": "قواعد Firestore تمنع العملية. تأكد من نشر ملف القواعد."
         };
         return messages[code] || error?.message || "حدث خطأ غير متوقع";
       }
@@ -13095,7 +13095,7 @@ main > section { position: relative; }
         clearAuthError();
 
         if (window.location.protocol === "file:") {
-          showToast("لا يمكن تسجيل الدخول من file:// — شغّلي run_hutoon_local.bat أولًا");
+          showToast("لا يمكن تسجيل الدخول من file:// — شغّل run_hutoon_local.bat أولًا");
           document.getElementById("localProtocolWarning")?.classList.remove("hidden");
           return;
         }
@@ -13182,7 +13182,7 @@ main > section { position: relative; }
         clearAuthError();
 
         if (window.location.protocol === "file:") {
-          showToast("لا يمكن إنشاء حساب من file:// — شغّلي run_hutoon_local.bat أولًا");
+          showToast("لا يمكن إنشاء حساب من file:// — شغّل run_hutoon_local.bat أولًا");
           document.getElementById("localProtocolWarning")?.classList.remove("hidden");
           return;
         }
@@ -13193,7 +13193,7 @@ main > section { position: relative; }
         const password = document.getElementById("regPassword").value;
 
         if (!name || !email || !phone || !password) {
-          showToast("أكملي جميع البيانات");
+          showToast("أكمل جميع البيانات");
           return;
         }
 
@@ -14167,18 +14167,11 @@ document.addEventListener('DOMContentLoaded', function () {
   function handleMobileScroll(){
     if(!isMobile() || !mobileNav) return;
 
-    const currentY = Math.max(window.scrollY, 0);
-    const difference = currentY - lastScrollY;
+    // الشريط يبقى ظاهرًا دائمًا. كان يختفي عند التمرير لأسفل، فيضطر
+    // الزبون إلى تمرير عكسي ليستعيده — والسلة والحساب خلفه.
+    mobileNav.classList.remove("mobile-nav-hidden");
 
-    if(currentY < 80){
-      mobileNav.classList.remove("mobile-nav-hidden");
-    }else if(difference > 8){
-      mobileNav.classList.add("mobile-nav-hidden");
-    }else if(difference < -6){
-      mobileNav.classList.remove("mobile-nav-hidden");
-    }
-
-    lastScrollY = currentY;
+    lastScrollY = Math.max(window.scrollY, 0);
     setActiveSection();
   }
 
@@ -20620,6 +20613,15 @@ footer .footer-copy {
 @media (max-width: 420px) {
   .cart-points-box { flex-direction: column; align-items: stretch; }
   .cart-points-box button { width: 100%; }
+}
+</style>
+
+<style id="hutoon-sticky-mobile-nav">
+/* الشريط السفلي ثابت: لا يختفي مع التمرير في أي حال. */
+.mobile-floating-nav.mobile-nav-hidden{
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 </style>
 </body>

@@ -11326,11 +11326,6 @@ main > section { position: relative; }
 <div><strong>تعديل البيانات</strong><small>الاسم ورقم الهاتف</small></div>
 <b>←</b>
 </button>
-<button onclick="changePassword()">
-<span>⌘</span>
-<div><strong>تغيير كلمة المرور</strong><small>تحديث بيانات الدخول</small></div>
-<b>←</b>
-</button>
 <button class="logout-action" onclick="logout()">
 <span>⇥</span>
 <div><strong>تسجيل الخروج</strong><small>الخروج من حساب هتون</small></div>
@@ -11951,53 +11946,6 @@ main > section { position: relative; }
       document.getElementById("loginTab").classList.toggle("active", login);
       document.getElementById("registerTab").classList.toggle("active", !login);
     }
-    function register(e){
-      e.preventDefault();
-      const user={name:regName.value.trim(),phone:regPhone.value.trim(),password:regPassword.value};
-      localStorage.setItem("hutoon_account",JSON.stringify(user));
-      state.user={name:user.name,phone:user.phone};
-      localStorage.setItem("hutoon_user",JSON.stringify(state.user));
-      closeAuth();refreshProfile();refreshLoyalty();showToast("تم إنشاء حسابك بنجاح");
-    }
-    function unifiedLogin(e){
-      e.preventDefault();
-
-      const identifier = document.getElementById("loginIdentifier").value.trim();
-      const password = document.getElementById("loginPassword").value;
-
-      const adminEmail = "admin@hutoon.com";
-      const adminPassword = "";
-
-      // Admin login is detected automatically and never appears as a separate option.
-      if(identifier.toLowerCase() === adminEmail && password === adminPassword){
-        closeAuth();
-        document.getElementById("adminView").classList.add("show");
-        refreshAdmin();
-        showToast("مرحبًا بك في لوحة إدارة هتون");
-        e.target.reset();
-        return;
-      }
-
-      // Normal customer login.
-      const account = JSON.parse(localStorage.getItem("hutoon_account") || "null");
-
-      if(
-        account &&
-        identifier === account.phone &&
-        password === account.password
-      ){
-        state.user = {name:account.name, phone:account.phone};
-        localStorage.setItem("hutoon_user", JSON.stringify(state.user));
-        closeAuth();
-        refreshProfile();
-        refreshLoyalty();
-        showToast("تم تسجيل الدخول بنجاح");
-        e.target.reset();
-        return;
-      }
-
-      showToast("بيانات تسجيل الدخول غير صحيحة");
-    }
     function logout(){
       state.user=null;localStorage.removeItem("hutoon_user");refreshProfile();refreshLoyalty();closeProfile();showToast("تم تسجيل الخروج");
     }
@@ -12052,51 +12000,6 @@ main > section { position: relative; }
       const points=getUserPoints();
       const profilePoints=document.getElementById("profileLoyaltyPoints");
       if(profilePoints) profilePoints.textContent=points;
-    }
-
-    function editProfile(){
-      if(!state.user){
-        showToast("سجل دخولك أولًا");
-        openAuth();
-        return;
-      }
-      const newName=prompt("اكتب الاسم الجديد:",state.user.name||"");
-      if(newName===null) return;
-      const newPhone=prompt("اكتب رقم الهاتف الجديد:",state.user.phone||"");
-      if(newPhone===null) return;
-      const account=JSON.parse(localStorage.getItem("hutoon_account")||"null");
-      state.user={name:newName.trim()||state.user.name,phone:newPhone.trim()||state.user.phone};
-      localStorage.setItem("hutoon_user",JSON.stringify(state.user));
-      if(account){
-        account.name=state.user.name;
-        account.phone=state.user.phone;
-        localStorage.setItem("hutoon_account",JSON.stringify(account));
-      }
-      refreshProfile();
-      refreshLoyalty();
-      showToast("تم تحديث بياناتك");
-    }
-
-    function changePassword(){
-      if(!state.user){
-        showToast("سجل دخولك أولًا");
-        openAuth();
-        return;
-      }
-      const account=JSON.parse(localStorage.getItem("hutoon_account")||"null");
-      if(!account){
-        showToast("لا يوجد حساب محفوظ");
-        return;
-      }
-      const newPassword=prompt("اكتب كلمة المرور الجديدة:");
-      if(!newPassword) return;
-      if(newPassword.length<4){
-        showToast("كلمة المرور يجب أن تكون 4 أحرف على الأقل");
-        return;
-      }
-      account.password=newPassword;
-      localStorage.setItem("hutoon_account",JSON.stringify(account));
-      showToast("تم تغيير كلمة المرور");
     }
 
     function closeAdmin(){document.getElementById("adminView").classList.remove("show")}
@@ -12516,7 +12419,6 @@ main > section { position: relative; }
       };
 
       const ADMIN_EMAIL = "admin@hutoon.com";
-      const ADMIN_PASSWORD = "";
       const ADMIN_EMAILS = new Set([ADMIN_EMAIL,"admin@hutoon.om"]);
 
       // Connection/status reporter. The visible indicator was retired in an earlier
@@ -13090,197 +12992,6 @@ main > section { position: relative; }
         }
       });
 
-      window.unifiedLogin = async function (event) {
-        event.preventDefault();
-        clearAuthError();
-
-        if (window.location.protocol === "file:") {
-          showToast("لا يمكن تسجيل الدخول من file:// — شغّل run_hutoon_local.bat أولًا");
-          document.getElementById("localProtocolWarning")?.classList.remove("hidden");
-          return;
-        }
-
-        const email = document.getElementById("loginIdentifier").value.trim().toLowerCase();
-        const password = document.getElementById("loginPassword").value;
-
-        if (!email || !password) {
-          showToast("اكتب البريد الإلكتروني وكلمة المرور");
-          return;
-        }
-
-        const button = event.submitter;
-        if (button) {
-          button.disabled = true;
-          button.textContent = "جاري الدخول...";
-        }
-
-        try {
-          setConnectionStatus("", "جاري تسجيل الدخول...");
-
-          let credential;
-          try {
-            credential = await auth.signInWithEmailAndPassword(email, password);
-          } catch (error) {
-            const canCreateAdmin =
-              ADMIN_EMAILS.has(email) &&
-              Boolean(ADMIN_PASSWORD) &&
-              password === ADMIN_PASSWORD &&
-              ["auth/user-not-found", "auth/invalid-credential", "auth/invalid-login-credentials"].includes(error.code);
-
-            if (!canCreateAdmin) throw error;
-            credential = await auth.createUserWithEmailAndPassword(email, password);
-          }
-
-          // Authentication succeeded. Open the correct area immediately.
-          closeAuth();
-          event.target.reset();
-
-          const basicIsAdmin = ADMIN_EMAILS.has(email);
-          state.user = {
-            uid: credential.user.uid,
-            email: credential.user.email || email,
-            name: basicIsAdmin ? "إدارة هتون" : "عميل هتون",
-            phone: "",
-            role: basicIsAdmin ? "admin" : "customer",
-            points: 0,
-            firestoreReady: false
-          };
-          localStorage.setItem("hutoon_user", JSON.stringify(state.user));
-          updateViews();
-
-          if (basicIsAdmin) {
-            document.getElementById("adminView").classList.add("show");
-            showToast("تم تسجيل دخول الإدارة");
-          } else {
-            openProfile();
-            showToast("تم تسجيل الدخول بنجاح");
-          }
-
-          // Load Firestore profile after the interface is already open.
-          const profile = await ensureProfile(credential.user);
-          state.user = profile;
-          localStorage.setItem("hutoon_user", JSON.stringify(profile));
-          subscribeProfile(credential.user.uid);
-          subscribeOrders(profile);
-          updateViews();
-        } catch (error) {
-          console.error("Login:", error);
-          showAuthError(error);
-          
-          showToast(firebaseMessage(error));
-          console.error("Firebase login details:", error.code, error.message);
-        } finally {
-          if (button) {
-            button.disabled = false;
-            button.textContent = "تسجيل الدخول";
-          }
-        }
-      };
-
-      window.register = async function (event) {
-        event.preventDefault();
-        clearAuthError();
-
-        if (window.location.protocol === "file:") {
-          showToast("لا يمكن إنشاء حساب من file:// — شغّل run_hutoon_local.bat أولًا");
-          document.getElementById("localProtocolWarning")?.classList.remove("hidden");
-          return;
-        }
-
-        const name = document.getElementById("regName").value.trim();
-        const email = document.getElementById("regEmail").value.trim().toLowerCase();
-        const phone = document.getElementById("regPhone").value.trim();
-        const password = document.getElementById("regPassword").value;
-
-        if (!name || !email || !phone || !password) {
-          showToast("أكمل جميع البيانات");
-          return;
-        }
-
-        if (ADMIN_EMAILS.has(email)) {
-          showToast("هذا البريد مخصص لإدارة هتون");
-          return;
-        }
-
-        if (password.length < 6) {
-          showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
-          return;
-        }
-
-        const button = event.submitter;
-        if (button) {
-          button.disabled = true;
-          button.textContent = "جاري إنشاء الحساب...";
-        }
-
-        let credential = null;
-
-        try {
-          setConnectionStatus("", "جاري إنشاء الحساب...");
-          credential = await auth.createUserWithEmailAndPassword(email, password);
-
-          state.user = {
-            uid: credential.user.uid,
-            email,
-            name,
-            phone,
-            role: "customer",
-            points: 0,
-            firestoreReady: false
-          };
-          localStorage.setItem("hutoon_user", JSON.stringify(state.user));
-          closeAuth();
-          event.target.reset();
-          updateViews();
-          showToast("تم إنشاء الحساب وتسجيل الدخول");
-          openProfile();
-
-          const profile = await ensureProfile(credential.user, { name, phone });
-          state.user = profile;
-          localStorage.setItem("hutoon_user", JSON.stringify(profile));
-          subscribeProfile(credential.user.uid);
-          subscribeOrders(profile);
-          updateViews();
-        } catch (error) {
-          console.error("Register:", error);
-          showAuthError(error);
-
-          // An Auth user may be created while Firestore rules reject the profile.
-          // Keep the user signed in and show a precise message instead of appearing unresponsive.
-          if (credential?.user && error.code === "permission-denied") {
-            showToast("تم إنشاء الحساب في Authentication، لكن قواعد Firestore لم تُنشر بعد");
-          } else {
-            showToast(firebaseMessage(error));
-          }
-
-          
-        } finally {
-          if (button) {
-            button.disabled = false;
-            button.textContent = "إنشاء الحساب";
-          }
-        }
-      };
-
-      window.resetLoginPassword = async function () {
-        clearAuthError();
-        const email = document.getElementById("loginIdentifier").value.trim().toLowerCase();
-
-        if (!email) {
-          showToast("اكتب بريدك الإلكتروني أولًا");
-          return;
-        }
-
-        try {
-          await auth.sendPasswordResetEmail(email);
-          showToast("تم إرسال رابط تغيير كلمة المرور إلى بريدك");
-        } catch (error) {
-          console.error("Password reset:", error);
-          showAuthError(error);
-          showToast(firebaseMessage(error));
-        }
-      };
-
       window.logout = async function () {
         try {
           await auth.signOut();
@@ -13537,27 +13248,6 @@ main > section { position: relative; }
             updatedAt: serverTimestamp()
           });
           showToast("تم تحديث بياناتك");
-        } catch (error) {
-          showToast(firebaseMessage(error));
-        }
-      };
-
-      window.changePassword = async function () {
-        if (!auth.currentUser) {
-          showToast("سجل الدخول أولًا");
-          return;
-        }
-
-        const password = prompt("اكتب كلمة المرور الجديدة:");
-        if (!password) return;
-        if (password.length < 6) {
-          showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
-          return;
-        }
-
-        try {
-          await auth.currentUser.updatePassword(password);
-          showToast("تم تغيير كلمة المرور");
         } catch (error) {
           showToast(firebaseMessage(error));
         }
@@ -14211,9 +13901,6 @@ document.addEventListener('DOMContentLoaded', function () {
 (function(){
   const BRAND_KEY = "hutoon_admin_brands_v1";
   const NOTIFICATION_KEY = "hutoon_admin_notifications_v1";
-  const LOCAL_ACCOUNT_KEY = "hutoon_accounts_v2";
-  const ADMIN_EMAIL_FALLBACK = "admin@hutoon.com";
-  const ADMIN_PASSWORD_FALLBACK = "";
   let knownOrderIds = new Set();
   let notificationsReady = false;
 
@@ -14374,66 +14061,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     knownOrderIds=ids;
   }
-
-  // Fix login on file:// with a local fallback; hosted sites continue using Firebase.
-  function localLogin(email,password){
-    const accounts=safeRead(LOCAL_ACCOUNT_KEY,[]);
-    // Never hand out the admin session on an unset fallback password: an empty
-    // ADMIN_PASSWORD_FALLBACK would otherwise admit anyone who types the admin email.
-    if(ADMIN_PASSWORD_FALLBACK&&email===ADMIN_EMAIL_FALLBACK&&password===ADMIN_PASSWORD_FALLBACK){
-      window.state.user={uid:"local-admin",email,name:"إدارة هتون",phone:"",role:"admin",points:0,local:true};
-      localStorage.setItem("hutoon_user",JSON.stringify(window.state.user));
-      closeAuth();document.getElementById("adminView")?.classList.add("show");
-      if(typeof updateViews==="function")updateViews();
-      if(typeof refreshAdmin==="function")refreshAdmin();
-      renderAdminBrands();renderNotifications();
-      showToast("تم تسجيل دخول الإدارة");
-      return true;
-    }
-    const account=accounts.find(x=>x.email===email&&x.password===password);
-    if(!account)return false;
-    window.state.user={uid:account.id,email:account.email,name:account.name,phone:account.phone,role:"customer",points:0,local:true};
-    localStorage.setItem("hutoon_user",JSON.stringify(window.state.user));
-    closeAuth();
-    if(typeof updateViews==="function")updateViews();
-    if(typeof refreshProfile==="function")refreshProfile();
-    if(typeof openProfile==="function")openProfile();
-    showToast("تم تسجيل الدخول بنجاح");
-    return true;
-  }
-
-  const firebaseLogin=window.unifiedLogin;
-  window.unifiedLogin=async function(event){
-    const email=document.getElementById("loginIdentifier").value.trim().toLowerCase();
-    const password=document.getElementById("loginPassword").value;
-    if(location.protocol==="file:"){
-      event.preventDefault();
-      if(!localLogin(email,password))showToast("بيانات الدخول غير صحيحة");
-      return;
-    }
-    try{return await firebaseLogin(event)}
-    catch(error){
-      if(["auth/network-request-failed","auth/internal-error"].includes(error?.code)&&localLogin(email,password))return;
-      throw error;
-    }
-  };
-
-  const firebaseRegister=window.register;
-  window.register=async function(event){
-    if(location.protocol!=="file:"&&typeof firebaseRegister==="function")return firebaseRegister(event);
-    event.preventDefault();
-    const account={
-      id:"local-"+Date.now(),name:regName.value.trim(),email:regEmail.value.trim().toLowerCase(),
-      phone:regPhone.value.trim(),password:regPassword.value
-    };
-    const accounts=safeRead(LOCAL_ACCOUNT_KEY,[]);
-    if(accounts.some(x=>x.email===account.email)){showToast("هذا البريد مسجل مسبقًا");return}
-    accounts.push(account);safeWrite(LOCAL_ACCOUNT_KEY,accounts);
-    window.state.user={uid:account.id,email:account.email,name:account.name,phone:account.phone,role:"customer",points:0,local:true};
-    localStorage.setItem("hutoon_user",JSON.stringify(window.state.user));
-    closeAuth();if(typeof updateViews==="function")updateViews();if(typeof openProfile==="function")openProfile();
-    showToast("تم إنشاء الحساب بنجاح");
-  };
 
   async function saveSampleOrderToAdmin(order){
     if(window.state?.user?.local||location.protocol==="file:"){
@@ -16810,8 +16437,6 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
 
   const ADMIN_EMAILS=new Set(["admin@hutoon.com","admin@hutoon.om"]);
   const FALLBACK_IMAGE="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=82";
-  
-  const ACCOUNT_KEYS=["hutoon_accounts_v3","hutoon_accounts_v2"];
   const POINTS_PER_OMR=10; // ١٠ نقاط لكل ريال عماني
   let liveProducts=[];
   let productUnsubscribe=null;
@@ -16996,18 +16621,6 @@ body.hutoon-pop-ready .hutoon-section-pop.is-visible .hutoon-pop-target{
   }
 
   function isAdmin(){return isVerifiedAdminSession()}
-
-  function oldAccounts(){
-    const found=[];
-    const add=item=>{
-      if(!item||typeof item!=="object")return;
-      if(found.some(saved=>(item.email&&saved.email===item.email)||(item.phone&&saved.phone===item.phone)))return;
-      found.push(item);
-    };
-    ACCOUNT_KEYS.forEach(key=>{try{(JSON.parse(localStorage.getItem(key)||"[]")||[]).forEach(add)}catch(_){}});
-    try{add(JSON.parse(localStorage.getItem("hutoon_account")||"null"))}catch(_){}
-    return found;
-  }
 
   async function roleFor(firebaseUser,profile){
     // الإدارة تُعرَّف برقم الهاتف: البريد الداخلي المشتق منه هو ما يُخزَّن.
